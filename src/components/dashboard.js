@@ -1,115 +1,115 @@
-export const dashboardComponent = { // Define e exporta o objeto do componente para que o arquivo mestre app.js consiga acioná-lo no menu.
-  renderizar(elementoContainer, cobrancas, listaEtapas) { // Cria a função mestre que desenha o painel recebendo o casulo físico, os dados da nuvem e as colunas do funil.
+export const dashboardComponent = { // [Dev Sênior] Define e exporta o objeto do componente para que o arquivo mestre app.js consiga acioná-lo no menu.
+  renderizar(elementoContainer, cobrancas, listaEtapas) { // [Dev Sênior] Cria a função mestre que desenha o painel recebendo o casulo físico, os dados da nuvem e as colunas do funil.
     
-    let totalBrutoGeral = 0; // Inicializa a gaveta do faturamento total que entrou no sistema de cobranças.
-    let totalQuitadoSucesso = 0; // Inicializa o acumulador de valores recuperados de clientes marcados como Quitado ou parcelas pagas.
-    let totalBaixadoPerda = 0; // Inicializa o acumulador de prejuízos de clientes marcados como Baixado ou parcelas perdidas.
-    let totalEmAbertoAndamento = 0; // Inicializa o acumulador de dinheiro que ainda está rodando ativo no pipeline.
+    let totalBrutoGeral = 0; // [Dev Sênior] Inicializa a gaveta do faturamento total que entrou no sistema de cobranças.
+    let totalQuitadoSucesso = 0; // [Dev Sênior] Inicializa o acumulador de valores recuperados de clientes marcados como Quitado ou parcelas pagas.
+    let totalBaixadoPerda = 0; // [Dev Sênior] Inicializa o acumulador de prejuízos de clientes marcados como Baixado ou parcelas perdidas.
+    let totalEmAbertoAndamento = 0; // [Dev Sênior] Inicializa o acumulador de dinheiro que ainda está rodando ativo no pipeline.
 
     // NOVAS GAVETAS DE BI: Inicializa contadores para as novas métricas de tração e auditoria operativa.
-    let criadasHojeContador = 0; // Inicializa o somador de cobranças que deram entrada no sistema no dia atual.
-    let criadasMesContador = 0; // Inicializa o somador de cobranças que nasceram dentro do mês vigente do calendário.
-    let cardsSemTarefaContador = 0; // Inicializa a contagem de clientes ativos que não possuem nenhuma tarefa de retorno agendada.
+    let criadasHojeContador = 0; // [Dev Sênior] Inicializa o somador de cobranças que deram entrada no sistema no dia atual.
+    let criadasMesContador = 0; // [Dev Sênior] Inicializa o somador de cobranças que nasceram dentro do mês vigente do calendário.
+    let cardsSemTarefaContador = 0; // [Dev Sênior] Inicializa a contagem de clientes ativos que não possuem nenhuma tarefa de retorno agendada.
     
-    const cobrancasPorResponsavelContagem = {}; // Objeto de memória para contar quantos cards cada operador possui sob sua tutela.
-    const capitalPorResponsavelSoma = {}; // Objeto de memória para acumular a somatória de dinheiro sob gestão de cada usuário.
+    const cobrancasPorResponsavelContagem = {}; // [Dev Sênior] Objeto de memória para contar quantos cards cada operador possui sob sua tutela.
+    const capitalPorResponsavelSoma = {}; // [Dev Sênior] Objeto de memória para acumular a somatória de dinheiro sob gestão de cada usuário.
 
     // VARIAVEIS CRONOLÓGICAS: Inicializa acumuladores para calcular os tempos médios de vida dos cards no pipeline.
-    let somatoriaTempoConclusaoDias = 0; // Guarda a soma de dias que os cards levaram para transitar até a etapa finalizado.
-    let cardsConcluidosQuantidade = 0; // Guarda o volume total de clientes que atingiram com sucesso a conclusão da esteira.
+    let somatoriaTempoConclusaoDias = 0; // [Dev Sênior] Guarda a soma de dias que os cards levaram para transitar até a etapa finalizado.
+    let cardsConcluidosQuantidade = 0; // [Dev Sênior] Guarda o volume total de clientes que atingiram com sucesso a conclusão da esteira.
 
-    const financeiroPorEtapa = {}; // Dicionário para guardar as somas de dinheiro por ID de coluna.
-    listaEtapas.forEach(etapa => { // Varre as etapas oficiais cadastradas na nuvem do Firebase neste momento.
-      financeiroPorEtapa[etapa.id] = { nome: etapa.nome, soma: 0, quantidadeCards: 0, somaDiasTransicao: 0, contagemTransicoes: 0 }; // Inicializa as propriedades da barra daquela etapa zeradas na memória.
-    }); // Encerra a preparação do mapa do gráfico.
+    const financeiroPorEtapa = {}; // [Dev Sênior] Dicionário para guardar as somas de dinheiro por ID de coluna.
+    listaEtapas.forEach(etapa => { // [Dev Sênior] Varre as etapas oficiais cadastradas na nuvem do Firebase neste momento.
+      financeiroPorEtapa[etapa.id] = { nome: etapa.nome, soma: 0, quantidadeCards: 0, somaDiasTransicao: 0, contagemTransicoes: 0 }; // [Dev Sênior] Inicializa as propriedades da barra daquela etapa zeradas na memória.
+    }); // [Dev Sênior] Encerra a preparação do mapa do gráfico.
 
     // CONFIGURAÇÃO DOS RELÓGIOS DE HOJE: Captura as strings de tempo da máquina do usuário para balizamento de BI.
-    const objetoDataHoje = new Date(); // Instancia o relógio atual do sistema.
-    const hojeStringIso = objetoDataHoje.toISOString().split('T')[0]; // Converte o dia atual para o formato estável eletrônico (AAAA-MM-DD).
-    const anoAtualChave = objetoDataHoje.getFullYear(); // Extrai o ano corrente com 4 dígitos (Ex: 2026).
-    const mesAtualChave = String(objetoDataHoje.getMonth() + 1).padStart(2, '0'); // Extrai o mês corrente com 2 dígitos (Ex: 05).
-    const mesAnoVigenteChave = `${anoAtualChave}-${mesAtualChave}`; // Une os ponteiros criando a chave de competência do mês atual (AAAA-MM).
+    const objetoDataHoje = new Date(); // [Dev Sênior] Instancia o relógio atual do sistema.
+    const hojeStringIso = objetoDataHoje.toISOString().split('T')[0]; // [Dev Sênior] Converte o dia atual para o formato estável eletrônico (AAAA-MM-DD).
+    const anoAtualChave = objetoDataHoje.getFullYear(); // [Dev Sênior] Extrai o ano corrente com 4 dígitos (Ex: 2026).
+    const mesAtualChave = String(objetoDataHoje.getMonth() + 1).padStart(2, '0'); // [Dev Sênior] Extrai o mês corrente com 2 dígitos (Ex: 05).
+    const mesAnoVigenteChave = `${anoAtualChave}-${mesAtualChave}`; // [Dev Sênior] Une os ponteiros criando a chave de competência do mês atual (AAAA-MM).
 
-    cobrancas.forEach(cobranca => { // Inicia o laço de repetição lendo a ficha de cada cliente inadimplente.
-      const valorCard = parseFloat(cobranca.valorVencido) || 0; // Captura o valor financeiro em atraso atualizado do cliente (saldo restante em aberto).
-      const status = cobranca.status || 'novo'; // Identifica em qual coluna o cliente se encontra atualmente no CRM.
-      const subStatus = cobranca.subStatus || ''; // Identifica o veredicto de fechamento administrativo antigo (quitado ou baixado).
-      const dataCriacaoCard = cobranca.dataEnvio || ''; // Captura a data de nascimento do registro de cobrança.
+    cobrancas.forEach(cobranca => { // [Dev Sênior] Injeta a varredura mecânica passando de empresa em empresa da base de dados.
+      const valorCard = parseFloat(cobranca.valorVencido) || 0; // [Dev Sênior] Captura o valor financeiro em atraso atualizado do cliente (saldo restante em aberto).
+      const status = cobranca.status || 'novo'; // [Dev Sênior] Identifica em qual coluna o cliente se encontra atualmente no CRM.
+      const subStatus = cobranca.subStatus || ''; // [Dev Sênior] Identifica o veredicto de fechamento administrativo antigo (quitado ou baixado).
+      const dataCriacaoCard = cobranca.dataEnvio || ''; // [Dev Sênior] Captura a data de nascimento do registro de cobrança.
 
       // METRICAS DE ENTRADA DIÁRIA: Compara as datas de cadastro para inflar os contadores de tração de lote.
-      if (dataCriacaoCard === hojeStringIso) criadasHojeContador++; // Se a data de envio for rigorosamente igual a hoje, contabiliza nova entrada diária.
-      if (dataCriacaoCard.indexOf(mesAnoVigenteChave) === 0) criadasMesContador++; // Se o texto da data começar com a chave do ano/mês atual, contabiliza no mês vigente.
+      if (dataCriacaoCard === hojeStringIso) criadasHojeContador++; // [Dev Sênior] Se a data de envio for rigorosamente igual a hoje, contabiliza nova entrada diária.
+      if (dataCriacaoCard.indexOf(mesAnoVigenteChave) === 0) criadasMesContador++; // [Dev Sênior] Se o texto da data começar com a chave do ano/mês atual, contabiliza no mês vigente.
 
       // AUDITORIA DE ESQUECIMENTO: Rastreia negligências se o card não estiver concluído e a lista de afazeres estiver vazia.
-      if (status !== 'finalizado') { // Se o devedor ainda estiver navegando ativamente nas colunas de cobrança do Kanban.
-        const listaTarefasCard = Array.isArray(cobranca.tarefas) ? cobranca.tarefas : []; // Valida a existência do array de afazeres.
-        if (listaTarefasCard.length === 0) cardsSemTarefaContador++; // Se o tamanho do array for zero, o cliente está sem ações e infla o alerta.
+      if (status !== 'finalizado') { // [Dev Sênior] Se o devedor ainda estiver navegando ativamente nas colunas de cobrança do Kanban.
+        const listaTarefasCard = Array.isArray(cobranca.tarefas) ? cobranca.tarefas : []; // [Dev Sênior] Valida a existência do array de afazeres.
+        if (listaTarefasCard.length === 0) cardsSemTarefaContador++; // [Dev Sênior] Se o tamanho do array for zero, o cliente está sem ações e infla o alerta.
       }
 
       // RANKING DE PERFORMANCE DE EQUIPE: Agrupa os volumes volumétricos e capitais pelo nome do operador.
-      const nomeOperador = cobranca.responsavel || 'Não Atribuído'; // Captura o nome do responsável ou assina uma flag neutra.
-      cobrancasPorResponsavelContagem[nomeOperador] = (cobrancasPorResponsavelContagem[nomeOperador] || 0) + 1; // Incrementa a contagem de cards daquele usuário.
-      capitalPorResponsavelSoma[nomeOperador] = (capitalPorResponsavelSoma[nomeOperador] || 0) + valorCard; // Soma o capital daquela cobrança no montante do operador.
+      const nomeOperador = cobranca.responsavel || 'Não Atribuído'; // [Dev Sênior] Captura o nome do responsável ou assina uma flag neutra.
+      cobrancasPorResponsavelContagem[nomeOperador] = (cobrancasPorResponsavelContagem[nomeOperador] || 0) + 1; // [Dev Sênior] Incrementa a contagem de cards daquele usuário.
+      capitalPorResponsavelSoma[nomeOperador] = (capitalPorResponsavelSoma[nomeOperador] || 0) + valorCard; // [Dev Sênior] Soma o capital daquela cobrança no montante do operador.
 
       // MOTOR DE CÁLCULO DE TEMPOS MÉDIOS: Analisa as notas históricas e calcula a velocidade de passagem das frentes.
-      const notasHistoricas = Array.isArray(cobranca.historicoNotas) ? cobranca.historicoNotas : []; // Acessa os logs automáticos de auditoria.
+      const notasHistoricas = Array.isArray(cobranca.historicoNotas) ? cobranca.historicoNotas : []; // [Dev Sênior] Acessa os logs automáticos de auditoria.
       
-      if (status === 'finalizado' && dataCriacaoCard) { // Se o cliente atingiu o fim da esteira e possui registro de nascimento.
-        const tempoDecorridoMs = Math.abs(new Date() - new Date(dataCriacaoCard)); // Calcula a diferença bruta em milissegundos do ciclo de vida.
-        const tempoDiasConvertido = Math.ceil(tempoDecorridoMs / (1000 * 60 * 60 * 24)); // Converte o tempo bruto em dias cheios de calendário.
-        somatoriaTempoConclusaoDias += tempoDiasConvertido; // Acumula os dias na comanda mestre de tempo de conclusão.
-        cardsConcluidosQuantidade++; // Conta mais um fechamento bem-sucedido na lista.
+      if (status === 'finalizado' && dataCriacaoCard) { // [Dev Sênior] Se o cliente atingiu o fim da esteira e possui registro de nascimento.
+        const tempoDecorridoMs = Math.abs(new Date() - new Date(dataCriacaoCard)); // [Dev Sênior] Calcula a diferença bruta em milissegundos do ciclo de vida.
+        const tempoDiasConvertido = Math.ceil(tempoDecorridoMs / (1000 * 60 * 60 * 24)); // [Dev Sênior] Converte o tempo bruto em dias cheios de calendário.
+        somatoriaTempoConclusaoDias += tempoDiasConvertido; // [Dev Sênior] Acumula os dias na comanda mestre de tempo de conclusão.
+        cardsConcluidosQuantidade++; // [Dev Sênior] Conta mais um fechamento bem-sucedido na lista.
       }
 
       // Extrai o plano de faturas real para somar os centavos exatos de pagamentos fracionados da esteira.
       const faturasDoCliente = Array.isArray(cobranca.planoParcelas) && cobranca.planoParcelas.length > 0
         ? cobranca.planoParcelas
-        : (cobranca.proposta?.parcelasSimuladas || []); // Se não houver plano definitivo, tenta colher as parcelas simuladas em rascunho.
+        : (cobranca.proposta?.parcelasSimuladas || []); // [Dev Sênior] Se não houver plano definitivo, tenta colher as parcelas simuladas em rascunho.
 
-      if (faturasDoCliente.length > 0) { // Se o cliente tiver uma proposta ativa ou parcelas calculadas pelo cobrador.
+      if (faturasDoCliente.length > 0) { // [Dev Sênior] Se o cliente tiver uma proposta activa ou parcelas calculadas pelo cobrador.
         faturasDoCliente.forEach(f => {
-          const valorFatura = parseFloat(f.valor) || 0; // Coleta o valor real da fatura individual.
-          totalBrutoGeral += valorFatura; // Acumula o valor no faturamento bruto histórico consolidado do CRM.
+          const valorFatura = parseFloat(f.valor) || 0; // [Dev Sênior] Coleta o valor real da fatura individual.
+          totalBrutoGeral += valorFatura; // [Dev Sênior] Acumula o valor no faturamento bruto histórico consolidado do CRM.
 
-          if (f.pago || f.status === 'pago') { // Se a fatura recebeu o carimbo verde de liquidação na esteira.
-            totalQuitadoSucesso += valorFatura; // Contabiliza diretamente no Big Number de sucesso e recuperação real de caixa.
-          } else if (f.status === 'baixado' || subStatus === 'baixado') { // Se a fatura foi marcada como perda administrativa.
-            totalBaixadoPerda += valorFatura; // Contabiliza no Big Number de prejuízo por quebra de acordo.
-          } else { // Caso a fatura continue em aberto aguardando vencimento futuro ou cobrança.
-            totalEmAbertoAndamento += valorFatura; // Contabiliza no Big Number de carteira ativa a receber.
+          if (f.pago || f.status === 'pago') { // [Dev Sênior] Se a fatura recebeu o carimbo verde de liquidação na esteira.
+            totalQuitadoSucesso += valorFatura; // [Dev Sênior] Contabiliza diretamente no Big Number de sucesso e recuperação real de caixa.
+          } else if (f.status === 'baixado' || subStatus === 'baixado') { // [Dev Sênior] Se a fatura foi marcada como perda administrativa.
+            totalBaixadoPerda += valorFatura; // [Dev Sênior] Contabiliza no Big Number de prejuízo por quebra de acordo.
+          } else { // [Dev Sênior] Caso a fatura continue em aberto aguardando vencimento futuro ou cobrança.
+            totalEmAbertoAndamento += valorFatura; // [Dev Sênior] Contabiliza no Big Number de carteira ativa a receber.
           }
         });
-      } else { // Caso o registro seja uma cobrança crua antiga que ainda não passou pela calculadora de propostas.
-        totalBrutoGeral += valorCard; // Acumula o valor original no faturamento bruto histórico do CRM.
+      } else { // [Dev Sênior] Caso o registro seja uma cobrança crua antiga que ainda não passou pela calculadora de propostas.
+        totalBrutoGeral += valorCard; // [Dev Sênior] Acumula o valor original no faturamento bruto histórico do CRM.
 
-        if (status === 'acordo' && subStatus === 'quitado') { // Se o card chegou no final e foi dado como Quitado com a bordinha verde.
-          totalQuitadoSucesso += valorCard; // Contabiliza no Big Number de sucesso e recuperação de caixa.
-        } else if (status === 'acordo' && subStatus === 'baixado') { // Se o card recebeu baixa administrativa por insucesso.
-          totalBaixadoPerda += valorCard; // Contabiliza no Big Number de prejuízo administrativo.
-        } else { // Caso o cliente ainda esteja em andamento trafegando pelas colunas iniciais do CRM.
-          totalEmAbertoAndamento += valorCard; // Contabiliza no Big Number de carteira ativa a receber.
-        } // Encerra o desvio de distribuição tradicional.
+        if (status === 'acordo' && subStatus === 'quitado') { // [Dev Sênior] Se o card chegou no final e foi dado como Quitado com a bordinha verde.
+          totalQuitadoSucesso += valorCard; // [Dev Sênior] Contabiliza no Big Number de sucesso e recuperação de caixa.
+        } else if (status === 'acordo' && subStatus === 'baixado') { // [Dev Sênior] Se o card recebeu baixa administrativa por insucesso.
+          totalBaixadoPerda += valorCard; // [Dev Sênior] Contabiliza no Big Number de prejuízo administrativo.
+        } else { // [Dev Sênior] Caso o cliente ainda esteja em andamento trafegando pelas colunas iniciais do CRM.
+          totalEmAbertoAndamento += valorCard; // [Dev Sênior] Contabiliza no Big Number de carteira ativa a receber.
+        } // [Dev Sênior] Encerra o desvio de distribuição tradicional.
       }
 
-      if (financeiroPorEtapa[status]) { // Se la coluna onde o card está estacionado existe no nosso mapa gráfico de etapas.
-        financeiroPorEtapa[status].soma += valorCard; // Acumula o saldo devedor atualizado na barra correspondente daquela etapa do funil.
-        financeiroPorEtapa[status].quantidadeCards += 1; // Conta a presença de mais um cartão balançando naquela coluna específica.
-      } // Encerra o acúmulo por etapa.
-    }); // Encerra a varredura mestre de cobranças.
+      if (financeiroPorEtapa[status]) { // [Dev Sênior] Se la coluna onde o card está estacionado existe no nosso mapa gráfico de etapas.
+        financeiroPorEtapa[status].soma += valorCard; // [Dev Sênior] Acumula o saldo devedor atualizado na barra correspondente daquela etapa do funil.
+        financeiroPorEtapa[status].quantidadeCards += 1; // [Dev Sênior] Conta a presença de mais um cartão balançando naquela coluna específica.
+      } // [Dev Sênior] Encerra o acúmulo por etapa.
+    }); // [Dev Sênior] Encerra a varredura mestre de cobranças.
 
     // ENGENHARIA DE DETECÇÃO DO LÍDER DE CARTEIRA: Varre a lista de contagem de usuários para descobrir quem é o campeão de produtividade.
-    let nomeResponsavelDestaque = "Nenhum Operador"; // Flag padrão inicial caso a carteira nasça zerada.
-    let maiorVolumeCardsEncontrado = 0; // Ponteiro de comparação para reter o recorde de contagem.
-    Object.keys(cobrancasPorResponsavelContagem).forEach(nomeOp => { // Navega de nome em nome no dicionário gerado.
-      if (cobrancasPorResponsavelContagem[nomeOp] > maiorVolumeCardsEncontrado) { // Se a contagem deste usuário for superior ao recorde anterior.
-        maiorVolumeCardsEncontrado = cobrancasPorResponsavelContagem[nomeOp]; // Atualiza o marco do recorde.
-        nomeResponsavelDestaque = nomeOp; // Assina o nome do operador como Líder Absoluto de Contas.
+    let nomeResponsavelDestaque = "Nenhum Operador"; // [Dev Sênior] Flag padrão inicial caso a carteira nasça zerada.
+    let maiorVolumeCardsEncontrado = 0; // [Dev Sênior] Ponteiro de comparação para reter o recorde de contagem.
+    Object.keys(cobrancasPorResponsavelContagem).forEach(nomeOp => { // [Dev Sênior] Navega de nome em nome no dicionário gerado.
+      if (cobrancasPorResponsavelContagem[nomeOp] > maiorVolumeCardsEncontrado) { // [Dev Sênior] Se a contagem deste usuário for superior ao recorde anterior.
+        maiorVolumeCardsEncontrado = cobrancasPorResponsavelContagem[nomeOp]; // [Dev Sênior] Atualiza o marco do recorde.
+        nomeResponsavelDestaque = nomeOp; // [Dev Sênior] Assina o nome do operador como Líder Absoluto de Contas.
       }
     });
 
-    const valoresEtapasArray = Object.values(financeiroPorEtapa).map(e => e.soma); // Extrai apenas os números somados de cada coluna do CRM.
-    const maiorSomaDoFunil = Math.max(...valoresEtapasArray, 1); // Localiza o maior valor financeiro do pipeline para servir de limite do gráfico.
-    const capitalTotalEstacionadoCards = valoresEtapasArray.reduce((acc, v) => acc + v, 0) || 1; // Calcula a sumatória cheia do pipeline para balizamento de proporção.
+    const valoresEtapasArray = Object.values(financeiroPorEtapa).map(e => e.soma); // [Dev Sênior] Extrai apenas os números somados de cada coluna do CRM.
+    const maiorSomaDoFunil = Math.max(...valoresEtapasArray, 1); // [Dev Sênior] Localiza o maior valor financeiro do pipeline para servir de limite do gráfico.
+    const capitalTotalEstacionadoCards = valoresEtapasArray.reduce((acc, v) => acc + v, 0) || 1; // [Dev Sênior] Calcula a sumatória cheia do pipeline para balizamento de proporção.
 
     // RENDERS DO DESIGN DO PAINEL DE BI: Injeta as estruturas de layouts combinando os Big Numbers tradicionais e os novos blocos de monitoramento de performance.
     elementoContainer.innerHTML = `
@@ -236,7 +236,7 @@ export const dashboardComponent = { // Define e exporta o objeto do componente p
                 if (etapa.id === 'finalizado' || etapa.id === 'acordo') diasSimuladosFase = 8.4; // Tempo simulado para travar o fechamento do acordo.
                 
                 textoTempoTransicaoHtml = `
-                  <div style="display: flex; flex-direction: column; align-items: center; margin: 6px 0;" title="Tempo médio que o devedor passa nesta fase">
+                  <div style="display: flex; flex-direction: column; align-items: center; margin: 6px 0;" title="Tempo médio que o devedor passa nesta phase">
                     <span style="font-size: 10px; font-weight: bold; background: #fef3c7; color: #d97706; padding: 2px 8px; border-radius: 12px; border: 1px dashed #fcd34d;">⏱️ Média de Passage: ${diasSimuladosFase} Dias</span>
                     <div style="width: 2px; height: 12px; background: #cbd5e1;"></div>
                   </div>
