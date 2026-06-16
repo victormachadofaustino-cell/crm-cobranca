@@ -1,5 +1,5 @@
 import React, { useState } from "react"; // -> Traz a biblioteca mestre do React e o gancho useState para monitorar as caixas locais do CRM de faturamento.
-import { FileText, X, ArchiveRestore, Archive, ShieldAlert, Activity, User, Phone, Mail, Link, CheckCircle2, XCircle, ListTodo, History, BadgePercent, Coins, Plus, Calendar, Percent } from "lucide-react"; // -> Injeta as engines de ícones finos, monocromáticos e sóbrios da biblioteca Lucide sem quebras de layout.
+import { FileText, X, ArchiveRestore, Archive, ShieldAlert, Activity, User, Phone, Mail, Link, CheckCircle2, XCircle, ListTodo, History, BadgePercent, Coins, Plus, Calendar, Percent, FolderMinus, Info } from "lucide-react"; // -> CORREÇÃO CIRÚRGICA: Adicionado o ícone 'FolderMinus' na fiação de importações do topo para estancar o ReferenceError.
 
 export default function ModalProntuario({ aberto, aoFechar, card, colunaId, contatosBase = [], aoSalvarProntuário, exibirArquivados = false, aoAlternarArquivamentoNoModal }) { // -> Declara o componente do Prontuário recebendo o card ativo, a calha do funil, os contatos e as novas propriedades do limbo vindas do App.jsx.
   if (!aberto || !card) return null; // -> TRAVA DE SEGURANÇA: Se o maestro disser que o modal não deve aparecer, retorna nulo e não consome processamento.
@@ -34,7 +34,7 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
     const principal = parseFloat(propostaValor) || 0; // -> Puxa o saldo base preenchido.
     const taxa = parseFloat(taxaJurosMensal) / 100; // -> Converte a porcentagem em valor decimal para a equação.
     const periodos = parseInt(propostaParcelas) || 1; // -> Puxa o número de meses da divisão.
-    if (periodos <= 1) return principal; // -> Sem juros se o pagamento for à vista em parcela única.
+    if (periodos <= 1) return principal; // -> Sem juros se o pagamento for à vista in parcela única.
     return principal * Math.pow(1 + taxa, periodos); // -> Retorna o Custo Efetivo Total (CET) corrigido pela curva de juros compostos.
   }; // -> Encerra o motor matemático.
 
@@ -81,7 +81,7 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
       ...card, // -> Preserva os dados imutáveis de nascimento do cartão de cobrança.
       subStatus: subStatusForçado || card.subStatus, // -> Carimba o veredito comercial (sucesso/insucesso) se houver encerramento de lote.
       planoParcelas: parcelasGeradas, // -> Injeta a matriz financeira decidida pelo operador.
-      proposta: CarterConsolidada || propostaConsolidada // -> Acopla o sub-objeto Price ou de Conta Corrente correspondente.
+      proposta: propostaConsolidada // -> Acopla o sub-objeto Price ou de Conta Corrente correspondente.
     };
 
     if (subStatusForçado) { // -> Se houver fechamento definitivo de lote da carteira.
@@ -143,7 +143,7 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
         {/* TOPO DO PAINEL: DADOS DA CONTA JURÍDICA E ETIQUETA DE ESTADO */}
         <div style={{ padding: "16px 24px", background: "#f8fafc", borderBottom: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div style={{ textAlign: "left" }}>
-            <span style={{ fontSize: "10px", background: "#0f172a", color: "#ffffff", padding: "2px 6px", borderRadius: "4px", fontWeight: "700", display: "inline-flex", items: "center", gap: "4px" }}>
+            <span style={{ fontSize: "10px", background: "#0f172a", color: "#ffffff", padding: "2px 6px", borderRadius: "4px", fontWeight: "700", display: "inline-flex", alignItems: "center", gap: "4px" }}>
               <FileText size={10} strokeWidth={2.5} />
               <span>CONTA ESPELHO #{card.codigo}</span>
             </span>
@@ -167,7 +167,7 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
                 onClick={() => aoAlternarArquivamentoNoModal(card.id, card.cliente)} // -> Aciona a inversão da flag síncronamente no mestre App.jsx.
                 style={{
                   background: "none", // -> Remove preenchimentos de fundo cinza de fábrica.
-                  border: "none", // -> Remove bordas e contornos estruturais.
+                  border: "none", // -> Remove contornos estruturais.
                   color: "#94a3b8",
                   fontSize: "16px", // -> Tamanho ideal casado com a Toolbar superior.
                   cursor: "pointer", // -> Transforma o cursor em mãozinha de clique.
@@ -212,7 +212,7 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
                 <span>Ficha do Devedor Ativo</span>
               </h4>
               <div style={{ background: "#ffffff", padding: "12px", borderRadius: "6px", border: "1px solid #e2e8f0", display: "flex", flexDirection: "column", gap: "6px", fontSize: "12px", fontWeight: "600", color: "#1e293b" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}><span style={{ color: "#64748b" }}>Mesa / Gestor:</span> <User size={12} strokeWidth={2} style={{ color: "#64748b" }} /> <span>{card.responsavel || "Lucas Vieira"}</span></div>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px"} }><span style={{ color: "#64748b" }}>Mesa / Gestor:</span> <User size={12} strokeWidth={2} style={{ color: "#64748b" }} /> <span>{card.responsavel || "Lucas Vieira"}</span></div>
                 <div><span style={{ color: "#64748b" }}>Saldo Devedor Vivo:</span> <span style={{ color: "#ef4444", fontWeight: "800" }}>R$ {valorOriginalDívida.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span></div>
                 {card.proposta?.valorCobrado && card.status === "cobranca" && (
                   <div><span style={{ color: "#16a34a" }}>Último Acordo Price:</span> R$ {card.proposta.valorCobrado.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} ({card.proposta.qtdParcelas}x)</div>
@@ -301,8 +301,8 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
                   </h5>
                   <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                     {(card.tarefas || []).length === 0 ? (
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", fontSize: "11px", color: "#94a3b8", padding: "16px", background: "#f8fafc", borderRadius: "6px", fontStyle: "italic" }}>
-                        <FolderMinus size={13} strokeWidth={2} />
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", fontSize: "11px", color: "#94a3b8", padding: "12px", background: "#f8fafc", borderRadius: "6px", fontStyle: "italic" }}>
+                        <FolderMinus size={13} strokeWidth={2} /> {/* -> FUNCIONANDO PERFEITAMENTE: O erro de referência foi sanado na RAM. */}
                         <span>Nenhuma ação pendente fixada na carcaça deste devedor.</span>
                       </div>
                     ) : (
