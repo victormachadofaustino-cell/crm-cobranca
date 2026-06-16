@@ -1,4 +1,5 @@
 import React, { useState } from "react"; // -> Importa a biblioteca mestre do React e o gancho useState para monitorar as caixas de seleção locais do CRM de faturamento.
+import { Filter, X, Search, Eraser, SlidersHorizontal, Calculator } from "lucide-react"; // -> Injeta as engines de ícones finos, monocromáticos e sóbrios da biblioteca Lucide sem quebras de layout.
 
 export default function FilterDrawer({ aberto, aoFechar, aoAplicarFiltros }) { // -> Define e exporta o componente da gaveta de buscas recebendo as ferramentas de controle do pai App.jsx.
   // -> GAVETA DE MEMÓRIA INTERNAS EXPANDIDA: Monitoram localmente todas as chaves do cabeçalho comercial antes do disparo do botão.
@@ -72,7 +73,7 @@ export default function FilterDrawer({ aberto, aoFechar, aoAplicarFiltros }) { /
           background: "#ffffff", // -> Folha branca limpa profissional.
           width: "100%", // -> Largura responsiva base adaptável.
           maxWidth: "340px", // -> Mantém o visual esguio e compacto de 340px ideal para escritórios jurídicos.
-          boxShadow: "-10px 0 25px rgba(0,0,0,0.05)", // -> Sombra de projeção suave lateral de profundidade.
+          boxShadow: "-10px 0 25px rgba(0,0,0,0.05)", // -> Sombra de projection suave lateral de profundidade.
           padding: "24px", // -> Padding interno enxugado para maximizar o preenchimento de inputs na barra.
           display: "flex", // -> Ativa o flexbox para empilhar os elementos verticais.
           flexDirection: "column", // -> Organiza as caixas verticalmente de cima para baixo.
@@ -84,10 +85,21 @@ export default function FilterDrawer({ aberto, aoFechar, aoAplicarFiltros }) { /
         <div style={{ overflowY: "auto", flexGrow: 1, paddingRight: "4px" }}> {/* -> Adicionado rolagem interna auxiliar para evitar quebras em telas menores. */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid #e2e8f0", paddingBottom: "12px" }}> {/* -> Cabeçalho separador compacto cinza. */}
             <div> {/* -> Agrupador de títulos estruturais. */}
-              <h3 style={{ margin: 0, fontSize: "14px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.5px" }}>🔍 Filtros Simultâneos</h3> {/* -> Título formal sóbrio em caixa alta corporativa. */}
+              <h3 style={{ display: "flex", alignItems: "center", gap: "6px", margin: 0, fontSize: "14px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                <SlidersHorizontal size={14} strokeWidth={2.5} style={{ color: "#0f172a" }} /> {/* -> Injeta o componente vetorial de controles deslizantes substituindo o antigo emoji de lupa. */}
+                <span>Filtros Simultâneos</span>
+              </h3> {/* -> Título formal sóbrio em caixa alta corporativa. */}
               <p style={{ margin: "4px 0 0 0", fontSize: "12px", color: "#64748b" }}>Refine a busca de devedores na esteira ativa.</p> {/* -> Subtítulo explicativo cinza. */}
             </div> {/* -> Encerra o bloco de títulos. */}
-            <button type="button" onClick={aoFechar} style={{ background: "none", border: "none", fontSize: "20px", cursor: "pointer", color: "#94a3b8", fontWeight: "bold", padding: 0 }}>&times;</button> {/* -> Ícone puro de fechamento em formato de X sem textos poluentes. */}
+            <button 
+              type="button" 
+              onClick={aoFechar} 
+              style={{ background: "none", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#94a3b8", padding: "4px", transition: "color 0.2s" }}
+              onMouseEnter={(e) => e.currentTarget.style.color = "#1e293b"}
+              onMouseLeave={(e) => e.currentTarget.style.color = "#94a3b8"}
+            >
+              <X size={18} strokeWidth={2.5} /> {/* -> Substitui o antigo caractere rudimentar multiplication pelo componente X fino e geométrico. */}
+            </button> 
           </div> {/* -> Encerra o cabeçalho superior. */}
 
           {/* FORMULÁRIO COM SELETORES OPERACIONAIS DE CABEÇALHO COMPLE DO FUNIL */}
@@ -137,14 +149,14 @@ export default function FilterDrawer({ aberto, aoFechar, aoAplicarFiltros }) { /
                 onChange={(e) => setFiltroStatus(e.target.value)} 
                 style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", color: "#0f172a", background: "#ffffff", fontWeight: "bold", cursor: "pointer" }} // -> Dropdown compacto com fonte de 12px e negrito.
               >
-                <option value="todos">🗂️ Exibir Todas as Colunas</option>
-                <option value="novo">🆕 A Iniciar</option>
-                <option value="contato">✉️ Notificação Enviada</option>
-                <option value="negociacao">🤝 Em Negociação</option>
-                <option value="acordo">📄 Termo em Andamento</option>
-                <option value="cobranca">📊 Cobrança Parcelada</option> {/* -> NOVO STATUS: Acopla o filtro síncrono para os parcelamentos Price. */}
-                <option value="conta_corrente">⚡ Conta Corrente</option> {/* -> NOVO STATUS: Acopla o filtro síncrono para as amortizações livres. */}
-                <option value="finalizado">✅ Finalizado</option>
+                <option value="todos">Exibir Todas as Colunas</option> {/* -> HIGIENIZADO: Removidos terminantemente todos os emojis de textos de options. */}
+                <option value="novo">A Iniciar</option>
+                <option value="contato">Notificação Enviada</option>
+                <option value="negociacao">Em Negociação</option>
+                <option value="acordo">Termo em Andamento</option>
+                <option value="cobranca">Cobrança Parcelada</option> 
+                <option value="conta_corrente">Conta Corrente</option> 
+                <option value="finalizado">Finalizado</option>
               </select> {/* -> Encerra a caixa seletora de fases do funil. */}
             </div> {/* -> Fim do campo de fase do funil. */}
 
@@ -168,7 +180,7 @@ export default function FilterDrawer({ aberto, aoFechar, aoAplicarFiltros }) { /
                   placeholder="Valor corte (Ex: 5000)" 
                   value={filtroValorLimite} 
                   onChange={(e) => setFiltroValorLimite(e.target.value)} 
-                  style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", color: "#0f172a", background: "#f8fafc", fontWeight: "bold", textAlign: "right" }} // -> Entrada numérica alinhada à direita para digitação do saldo limite.
+                  style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", color: "#0f172a", background: "#f8fafc", fontWeight: "bold", textAlign: "right" }} // -> Entrada numérica alinhada à direita para digitação del saldo limite.
                 />
               </div> {/* -> Encerra a grade dupla interna. */}
             </div> {/* -> Fim do campo matemático de valores de saldo vencido. */}
@@ -181,16 +193,22 @@ export default function FilterDrawer({ aberto, aoFechar, aoAplicarFiltros }) { /
           <button 
             onClick={tratarFiltroLocal} // -> Aciona o gatilho interceptador que injeta o bloco completo de chaves na esteira do cérebro.
             type="button" // -> Tipo botão para estabilidade de eventos.
-            style={{ backgroundColor: "#0f172a", border: "none", color: "white", padding: "10px", borderRadius: "6px", cursor: "pointer", fontWeight: "700", textTransform: "uppercase", fontSize: "12px" }} // -> Botão sólido Azul Escuro Profundo institucional da advocacia.
+            style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", backgroundColor: "#0f172a", border: "none", color: "white", padding: "10px", borderRadius: "6px", cursor: "pointer", fontWeight: "700", textTransform: "uppercase", fontSize: "12px", transition: "background 0.2s" }} // -> Botão sólido Azul Escuro Profundo institucional de alta densidade.
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#1e293b"}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#0f172a"}
           >
-            Filtrar Esteira
+            <Filter size={13} strokeWidth={2.5} /> {/* -> Injeta o funil vetorial do Lucide no botão principal de execução. */}
+            <span>Filtrar Esteira</span>
           </button>
           <button 
             onClick={limparFiltrosLocais} // -> Aciona a função de limpeza redefinindo as 6 chaves de busca simultâneas na nuvem.
             type="button" // -> Tipo botão para estabilidade de eventos.
-            style={{ backgroundColor: "#ffffff", border: "1px solid #cbd5e1", color: "#475569", padding: "10px", borderRadius: "6px", cursor: "pointer", fontWeight: "600", fontSize: "12px" }} // -> Botão sóbrio de limpeza em 12px.
+            style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", backgroundColor: "#ffffff", border: "1px solid #cbd5e1", color: "#475569", padding: "10px", borderRadius: "6px", cursor: "pointer", fontWeight: "600", fontSize: "12px", transition: "all 0.2s" }} // -> Botão sóbrio de limpeza em 12px.
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#f8fafc"; e.currentTarget.style.borderColor = "#94a3b8"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#ffffff"; e.currentTarget.style.borderColor = "#cbd5e1"; }}
           >
-            Limpar Filtros
+            <Eraser size={13} strokeWidth={2} /> {/* -> Injeta o componente de apagador do Lucide no botão secundário de reset total. */}
+            <span>Limpar Filtros</span>
           </button>
         </div> {/* -> Encerra o bloco inferior fixo de comandos rápidos. */}
 

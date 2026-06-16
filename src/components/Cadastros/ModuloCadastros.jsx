@@ -1,6 +1,7 @@
-import React, { useState } from "react"; // -> Importa o React e o gancho useState para monitorar as caixas de seleção locais do CRM de faturamento.
+import React, { useState } from "react"; // -> Importa a biblioteca mestre do React e o gancho useState para monitorar as caixas de seleção locais do CRM de faturamento.
 import { db } from "../../config/firebase"; // -> Injeta o conector físico db exportado do arquivo firebase.js para permitir comandos directos à nuvem.
 import { collection, addDoc, doc, deleteDoc, updateDoc } from "firebase/firestore"; // -> Puxa as ferramentas nativas do Google Firestore para inclusão, update parcial e descarte definitivo de documentos de banco.
+import { Settings, FileSpreadsheet, Filter, ArrowLeft, Building2, User, Tag, Link2, Columns3, Plus, Trash2, SlidersHorizontal } from "lucide-react"; // -> Injeta as engines de ícones finos, monocromáticos e sóbrios da biblioteca Lucide sem quebras de layout.
 import TabelaEmpresas from "./TabelaEmpresas.jsx"; // -> PEÇA DE LEGO PLUGADA: Importa a planilha especialista em Pessoas Jurídicas na mesma pasta.
 import TabelaContatos from "./TabelaContatos.jsx"; // -> PEÇA DE LEGO PLUGADA: Importa a planilha especialista em Pessoas Humanas na mesma pasta.
 import ModalNovaEmpresa from "./ModalNovaEmpresa.jsx"; // -> PEÇA DE LEGO PLUGADA: Importa o formulário flutuante especialista em Pessoas Jurídicas.
@@ -21,7 +22,7 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
   const [modalContatoAberto, setModalContatoAberto] = useState(false); // -> MODAL CONTATO: Controla o aparecimento flutuante del formulário de novos representantes humanos.
   const [gavetaFiltrosAberta, setGavetaFiltrosAberta] = useState(false); // -> GAVETA DE FILTROS: Abre ou fecha a cortina lateral direita administrative de buscas.
 
-  // REGISTROS EM EDIÇÃO: Estados auxiliares técnicos para identificar se a operação atual é de alteração ou de inclusão nova.
+  // REGISTROS EM EDIÇÃO: Estados auxiliares técnicos para identificar se a operation atual é de alteração ou de inclusão nova.
   const [empresaEmEdicaoId, setEmpresaEmEdicaoId] = useState(null); // -> CORREÇÃO LÓGICA SÍNCRONA: Alinha o nome da função de estado para bater simetricamente com as chamadas de salvamento das linhas subsequentes.
   const [contatoEmEdicaoId, setContatoEmEdicaoId] = useState(null); // -> Armazena a ID exclusiva do documento Firestore do representative que está sendo alterado pelo operador.
 
@@ -76,7 +77,7 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
   };
 
   const lidarAdicionarVinculo = async (e) => { // -> Transmutada em assíncrona para disparar pacotes de rede para a nuvem.
-    e.preventDefault(); // -> Trava o recarregamento automático do navegador protegendo a digitação.
+    e.preventDefault(); // -> Trava o recarregamento automático del navegador protegendo a digitação.
     if (!novoVinculoTexto.trim()) return; // -> Trava de segurança contra submissões sem conteúdo.
     try { // -> Escudo protetivo de chamadas assíncronas.
       const colecaoRef = collection(db, "cadastros_vinculos"); // -> Abre o canal visando diretamente a coleção independente raiz no Firestore.
@@ -141,7 +142,7 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
         const empresaPai = empresas.find((e) => e.id === item.empresaId); // -> Cruza na memória para resgatar o nome corporativo da empresa-pai vinculada.
         corpoPlanilha += `${item.nome || ""};${item.cpf || ""};${item.telefone || ""};${item.email || ""};${item.tipoVinculo || ""};${window.encodeURIComponent(empresaPai ? empresaPai.cliente : "Não Encontrada")}\n`; // -> Concatena as células humanas divididas por ponto e vírgula e salta a linha.
       }
-    }); // -> Termina a montagem do bloco bruto de texto.
+    }); // -> Termina a montagem del bloco bruto de texto.
 
     const blobDeDados = new Blob(["\uFEFF" + corpoPlanilha], { type: "text/csv;charset=utf-8;" }); // -> Converte a string bruta injetando o byte BOM de compatibilidade automática para o Microsoft Excel abrir sem corromper acentos.
     const linkInvisivel = document.createElement("a"); // -> Instancia um gatilho de link físico temporário na raiz do navegador HTML.
@@ -184,7 +185,7 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
     }
   };
 
-  // RE-SOLDA REATIVA DO BARRAMENTO HUMANO: Soldado o cabo real NoSQL assíncrono para triturar e excluir o contato direto do Firebase
+  // RE-SOLDA REATIVA DO BARRAMENTO HUMANO: Soldado o cabo real NoSQL assíncrono para triturar e excluir o contato direto del Firebase
   const lidarComExcluirContato = async (id, nome) => { // -> Transmutada em assíncrona para detonar nós NoSQL.
     const confirmacao = window.confirm(`⚠️ EXCLUSÃO DEFINITIVA NoSQL:\nDeseja apagar permanentemente o representante humano "${nome}" do Firebase?\n\nEsta ação não pode ser desfeita.`); // -> Dispara o balão de barreira humana.
     if (confirmacao) { // -> Se o administrador der o aval positivo.
@@ -200,7 +201,7 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
 
   // RE-HOMOLOGAÇÃO DA FUNÇÃO TRATAR CADASTRO EMPRESA
   const tratarCadastroEmpresa = (e) => { // -> Garante a existência física del token de escopo na memória da tabela.
-    e.preventDefault(); // -> Bloqueia a recarga cega de páginas retendo a RAM.
+    e.preventDefault(); // -> Bloqueia o recarga cega de páginas retendo a RAM.
     if (!empCodigo.trim() || !empNome.trim() || !empCnpj.trim()) { // -> Valida chaves mandatórias.
       alert("⚠️ CAMPOS OBRIGATÓRIOS:\n\nPor favor, preencha o Código da Conta, a Razão Social e o CNPJ do assistido."); // -> Alerta técnico.
       return; // -> Trava a descida.
@@ -288,23 +289,80 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
   const contatosOrdenadosVisor = poolOrdenacaoArray(contatosFiltrados, campoOrdenado, direcaoOrdenacao); // -> Transpassa o lote de representantes humanos pelo classificador del cabeçalho.
 
   return (
-    <div style={{ maxWidth: "1400px", margin: "24px auto", padding: "0 20px", boxSizing: "border-box", display: "flex", flexDirection: "column", gap: "20px", textAlign: "left" }}>
+    <div style={{ width: "100%", maxWidth: "1400px", margin: "24px auto", padding: "0 20px", boxSizing: "border-box", display: "flex", flexDirection: "column", gap: "20px", textAlign: "left" }}>
       
       {/* 🧭 CABEÇALHO DO MÓDULO E CONTROLES DE RETORNO */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "15px", borderBottom: "1px solid #e2e8f0", paddingBottom: "16px" }}>
-        <div>
-          <h2 style={{ color: "#0f172a", fontSize: "18px", fontWeight: "800", margin: 0, letterSpacing: "0.5px" }}>⚙️ CENTRAL DE PARAMETRIZAÇÃO DE CLIENTES</h2>
-          <p style={{ color: "#64748b", fontSize: "13px", margin: "4px 0 0 0" }}>Gerencie os dados institucionais sóbrios de assistidos e representantes jurídicos.</p>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <Settings size={22} strokeWidth={2.5} style={{ color: "#0f172a" }} /> {/* -> Injeta o componente vetorial de engrenagem do Lucide eliminando o antigo emoji. */}
+          <div>
+            <h2 style={{ color: "#0f172a", fontSize: "16px", fontWeight: "800", margin: 0, letterSpacing: "0.5px", textTransform: "uppercase" }}>Central de Parametrização de Clientes</h2> {/* -> Título limpo e formalizado por extenso em caixa alta. */}
+            <p style={{ color: "#64748b", fontSize: "12px", margin: "4px 0 0 0" }}>Gerencie os dados institucionais sóbrios de assistidos e representantes jurídicos.</p>
+          </div>
         </div>
         
         {/* BOTÕES DE CONTROLE SUPERIOR DIREITO REFORMULADOS CONTEXTUAIS */}
         {visaoPainel !== "hub" && (
           <div style={{ display: "flex", gap: "8px" }}>
-            {(visaoPainel === "empresas" || visaoPainel === "contatos") && <button type="button" onClick={exportarParaExcel} title="Exportar dados visíveis para planilha Excel" style={{ background: "#ffffff", color: "#16a34a", border: "1px solid #bbf7d0", padding: "8px 14px", borderRadius: "6px", fontWeight: "700", fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>📊 Exportar .XLSX</button>}
-            {(visaoPainel === "empresas" || visaoPainel === "contatos") && <button type="button" onClick={() => setGavetaFiltrosAberta(true)} style={{ background: "#ffffff", color: "#475569", border: "1px solid #cbd5e1", padding: "8px 14px", borderRadius: "6px", fontWeight: "700", fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}>🔍 Filtrar Tabela</button>}
-            <button type="button" onClick={() => { setVisaoPainel("hub"); setCampoOrdenado(""); }} style={{ background: "#475569", color: "#ffffff", border: "none", padding: "8px 14px", borderRadius: "6px", fontWeight: "700", fontSize: "12px", cursor: "pointer" }}>⬅️ Voltar ao Painel</button>
-            {visaoPainel === "empresas" && <button type="button" onClick={() => { setEmpresaEmEdicaoId(null); setModalEmpresaAberto(true); }} style={{ background: "#0f172a", color: "#ffffff", border: "none", padding: "8px 16px", borderRadius: "6px", fontWeight: "700", fontSize: "12px", cursor: "pointer" }}>+ Novo Assistido</button>}
-            {visaoPainel === "contatos" && <button type="button" onClick={() => { setContatoEmEdicaoId(null); setModalContatoAberto(true); }} style={{ background: "#0f172a", color: "#ffffff", border: "none", padding: "8px 16px", borderRadius: "6px", fontWeight: "700", fontSize: "12px", cursor: "pointer" }}>+ Novo Contato</button>}
+            {(visaoPainel === "empresas" || visaoPainel === "contatos") && (
+              <button 
+                type="button" 
+                onClick={exportarParaExcel} 
+                title="Exportar dados visíveis para planilha Excel" 
+                style={{ background: "#ffffff", color: "#16a34a", border: "1px solid #bbf7d0", padding: "6px 14px", borderRadius: "6px", fontWeight: "700", fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", transition: "background 0.15s" }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f0fdf4"}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#ffffff"}
+              >
+                <FileSpreadsheet size={14} strokeWidth={2.5} /> {/* -> Substitui o antigo emoji de gráfico pela planilha vetorial regular do Lucide. */}
+                <span>Exportar .XLSX</span>
+              </button>
+            )}
+            {(visaoPainel === "empresas" || visaoPainel === "contatos") && (
+              <button 
+                type="button" 
+                onClick={() => setGavetaFiltrosAberta(true)} 
+                style={{ background: "#ffffff", color: "#475569", border: "1px solid #cbd5e1", padding: "6px 14px", borderRadius: "6px", fontWeight: "700", fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", transition: "background 0.15s" }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f8fafc"}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#ffffff"}
+              >
+                <Filter size={14} strokeWidth={2.5} /> {/* -> Substitui o antigo emoji de lupa pelo funil geométrico fino do Lucide. */}
+                <span>Filtrar Tabela</span>
+              </button>
+            )}
+            <button 
+              type="button" 
+              onClick={() => { setVisaoPainel("hub"); setCampoOrdenado(""); }} 
+              style={{ background: "#475569", color: "#ffffff", border: "none", padding: "6px 14px", borderRadius: "6px", fontWeight: "700", fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", transition: "background 0.15s" }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#334155"}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#475569"}
+            >
+              <ArrowLeft size={14} strokeWidth={2.5} /> {/* -> Substitui o antigo emoji de seta pela seta fina vetorial de retorno do Lucide. */}
+              <span>Voltar ao Painel</span>
+            </button>
+            {visaoPainel === "empresas" && (
+              <button 
+                type="button" 
+                onClick={() => { setEmpresaEmEdicaoId(null); setModalEmpresaAberto(true); }} 
+                style={{ background: "#0f172a", color: "#ffffff", border: "none", padding: "6px 16px", borderRadius: "6px", fontWeight: "700", fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", transition: "background 0.15s" }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#1e293b"}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#0f172a"}
+              >
+                <Plus size={14} strokeWidth={2.5} /> {/* -> Injeta o símbolo de adição em linha regular do Lucide. */}
+                <span>Novo Assistido</span>
+              </button>
+            )}
+            {visaoPainel === "contatos" && (
+              <button 
+                type="button" 
+                onClick={() => { setContatoEmEdicaoId(null); setModalContatoAberto(true); }} 
+                style={{ background: "#0f172a", color: "#ffffff", border: "none", padding: "6px 16px", borderRadius: "6px", fontWeight: "700", fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", transition: "background 0.15s" }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#1e293b"}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#0f172a"}
+              >
+                <Plus size={14} strokeWidth={2.5} /> {/* -> Injeta o símbolo de adição em linha regular do Lucide. */}
+                <span>Novo Contato</span>
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -316,53 +374,63 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "20px", marginTop: "8px" }}>
           
           {/* CARD BONITO 1: Base de Assistidos */}
-          <div onClick={() => setVisaoPainel("empresas")} style={{ background: "#ffffff", padding: "20px", borderRadius: "8px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.02)", cursor: "pointer", boxSizing: "border-box", transition: "transform 0.2s", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+          <div onClick={() => setVisaoPainel("empresas")} style={{ background: "#ffffff", padding: "20px", borderRadius: "8px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.02)", cursor: "pointer", boxSizing: "border-box", transition: "all 0.2s ease", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "12px" }} onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.borderColor = "#cbd5e1"; }} onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "#e2e8f0"; }}>
             <div>
-              <div style={{ fontSize: "26px", marginBottom: "6px" }}>🏢</div>
-              <h3 style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: "800", color: "#0f172a" }}>Base de Assistidos (Empresas)</h3>
-              <p style={{ margin: "0 0 12px 0", fontSize: "12px", color: "#64748b", lineHeight: "1.4" }}>Gerencie Razão Social, CNPJs obrigatórios, endereços de citações e status de matriz/filial.</p>
+              <div style={{ color: "#0f172a", marginBottom: "8px", display: "flex", alignItems: "center" }}>
+                <Building2 size={24} strokeWidth={2} /> {/* -> Injeta o componente vetorial de corporação PJ fina do Lucide removendo o antigo emoji de prédio colorido. */}
+              </div>
+              <h3 style={{ margin: "0 0 6px 0", fontSize: "13px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.3px" }}>Base de Assistidos (Empresas)</h3>
+              <p style={{ margin: "0", fontSize: "12px", color: "#64748b", lineHeight: "1.4" }}>Gerencie Razão Social, CNPJs obrigatórios, endereços de citações e status de matriz/filial.</p>
             </div>
-            <span style={{ background: "#f1f5f9", color: "#1e293b", fontSize: "11px", fontWeight: "700", padding: "3px 10px", borderRadius: "4px", border: "1px solid #e2e8f0", width: "fit-content" }}>Total Cadastrado: {empresas.length}</span>
+            <span style={{ background: "#f1f5f9", color: "#1e293b", fontSize: "11px", fontWeight: "700", padding: "3px 10px", borderRadius: "4px", border: "1px solid #e2e8f0", width: "fit-content", marginTop: "8px" }}>Total Cadastrado: {empresas.length}</span>
           </div>
 
           {/* CARD BONITO 2: Representantes Financeiros */}
-          <div onClick={() => setVisaoPainel("contatos")} style={{ background: "#ffffff", padding: "20px", borderRadius: "8px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.02)", cursor: "pointer", boxSizing: "border-box", transition: "transform 0.2s", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+          <div onClick={() => setVisaoPainel("contatos")} style={{ background: "#ffffff", padding: "20px", borderRadius: "8px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.02)", cursor: "pointer", boxSizing: "border-box", transition: "all 0.2s ease", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "12px" }} onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.borderColor = "#cbd5e1"; }} onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "#e2e8f0"; }}>
             <div>
-              <div style={{ fontSize: "26px", marginBottom: "6px" }}>👤</div>
-              <h3 style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: "800", color: "#0f172a" }}>Representantes Financeiros (Contatos)</h3>
-              <p style={{ margin: "0 0 12px 0", fontSize: "12px", color: "#64748b", lineHeight: "1.4" }}>Gerencie a fiação humana relacional, CPFs obrigatórios, telefones com DDD e e-mails com @.</p>
+              <div style={{ color: "#0f172a", marginBottom: "8px", display: "flex", alignItems: "center" }}>
+                <User size={24} strokeWidth={2} /> {/* -> Injeta o componente vetorial silhueta de perfil fino do Lucide removendo o antigo emoji humano colorido. */}
+              </div>
+              <h3 style={{ margin: "0 0 6px 0", fontSize: "13px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.3px" }}>Representantes Financeiros (Contatos)</h3>
+              <p style={{ margin: "0", fontSize: "12px", color: "#64748b", lineHeight: "1.4" }}>Gerencie a fiação humana relacional, CPFs obrigatórios, telefones com DDD e e-mails com @.</p>
             </div>
-            <span style={{ background: "#f1f5f9", color: "#1e293b", fontSize: "11px", fontWeight: "700", padding: "3px 10px", borderRadius: "4px", border: "1px solid #e2e8f0", width: "fit-content" }}>Total Cadastrado: {contatos.length}</span>
+            <span style={{ background: "#f1f5f9", color: "#1e293b", fontSize: "11px", fontWeight: "700", padding: "3px 10px", borderRadius: "4px", border: "1px solid #e2e8f0", width: "fit-content", marginTop: "8px" }}>Total Cadastrado: {contatos.length}</span>
           </div>
 
           {/* CARD BONITO 3: Segmentos de Mercado */}
-          <div onClick={() => setVisaoPainel("segmentos")} style={{ background: "#ffffff", padding: "20px", borderRadius: "8px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.02)", cursor: "pointer", boxSizing: "border-box", transition: "transform 0.2s", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+          <div onClick={() => setVisaoPainel("segmentos")} style={{ background: "#ffffff", padding: "20px", borderRadius: "8px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.02)", cursor: "pointer", boxSizing: "border-box", transition: "all 0.2s ease", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "12px" }} onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.borderColor = "#cbd5e1"; }} onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "#e2e8f0"; }}>
             <div>
-              <div style={{ fontSize: "26px", marginBottom: "6px" }}>🏷️</div>
-              <h3 style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: "800", color: "#0f172a" }}>Segmentos de Mercado</h3>
-              <p style={{ margin: "0 0 12px 0", fontSize: "12px", color: "#64748b", lineHeight: "1.4" }}>Parametrice os nichos de atuação comercial de devedores (Ex: Logística, Varejo) em coleção separada.</p>
+              <div style={{ color: "#0f172a", marginBottom: "8px", display: "flex", alignItems: "center" }}>
+                <Tag size={24} strokeWidth={2} /> {/* -> Injeta o componente vetorial de etiqueta inclinada fina do Lucide removendo o antigo emoji de tag colorido. */}
+              </div>
+              <h3 style={{ margin: "0 0 6px 0", fontSize: "13px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.3px" }}>Segmentos de Mercado</h3>
+              <p style={{ margin: "0", fontSize: "12px", color: "#64748b", lineHeight: "1.4" }}>Parametrice os nichos de atuação comercial de devedores (Ex: Logística, Varejo) em coleção separada.</p>
             </div>
-            <span style={{ background: "#f1f5f9", color: "#1e293b", fontSize: "11px", fontWeight: "700", padding: "3px 10px", borderRadius: "4px", border: "1px solid #e2e8f0", width: "fit-content" }}>Setores Ativos: {segmentosBase.length}</span>
+            <span style={{ background: "#f1f5f9", color: "#1e293b", fontSize: "11px", fontWeight: "700", padding: "3px 10px", borderRadius: "4px", border: "1px solid #e2e8f0", width: "fit-content", marginTop: "8px" }}>Setores Ativos: {segmentosBase.length}</span>
           </div>
 
           {/* CARD BONITO 4: Tipos de Elos e Vínculos */}
-          <div onClick={() => setVisaoPainel("vinculos")} style={{ background: "#ffffff", padding: "20px", borderRadius: "8px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.02)", cursor: "pointer", boxSizing: "border-box", transition: "transform 0.2s", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+          <div onClick={() => setVisaoPainel("vinculos")} style={{ background: "#ffffff", padding: "20px", borderRadius: "8px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.02)", cursor: "pointer", boxSizing: "border-box", transition: "all 0.2s ease", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "12px" }} onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.borderColor = "#cbd5e1"; }} onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "#e2e8f0"; }}>
             <div>
-              <div style={{ fontSize: "26px", marginBottom: "6px" }}>🔗</div>
-              <h3 style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: "800", color: "#0f172a" }}>Tipos de Elos e Vínculos</h3>
-              <p style={{ margin: "0 0 12px 0", fontSize: "12px", color: "#64748b", lineHeight: "1.4" }}>Parametrice as categorias jurídicas de representation humana (Ex: Preposto, Sócio) em coleção separada.</p>
+              <div style={{ color: "#0f172a", marginBottom: "8px", display: "flex", alignItems: "center" }}>
+                <Link2 size={24} strokeWidth={2} /> {/* -> Injeta o componente vetorial de elo de ligação fino do Lucide removendo o antigo emoji de corrente colorido. */}
+              </div>
+              <h3 style={{ margin: "0 0 6px 0", fontSize: "13px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.3px" }}>Tipos de Elos e Vínculos</h3>
+              <p style={{ margin: "0", fontSize: "12px", color: "#64748b", lineHeight: "1.4" }}>Parametrice as categorias jurídicas de representation humana (Ex: Preposto, Sócio) em coleção separada.</p>
             </div>
-            <span style={{ background: "#f1f5f9", color: "#1e293b", fontSize: "11px", fontWeight: "700", padding: "3px 10px", borderRadius: "4px", border: "1px solid #e2e8f0", width: "fit-content" }}>Categorias: {vinculosBase.length}</span>
+            <span style={{ background: "#f1f5f9", color: "#1e293b", fontSize: "11px", fontWeight: "700", padding: "3px 10px", borderRadius: "4px", border: "1px solid #e2e8f0", width: "fit-content", marginTop: "8px" }}>Categorias: {vinculosBase.length}</span>
           </div>
 
           {/* CARD BONITO 5: Central de Gerenciamento do Funil NoSQL Parametrizável */}
-          <div onClick={() => setVisaoPainel("funil")} style={{ background: "#ffffff", padding: "20px", borderRadius: "8px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.02)", cursor: "pointer", boxSizing: "border-box", transition: "transform 0.2s", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+          <div onClick={() => setVisaoPainel("funil")} style={{ background: "#ffffff", padding: "20px", borderRadius: "8px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.02)", cursor: "pointer", boxSizing: "border-box", transition: "all 0.2s ease", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "12px" }} onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.borderColor = "#cbd5e1"; }} onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "#e2e8f0"; }}>
             <div>
-              <div style={{ fontSize: "26px", marginBottom: "6px" }}>⚙️</div>
-              <h3 style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: "800", color: "#0f172a" }}>Gerenciamento do Funil (CRM)</h3>
-              <p style={{ margin: "0 0 12px 0", fontSize: "12px", color: "#64748b", lineHeight: "1.4" }}>Adicione, renomeie ou remova colunas vivas do Kanban ligando-as à máquina de estados Core.</p>
+              <div style={{ color: "#0f172a", marginBottom: "8px", display: "flex", alignItems: "center" }}>
+                <Columns3 size={24} strokeWidth={2} /> {/* -> Injeta o componente vetorial de raias verticais finas do Lucide removendo o antigo emoji de controle colorido. */}
+              </div>
+              <h3 style={{ margin: "0 0 6px 0", fontSize: "13px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.3px" }}>Gerenciamento do Funil (CRM)</h3>
+              <p style={{ margin: "0", fontSize: "12px", color: "#64748b", lineHeight: "1.4" }}>Adicione, renomeie ou remova colunas vivas do Kanban ligando-as à máquina de estados Core.</p>
             </div>
-            <span style={{ background: "#f1f5f9", color: "#1e293b", fontSize: "11px", fontWeight: "700", padding: "3px 10px", borderRadius: "4px", border: "1px solid #e2e8f0", width: "fit-content" }}>Etapas do Banco: {etapasFunilBase.length}</span>
+            <span style={{ background: "#f1f5f9", color: "#1e293b", fontSize: "11px", fontWeight: "700", padding: "3px 10px", borderRadius: "4px", border: "1px solid #e2e8f0", width: "fit-content", marginTop: "8px" }}>Etapas do Banco: {etapasFunilBase.length}</span>
           </div>
 
         </div>
@@ -378,11 +446,17 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
           ⚙️ RENDERIZAÇÃO INTERNA: NOVA TABELA COMPACTA PARA GERENCIAR A COLEÇÃO DE SEGMENTOS
           ========================================================================================= */}
       {visaoPainel === "segmentos" && (
-        <div style={{ background: "#ffffff", padding: "24px", borderRadius: "8px", border: "1px solid #e2e8f0", maxWidth: "600px" }}>
-          <h3 style={{ margin: "0 0 6px 0", fontSize: "14px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase" }}>🏷️ Cadastro de Segmentos Independentes</h3>
+        <div style={{ background: "#ffffff", padding: "24px", borderRadius: "8px", border: "1px solid #e2e8f0", maxWidth: "600px", boxShadow: "0 4px 6px rgba(0,0,0,0.02)" }}>
+          <h3 style={{ display: "flex", alignItems: "center", gap: "6px", margin: "0 0 6px 0", fontSize: "13px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase" }}>
+            <Tag size={14} strokeWidth={2.5} style={{ color: "#0f172a" }} /> {/* -> Injeta o componente vetorial de tag de metadados fina no título. */}
+            <span>Cadastro de Segmentos Independentes</span>
+          </h3>
           <form onSubmit={lidarAdicionarSegmento} style={{ display: "flex", gap: "8px", marginBottom: "16px", marginTop: "12px" }}>
-            <input type="text" placeholder="Digitar novo setor (Ex: Tecnologia)..." value={novoSegmentoTexto} onChange={(e) => setNovoSegmentoTexto(e.target.value)} style={{ flex: 1, padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px" }} />
-            <button type="submit" style={{ background: "#0f172a", color: "white", border: "none", padding: "8px 16px", borderRadius: "6px", fontSize: "12px", fontWeight: "700", cursor: "pointer" }}>+ Inserir</button>
+            <input type="text" placeholder="Digitar novo setor (Ex: Tecnologia)..." value={novoSegmentoTexto} onChange={(e) => setNovoSegmentoTexto(e.target.value)} style={{ flex: 1, padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", outline: "none", background: "#f8fafc" }} />
+            <button type="submit" style={{ display: "flex", alignItems: "center", gap: "4px", background: "#0f172a", color: "white", border: "none", padding: "8px 16px", borderRadius: "6px", fontSize: "12px", fontWeight: "700", cursor: "pointer", transition: "background 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#1e293b"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#0f172a"}>
+              <Plus size={14} strokeWidth={2.5} />
+              <span>Inserir</span>
+            </button>
           </form>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px", textAlign: "left" }}>
             <thead>
@@ -393,13 +467,20 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
             </thead>
             <tbody>
               {segmentosBase.length === 0 ? (
-                <tr><td colSpan="2" style={{ padding: "16px", textAlign: "center", color: "#64748b" }}>Nenhum segmento parametrizado na base.</td></tr>
+                <tr><td colSpan="2" style={{ padding: "16px", textAlign: "center", color: "#64748b", fontStyle: "italic" }}>Nenhum segmento parametrizado na base.</td></tr>
               ) : (
                 segmentosBase.map((seg) => (
-                  <tr key={seg.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                    <td style={{ padding: "8px 12px", fontWeight: "700", color: "#0f172a" }}>🏢 {seg.nome}</td>
+                  <tr key={seg.id} style={{ borderBottom: "1px solid #f1f5f9", backgroundColor: "#ffffff" }}>
+                    <td style={{ padding: "8px 12px", fontWeight: "700", color: "#0f172a" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                        <Building2 size={13} strokeWidth={2} style={{ color: "#64748b" }} /> {/* -> Troca o emoji de prédio colorido pela silhueta corporativa em vetor cinza fino. */}
+                        <span>{seg.nome}</span>
+                      </div>
+                    </td>
                     <td style={{ padding: "8px 12px", textAlign: "center" }}>
-                      <button type="button" onClick={() => lidarDeletarSegmento(seg.id, seg.nome)} title="Excluir este segmento permanentemente" style={{ background: "none", border: "none", cursor: "pointer", fontSize: "13px" }}>🗑️</button>
+                      <button type="button" onClick={() => lidarDeletarSegmento(seg.id, seg.nome)} title="Excluir este segmento permanentemente" style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto", padding: "4px", color: "#94a3b8", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#ef4444"} onMouseLeave={(e) => e.currentTarget.style.color = "#94a3b8"}>
+                        <Trash2 size={14} strokeWidth={2} /> {/* -> Injeta a lixeira geométrica fina do Lucide em substituição ao antigo emoji de lixeira. */}
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -413,11 +494,17 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
           ⚙️ RENDERIZAÇÃO INTERNA: NOVA TABELA COMPACTA PARA GERENCIAR A COLEÇÃO DE VÍNCULOS
           ========================================================================================= */}
       {visaoPainel === "vinculos" && (
-        <div style={{ background: "#ffffff", padding: "24px", borderRadius: "8px", border: "1px solid #e2e8f0", maxWidth: "600px" }}>
-          <h3 style={{ margin: "0 0 6px 0", fontSize: "14px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase" }}>🔗 Cadastro de Tipos de Vínculos Civis</h3>
+        <div style={{ background: "#ffffff", padding: "24px", borderRadius: "8px", border: "1px solid #e2e8f0", maxWidth: "600px", boxShadow: "0 4px 6px rgba(0,0,0,0.02)" }}>
+          <h3 style={{ display: "flex", alignItems: "center", gap: "6px", margin: "0 0 6px 0", fontSize: "13px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase" }}>
+            <Link2 size={14} strokeWidth={2.5} style={{ color: "#0f172a" }} /> {/* -> Injeta o componente vetorial de elos civis fino no título. */}
+            <span>Cadastro de Tipos de Vínculos Civis</span>
+          </h3>
           <form onSubmit={lidarAdicionarVinculo} style={{ display: "flex", gap: "8px", marginBottom: "16px", marginTop: "12px" }}>
-            <input type="text" placeholder="Digitar novo elo (Ex: Gerente Geral)..." value={novoVinculoTexto} onChange={(e) => setNovoVinculoTexto(e.target.value)} style={{ flex: 1, padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px" }} />
-            <button type="submit" style={{ background: "#0f172a", color: "white", border: "none", padding: "8px 16px", borderRadius: "6px", fontSize: "12px", fontWeight: "700", cursor: "pointer" }}>+ Inserir</button>
+            <input type="text" placeholder="Digitar novo elo (Ex: Gerente Geral)..." value={novoVinculoTexto} onChange={(e) => setNovoVinculoTexto(e.target.value)} style={{ flex: 1, padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", outline: "none", background: "#f8fafc" }} />
+            <button type="submit" style={{ display: "flex", alignItems: "center", gap: "4px", background: "#0f172a", color: "white", border: "none", padding: "8px 16px", borderRadius: "6px", fontSize: "12px", fontWeight: "700", cursor: "pointer", transition: "background 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#1e293b"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#0f172a"}>
+              <Plus size={14} strokeWidth={2.5} />
+              <span>Inserir</span>
+            </button>
           </form>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px", textAlign: "left" }}>
             <thead>
@@ -428,13 +515,20 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
             </thead>
             <tbody>
               {vinculosBase.length === 0 ? (
-                <tr><td colSpan="2" style={{ padding: "16px", textAlign: "center", color: "#64748b" }}>Nenhuma categoria parametrizada na base.</td></tr>
+                <tr><td colSpan="2" style={{ padding: "16px", textAlign: "center", color: "#64748b", fontStyle: "italic" }}>Nenhuma categoria parametrizada na base.</td></tr>
               ) : (
                 vinculosBase.map((vin) => (
-                  <tr key={vin.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                    <td style={{ padding: "8px 12px", fontWeight: "700", color: "#0f172a" }}>👤 {vin.label}</td>
+                  <tr key={vin.id} style={{ borderBottom: "1px solid #f1f5f9", backgroundColor: "#ffffff" }}>
+                    <td style={{ padding: "8px 12px", fontWeight: "700", color: "#0f172a" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                        <User size={13} strokeWidth={2} style={{ color: "#64748b" }} /> {/* -> Troca o emoji humano colorido pelo componente vetorial fino de silhueta de perfil cinza. */}
+                        <span>{vin.label}</span>
+                      </div>
+                    </td>
                     <td style={{ padding: "8px 12px", textAlign: "center" }}>
-                      <button type="button" onClick={() => lidarDeletarVinculo(vin.id, vin.label)} title="Excluir este vínculo permanentemente" style={{ background: "none", border: "none", cursor: "pointer", fontSize: "13px" }}>🗑️</button>
+                      <button type="button" onClick={() => lidarDeletarVinculo(vin.id, vin.label)} title="Excluir este vínculo permanentemente" style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto", padding: "4px", color: "#94a3b8", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#ef4444"} onMouseLeave={(e) => e.currentTarget.style.color = "#94a3b8"}>
+                        <Trash2 size={14} strokeWidth={2} /> {/* -> Injeta a lixeira geométrica fina do Lucide em substituição ao antigo emoji de lixeira. */}
+                      </button>
                     </td>
                   </tr>
                 ))

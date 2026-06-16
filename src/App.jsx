@@ -35,7 +35,7 @@ export default function App() { // -> Define e exporta a função mestre que ger
   // MEMÓRIA DE BUSCA COMBINADA EXPANDIDA DO CRM: Inicializa o objeto com todas as chaves de cabeçalho solicitadas para filtrar simultaneamente.
   const [filtrosAtivos, setFiltrosAtivos] = useState({ codigo: "", cliente: "", responsavel: "", status: "todos", operadorValor: ">=", valorLimite: "" }); // -> RECALIBRAÇÃO COMPLETA: Agrega travas lógicas e numéricas de saldo para raias e planilhas.
   
-  // -> CONFIGURAÇÕES DE ORDENAÇÃO DO CRM FINANCEIRO: Armazena qual coluna rege a planilha e em qual sentido de triagem.
+  // -> CONFIGURAÇÕES DE ORDENAÇÃO DO CRM FINANCEIRO: Armazena qual coluna rege a planilha e in qual sentido de triagem.
   const [campoOrdenadoCrm, setCampoOrdenadoCrm] = useState(""); // -> Memoriza a string da coluna de devedores clicada (Ex: 'codigo', 'cliente', 'valorVencido').
   const [direcaoOrdenacaoCrm, setDirecaoOrdenacaoCrm] = useState("asc"); // -> Chaveia o fluxo entre ordem alfabética/numérica crescente ('asc') ou decrescente ('desc').
 
@@ -55,7 +55,7 @@ export default function App() { // -> Define e exporta a função mestre que ger
   useEffect(() => { // -> Ativa um gancho de efeito para rodar a escuta de chaves assim que o app liga.
     const monitorarAuth = onAuthStateChanged(auth, (usuarioLogado) => { // -> Vigia silenciosamente se o operador está com o login salvo no navegador.
       setUser(usuarioLogado); // -> Atualiza o crachá do operador com a sessão de credenciais encontrada.
-    }); // -> Encerra o monitoramento de estado de login.
+    }); // -> Encerra o monitoring de estado de login.
     return () => monitorarAuth(); // -> Desliga a escuta quando o componente fecha para poupar memória RAM activa della máquina.
   }, []); // -> Indica que o efeito só roda uma vez na inicialização primária.
 
@@ -463,8 +463,8 @@ export default function App() { // -> Define e exporta a função mestre que ger
           empresasAtivasExternas={empresasBase} // -> Envia o array de Pessoas Jurídicas (B2 IND E COM) do banco para exibição.
           contatosAtivosExternos={contatosBase} // -> Envia a lista de contatos do banco para exibição.
           aoAtualizarEmpresasExternas={(novasEmpresas) => setEmpresasBase(novasEmpresas)} // -> CORREÇÃO DE ESCOPO: Envelopa a atualização de estado em uma função anônima limpa para evitar conflitos de mutação em lote.
-          segmentosExternos={segmentosBase} // -> PROPRIEDADE DINÂMICA: Sincroniza a coleção de segmentos do banco com a tela de metadados.
-          vinculosExternos={vinculosBase} // -> PROPRIEDADE DINÂMICA: Sincroniza a coleção de vínculos do banco com a tela de metadados.
+          segmentosExternos={segmentosBase} // -> PROPRIEDADE DINÂMICA: Sincroniza a coleção de segmentos del banco com a tela de metadados.
+          vinculosExternos={vinculosBase} // -> PROPRIEDADE DINÂMICA: Sincroniza a coleção de vínculos del banco com a tela de metadados.
           etapasFunilExternas={colunasFunil} // -> Despacha as colunas vivas extraídas da nuvem para preencher os badges contadores do Hub.
         /> 
       )}
@@ -482,7 +482,7 @@ export default function App() { // -> Define e exporta a função mestre que ger
         aberto={gavetaFiltrosAberta} 
         aoFechar={() => setGavetaFiltrosAberta(false)} 
         aoAplicarFiltros={(filtros) => {
-          setFiltrosAtivos(filtros); // -> Injeta reativamente as 6 chaves combinadas no estado mestre para o refino instantâneo do visor.
+          setFiltrosAtivos(filtros); // -> Injeta reativamente as 6 chaves combinadas no estado mestre para o refino instantâneo del visor.
           setGavetaFiltrosAberta(false); // -> Encerra o positioning visual recolhendo a gaveta lateral.
         }} 
       />
@@ -495,7 +495,7 @@ export default function App() { // -> Define e exporta a função mestre que ger
         card={cardSelecionadoProntuario} // -> Envia o objeto inteiro do devedor focado para a ala esquerda de visualização.
         colunaId={cardSelecionadoProntuario?.status || "novo"} // -> Envia a calha atual do funil para checar se há encerramento forçado de carteira.
         contatosBase={contatosBase} // -> CABO RELACIONAL HUMANO: Passa a lista completa de representantes para o cruzamento de IDs telefônicas.
-        listaVinculos={vinculosBase} // -> FIAÇÃO REATIVA INJETADA: Transmite as categorias reais do banco (Ex: "Sócio") para o menu interno do prontuário.
+        listaVinculos={vinculosBase} // -> FIAÇÃO REATIVA INJETADA: Transmite as categorias reais del banco (Ex: "Sócio") para o menu interno do prontuário.
         aoSalvarProntuário={atualizarDadosProntuarioDoBanco} // -> Conecta o botão de gravação direta ao motor assíncrono updateDoc do Firestore.
         exibirArquivados={exibirArquivados} // -> BARRAMENTO PLUGADO: Envia o modo ativo da Toolbar para o prontuário calibrar seu cabeçalho.
         aoAlternarArquivamentoNoModal={arquivarCobrancaNoLimbo} // -> BARRAMENTO PLUGADO: Passa a função mestre que inverte as flags de arquivo direto de dentro do prontuário.

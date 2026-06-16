@@ -1,4 +1,5 @@
-import React from "react"; // -> Traz a biblioteca mestre do React para permitir a leitura e interpretação da sintaxe .jsx.
+import React from "react"; // -> Traz a biblioteca mestre do React para permitir a leitura e interpretação da sintaxe de componentes .jsx.
+import { CheckCircle2, BarChart3, Handshake, Briefcase, Activity, Target, Lightbulb } from "lucide-react"; // -> Injeta as engines de ícones finos, monocromáticos e sóbrios da biblioteca Lucide sem quebras de layout.
 
 export default function ModuloDashboard({ cobrancas = [], etapasFunilExternas = [] }) { // 🛠️ RECALIBRAÇÃO ANALÍTICA: Abre o barramento para receber a lista viva de etapas customizadas vindas do cofre da nuvem.
 
@@ -40,36 +41,48 @@ export default function ModuloDashboard({ cobrancas = [], etapasFunilExternas = 
     return `${(valor / maiorValorEtapa) * 100}%`; // -> Retorna a string de porcentagem simétrica.
   };
 
-  return ( // -> Inicia a renderização do painel analítico executivo do DOCULOC.
-    <div style={{ maxWidth: "1400px", margin: "20px auto", padding: "0 20px", boxSizing: "border-box", textAlign: "left" }}>
+  return ( // -> Inicia a renderização del painel analítico executivo do DOCULOC.
+    <div style={{ width: "100%", maxWidth: "1400px", margin: "20px auto", padding: "0 20px", boxSizing: "border-box", textAlign: "left" }}>
       
       {/* 🏛️ SEÇÃO 1: OS BIG NUMBERS DE PRAXE (MÉTRICAS DE ALTA PERFORMANCE) */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px", marginBottom: "24px" }}>
         
         {/* BIG NUMBER 1: TOTAL RECUPERADO */}
         <div style={{ background: "#ffffff", padding: "20px", borderRadius: "12px", border: "1px solid #e2e8f0", boxShadow: "0 4px 6px rgba(0,0,0,0.02)", borderLeft: "5px solid #10b981" }}>
-          <div style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" }}>🎉 Total Recuperado (Quitado)</div>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", fontWeight: "800", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+            <CheckCircle2 size={13} strokeWidth={2.5} style={{ color: "#10b981" }} /> {/* -> Troca o emoji de festa pelo componente sutil de visto regular do Lucide. */}
+            <span>Total Recuperado (Quitado)</span>
+          </div>
           <div style={{ fontSize: "24px", fontWeight: "800", color: "#065f46", marginTop: "6px" }}>R$ {totalRecuperado.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</div>
           <div style={{ fontSize: "11px", color: "#64748b", marginTop: "4px" }}>Canhotos baixados de forma definitiva.</div>
         </div>
 
         {/* BIG NUMBER 2: REGIME DE RECEBIMENTO */}
         <div style={{ background: "#ffffff", padding: "20px", borderRadius: "12px", border: "1px solid #e2e8f0", boxShadow: "0 4px 6px rgba(0,0,0,0.02)", borderLeft: "5px solid #2563eb" }}>
-          <div style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" }}>📊 Em Regime de Recebimento</div>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", fontWeight: "800", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+            <BarChart3 size={13} strokeWidth={2.5} style={{ color: "#2563eb" }} /> {/* -> Troca o emoji de barras pelo componente fino de barras em linhas vetoriais. */}
+            <span>Em Regime de Recebimento</span>
+          </div>
           <div style={{ fontSize: "24px", fontWeight: "800", color: "#1e40af", marginTop: "6px" }}>R$ {volumeTotalRecebimentos.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</div>
           <div style={{ fontSize: "11px", color: "#64748b", marginTop: "4px" }}>Price: R$ {acordosAtivosPrice.toLocaleString("pt-BR")} | CC: R$ {amortizacaoContaCorrente.toLocaleString("pt-BR")}</div>
         </div>
 
         {/* BIG NUMBER 3: PIPELINE EM ATRITO */}
         <div style={{ background: "#ffffff", padding: "20px", borderRadius: "12px", border: "1px solid #e2e8f0", boxShadow: "0 4px 6px rgba(0,0,0,0.02)", borderLeft: "5px solid #d97706" }}>
-          <div style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" }}>🤝 Pipeline em Negociação ACTIVE</div>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", fontWeight: "800", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+            <Handshake size={13} strokeWidth={2} style={{ color: "#d97706" }} /> {/* -> Troca o emoji de aperto de mãos pelo componente estilizado do Lucide em vetor. */}
+            <span>Pipeline em Negociação ACTIVE</span>
+          </div>
           <div style={{ fontSize: "24px", fontWeight: "800", color: "#b45309", marginTop: "6px" }}>R$ {emAtritoNegociacao.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</div>
           <div style={{ fontSize: "11px", color: "#64748b", marginTop: "4px" }}>Capital sob pressão comercial nas colunas quentes.</div>
         </div>
 
         {/* BIG NUMBER 4: VOLUME TOTAL DE CARTEIRA */}
         <div style={{ background: "#ffffff", padding: "20px", borderRadius: "12px", border: "1px solid #e2e8f0", boxShadow: "0 4px 6px rgba(0,0,0,0.02)", borderLeft: "5px solid #0f172a" }}>
-          <div style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" }}>💼 Custódia Total de Carteira</div>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", fontWeight: "800", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+            <Briefcase size={13} strokeWidth={2} style={{ color: "#0f172a" }} /> {/* -> Troca o emoji de maleta pelo componente fino outline de pasta executiva do Lucide. */}
+            <span>Custodia Total de Carteira</span>
+          </div>
           <div style={{ fontSize: "24px", fontWeight: "800", color: "#0f172a", marginTop: "6px" }}>R$ {carteiraTotalBruta.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</div>
           <div style={{ fontSize: "11px", color: "#64748b", marginTop: "4px" }}>Dividido em {totalEmpresasAtivas} CNPJs ativos monitorados.</div>
         </div>
@@ -81,13 +94,16 @@ export default function ModuloDashboard({ cobrancas = [], etapasFunilExternas = 
         
         {/* GRÁFICO A: DISTRIBUIÇÃO CAPITAL FINANCEIRO POR ETAPA DO FUNIL DINÂMICA */}
         <div style={{ background: "#ffffff", padding: "24px", borderRadius: "12px", border: "1px solid #e2e8f0", boxShadow: "0 4px 6px rgba(0,0,0,0.02)", display: "flex", flexDirection: "column" }}>
-          <h3 style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.5px" }}>📊 Alocação de Capital por Etapa Comercial</h3>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+            <Activity size={14} strokeWidth={2.5} style={{ color: "#0f172a" }} /> {/* -> Troca o emoji de gráfico de barras pelo vetor fino de monitoração de atividades. */}
+            <h3 style={{ margin: 0, fontSize: "14px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.5px" }}>Alocação de Capital por Etapa Comercial</h3>
+          </div>
           <p style={{ margin: "0 0 24px 0", fontSize: "12px", color: "#64748b" }}>Volume de dinheiro vivo retido em cada calha parametrizada do funil.</p>
           
           {/* GRADE VISUAL DO GRÁFICO DE BARRAS VERTICAIS AUTOMATIZADO */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", height: "260px", borderBottom: "2px solid #cbd5e1", padding: "0 10px", gap: "12px" }}>
             {etapasDinamicasProcessadas.length === 0 ? ( // -> UX de contingência: se não existirem raias criadas no Firebase.
-              <div style={{ width: "100%", textAling: "center", fontSize: "12px", color: "#94a3b8", paddingBottom: "100px" }}>Aguardando conexão com as raias dinâmicas...</div>
+              <div style={{ width: "100%", textAlign: "center", fontSize: "12px", color: "#94a3b8", paddingBottom: "100px" }}>Aguardando conexão com as raias dinâmicas...</div>
             ) : ( // -> Havendo colunas salvas, monta o gráfico elástico de forma responsiva.
               etapasDinamicasProcessadas.map((item) => ( // -> Varre a lista processada desenhando o componente de barra simétrico.
                 <div key={item.id} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", height: "100%", justifyContent: "flex-end" }}>
@@ -110,10 +126,11 @@ export default function ModuloDashboard({ cobrancas = [], etapasFunilExternas = 
 
         {/* PANEL B: PERFORMANCE OPERACIONAL DA CARTEIRA */}
         <div style={{ background: "#ffffff", padding: "24px", borderRadius: "12px", border: "1px solid #e2e8f0", boxShadow: "0 4px 6px rgba(0,0,0,0.02)", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-          <div>
-            <h3 style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.5px" }}>🎯 Índice de Conversão</h3>
-            <p style={{ margin: "0 0 20px 0", fontSize: "12px", color: "#64748b" }}>Eficiência da mesa de conciliação.</p>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+            <Target size={14} strokeWidth={2.5} style={{ color: "#0f172a" }} /> {/* -> Troca o antigo emoji de alvo pelo componente alvo em linhas finas do Lucide. */}
+            <h3 style={{ margin: 0, fontSize: "14px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.5px" }}>Índice de Conversão</h3>
           </div>
+          <p style={{ margin: "0 0 20px 0", fontSize: "12px", color: "#64748b" }}>Eficiência da mesa de conciliação.</p>
 
           {/* BARRA HORIZONTAL DE PROPORÇÃO DE SUCESSO COBRADO */}
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
@@ -138,8 +155,11 @@ export default function ModuloDashboard({ cobrancas = [], etapasFunilExternas = 
             </div>
           </div>
 
-          <div style={{ background: "#f8fafc", padding: "12px", borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "11px", color: "#64748b", marginTop: "16px", lineHeight: "1.4" }}>
-            💡 <span style={{ fontWeight: "700", color: "#334155" }}>Diretriz Executiva:</span> O equilíbrio ideal de carteira jurídica dita que o volume somado de [Recebimentos + Finalizados] deve superar 40% do pipeline bruto.
+          <div style={{ display: "flex", alignItems: "flex-start", gap: "6px", background: "#f8fafc", padding: "12px", borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "11px", color: "#64748b", marginTop: "16px", lineHeight: "1.4" }}>
+            <Lightbulb size={14} strokeWidth={2} style={{ color: "#b45309", marginTop: "1px", flexShrink: 0 }} /> {/* -> Troca o antigo emoji de lâmpada pelo componente sutil vazado do Lucide. */}
+            <div>
+              <span style={{ fontWeight: "700", color: "#334155" }}>Diretriz Executiva:</span> O equilíbrio ideal de carteira jurídica dita que o volume somado de [Recebimentos + Finalizados] deve superar 40% do pipeline bruto.
+            </div>
           </div>
         </div>
 

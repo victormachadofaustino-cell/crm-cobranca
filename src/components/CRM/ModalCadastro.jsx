@@ -1,4 +1,5 @@
-import React, { useState } from "react"; // -> Importa o React e o gancho useState para monitorar localmente o que está sendo digitado no formulário.
+import React, { useState } from "react"; // -> Importa a biblioteca mestre do React e o gancho useState para monitorar as caixas de seleção locais do CRM de faturamento.
+import { FilePlus2, X, Briefcase, DollarSign, Calendar, User, Columns3, FileText } from "lucide-react"; // -> Injeta as engines de ícones finos, monocromáticos e sóbrios da biblioteca Lucide sem quebras de layout.
 
 export default function ModalCadastro({ aberto, aoFechar, aoSalvar, empresas = [] }) { // -> Define a função do modal recebendo reativamente a lista estável de empresas da base.
   // -> ESTADOS LOCAIS E ISOLADOS: As variáveis de digitação agora moram aqui dentro e não pesam mais no App.jsx!
@@ -66,16 +67,28 @@ export default function ModalCadastro({ aberto, aoFechar, aoSalvar, empresas = [
   }; // -> Encerra o interceptador de envios.
 
   return ( // -> Renderiza a interface visual flutuante do modal na tela.
+    // 🎭 CORTINA TRASEIRA ESCURA: Bloqueia cliques externos e dá foco visual total ao modal.
     <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(15, 23, 42, 0.4)", zIndex: 5000, display: "flex", justifyContent: "center", alignItems: "center" }}> {/* -> Cortina escura de fundo configurada com opacidade suave. */}
       <div style={{ background: "#ffffff", padding: "24px", borderRadius: "8px", border: "1px solid #e2e8f0", width: "100%", maxWidth: "480px", boxShadow: "0 10px 15px -3px rgba(0,0,0,0.05)", maxHeight: "85vh", overflowY: "auto", boxSizing: "border-box" }}> {/* -> Cartão branco otimizado com bordas compactas de 8px e trava antiqueda de estouro de tela. */}
         
         {/* TOPO DO MODAL: TÍTULO E BOTÃO FECHAR (X) */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", borderBottom: "1px solid #e2e8f0", paddingBottom: "10px" }}> {/* -> Cabeçalho separador horizontal compacto. */}
           <div> {/* -> Agrupador de títulos estruturais. */}
-            <h3 style={{ margin: 0, fontSize: "14px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.5px" }}>➕ Iniciar Procedimento Financeiro</h3> {/* -> Título formal sóbrio em fonte densa de 14px. */}
+            <h3 style={{ display: "flex", alignItems: "center", gap: "6px", margin: 0, fontSize: "14px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+              <FilePlus2 size={14} strokeWidth={2.5} style={{ color: "#0f172a" }} /> {/* -> Injeta o componente vetorial de criação de documentos eliminando o antigo emoji de mais (+). */}
+              <span>Iniciar Procedimento Financeiro</span>
+            </h3> {/* -> Título formal sóbrio em fonte densa de 14px. */}
             <p style={{ margin: "4px 0 0 0", fontSize: "12px", color: "#64748b" }}>Abra um lote de cobrança para um assistido homologado.</p> {/* -> Subtítulo explicativo corporativo de instrução. */}
           </div> {/* -> Encerra o agrupador de títulos. */}
-          <button type="button" onClick={aoFechar} style={{ background: "none", border: "none", fontSize: "20px", cursor: "pointer", color: "#94a3b8", fontWeight: "bold", padding: 0 }}>&times;</button> {/* -> Botão puro de fechar em formato de X sem poluição. */}
+          <button 
+            type="button" 
+            onClick={aoFechar} 
+            style={{ background: "none", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#94a3b8", padding: "4px", transition: "color 0.2s" }}
+            onMouseEnter={(e) => e.currentTarget.style.color = "#1e293b"}
+            onMouseLeave={(e) => e.currentTarget.style.color = "#94a3b8"}
+          >
+            <X size={18} strokeWidth={2.5} /> {/* -> Substitui o caractere antigo pelo componente X fino e geométrico do Lucide. */}
+          </button> 
         </div> {/* -> Encerra o topo do modal. */}
 
         {/* CORPO DO FORMULÁRIO OPERACIONAL */}
@@ -83,7 +96,10 @@ export default function ModalCadastro({ aberto, aoFechar, aoSalvar, empresas = [
           
           {/* CAMPO REFORMULADO: SELEÇÃO DO ASSISTIDO NA BASE VIVA */}
           <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}> {/* -> Alinhador do campo de escolha do cliente. */}
-            <label style={{ fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px", textTransform: "uppercase" }}>⚖️ Selecionar Cliente / Assistido *</label> {/* -> MUDANÇA SÓBRIA: Rótulo recalibrado para o cinza Slate ardósia. */}
+            <label style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px", textTransform: "uppercase" }}>
+              <Briefcase size={12} strokeWidth={2.5} style={{ color: "#475569" }} /> {/* -> Substitui a balança de texto pelo componente de maleta corporativa fina do Lucide. */}
+              <span>Selecionar Cliente / Assistido *</span>
+            </label> 
             <select 
               required 
               value={empresaIdSelecionada} 
@@ -92,7 +108,7 @@ export default function ModalCadastro({ aberto, aoFechar, aoSalvar, empresas = [
             >
               <option value="">-- Escolha um cliente cadastrado no sistema --</option> {/* -> Opção nula inicial de instrução. */}
               {empresas.map((emp) => ( // -> Varre a lista viva de empresas injetadas para desenhar as opções relacionais.
-                <option key={emp.id} value={emp.id}>🏢 {emp.cliente} (Conta: #{emp.codigo || "S/C"})</option> // -> Renderiza a Razão Social e o Código da Conta herdados da base física.
+                <option key={emp.id} value={emp.id}>{emp.cliente} (Conta: #{emp.codigo || "S/C"})</option> // -> Renderiza a Razão Social e o Código da Conta herdados da base física, higienizados de emojis.
               ))}
             </select> {/* -> Encerra o elemento select de vínculo. */}
           </div> {/* -> Encerra o container do campo. */}
@@ -100,43 +116,58 @@ export default function ModalCadastro({ aberto, aoFechar, aoSalvar, empresas = [
           {/* LINHA DUPLA: VALOR VENCIDO E DATA DO LOTE */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}> {/* -> Grade simétrica responsiva dividida ao meio. */}
             <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}> {/* -> Coluna do montante financeiro da pendência. */}
-              <label style={{ fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px", textTransform: "uppercase" }}>Valor Devido (R$)</label> {/* -> Rótulo explicativo cinza. */}
+              <label style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px", textTransform: "uppercase" }}>
+                <DollarSign size={12} strokeWidth={2.5} style={{ color: "#475569" }} /> {/* -> Injeta o ícone fino vetorial de cifrão no lugar de legendas vazias. */}
+                <span>Valor Devido (R$)</span>
+              </label> 
               <input type="number" step="0.01" required placeholder="0.00" id="valor-vencido-input-id" style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", color: "#0f172a", background: "#f8fafc", fontWeight: "bold", textAlign: "right" }} /> {/* -> Entrada numérica calibrada para fonte de 12px e alinhada à direita. */}
             </div> {/* -> Encerra o bloco do valor monetário. */}
             <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}> {/* -> Coluna do calendário de lançamento fiscal. */}
-              <label style={{ fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px", textTransform: "uppercase" }}>Data de Lançamento</label> {/* -> Rótulo explicativo cinza. */}
+              <label style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px", textTransform: "uppercase" }}>
+                <Calendar size={12} strokeWidth={2.5} style={{ color: "#475569" }} /> {/* -> Injeta o componente sutil de calendário outline do Lucide. */}
+                <span>Data de Lançamento</span>
+              </label> 
               <input type="date" id="dataEnvio" style={{ padding: "7px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", color: "#0f172a", background: "#f8fafc", fontWeight: "600" }} /> {/* -> Entrada nativa de calendário compactada. */}
             </div> {/* -> Encerra o bloco da data de lançamento. */}
           </div> {/* -> Encerra la grade dupla horizontal. */}
 
           {/* CAMPO: OPERADOR RESPONSÁVEL */}
           <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}> {/* -> Alinhador da caixa de texto do operador encarregado. */}
-            <label style={{ fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px", textTransform: "uppercase" }}>Operador Responsável</label> {/* -> Rótulo explicativo cinza. */}
+            <label style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px", textTransform: "uppercase" }}>
+              <User size={12} strokeWidth={2.5} style={{ color: "#475569" }} /> {/* -> Injeta a silhueta geométrica vazada do Lucide no operador. */}
+              <span>Operador Responsável</span>
+            </label> 
             <input type="text" placeholder="Ex: Lucas Vieira" value={responsavel} onChange={(e) => setResponsavel(e.target.value)} style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", color: "#0f172a", background: "#f8fafc" }} /> {/* -> Entrada de texto livre compactada em 12px. */}
           </div> {/* -> Encerra o container do operador responsavel. */}
 
           {/* CAMPO: SELETOR DA COLUNA DE ENTRADA DO KANBAN */}
           <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}> {/* -> Alinhador da caixa de seleção da raia natal do card. */}
-            <label style={{ fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px", textTransform: "uppercase" }}>Coluna de Entrada</label> {/* -> Rótulo explicativo cinza. */}
+            <label style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px", textTransform: "uppercase" }}>
+              <Columns3 size={12} strokeWidth={2.5} style={{ color: "#475569" }} /> {/* -> Injeta o componente sutil de raias do Lucide na seleção do funil. */}
+              <span>Coluna de Entrada</span>
+            </label> 
             <select value={statusInicial} onChange={(e) => setStatusInicial(e.target.value)} style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", color: "#0f172a", background: "#ffffff", fontWeight: "bold", cursor: "pointer" }}> {/* -> Seletor de raias do faturamento. */}
-              <option value="novo">A Iniciar</option> {/* -> Vincula o card na primeira raia do funil. */}
-              <option value="contato">Notificação Enviada</option> {/* -> Vincula o card na segunda raia do funil. */}
-              <option value="negociacao">Em Negociação</option> {/* -> Vincula o card na terceira raia do funil. */}
-              <option value="acordo">Termo em Andamento</option> {/* -> Vincula o card na quarta raia do funil. */}
-              <option value="finalizado">Finalizado</option> {/* -> Vincula o card na quinta raia do funil. */}
+              <option value="novo">A Iniciar</option> {/* -> Vincula o card na primeira raia do funil, higienizado de emojis. */}
+              <option value="contato">Notificação Enviada</option> {/* -> Vincula o card na segunda raia do funil, higienizado de emojis. */}
+              <option value="negociacao">Em Negociação</option> {/* -> Vincula o card na terceira raia do funil, higienizado de emojis. */}
+              <option value="acordo">Termo em Andamento</option> {/* -> Vincula o card na quarta raia do funil, higienizado de emojis. */}
+              <option value="finalizado">Finalizado</option> {/* -> Vincula o card na quinta raia do funil, higienizado de emojis. */}
             </select> {/* -> Encerra o seletor de calhas. */}
           </div> {/* -> Encerra o container de raias do Kanban. */}
 
           {/* CAMPO: NOTAS INICIAIS */}
           <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}> {/* -> Alinhador da caixa de notas textuais do histórico processual. */}
-            <label style={{ fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px", textTransform: "uppercase" }}>Notas Iniciais do Caso</label> {/* -> Rótulo explicativo cinza. */}
+            <label style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px", textTransform: "uppercase" }}>
+              <FileText size={12} strokeWidth={2.5} style={{ color: "#475569" }} /> {/* -> Injeta o componente sutil de linhas de texto do Lucide nas notas. */}
+              <span>Notas Iniciais do Caso</span>
+            </label> 
             <textarea rows="3" placeholder="Digite detalhes fiscais ou processuais..." value={observacao} onChange={(e) => setObservacao(e.target.value)} style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", color: "#0f172a", background: "#f8fafc", resize: "none" }}></textarea> {/* -> Área de texto livre travada contra desconfigurações manuais. */}
           </div> {/* -> Encerra o container de notas fiscais. */}
 
           {/* BASE DO MODAL: BOTÕES DE CANCELAR OU INJETAR DÍVIDA */}
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", borderTop: "1px solid #e2e8f0", paddingTop: "12px", marginTop: "4px" }}> {/* -> Alinhador do rodapé do modal com traço sutil de divisão e padding compacto. */}
-            <button type="button" onClick={aoFechar} style={{ backgroundColor: "#ffffff", border: "1px solid #cbd5e1", color: "#475569", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontWeight: "600" }}>Cancelar</button> {/* -> Botão sóbrio de cancelamento da inclusão ativa. */}
-            <button type="submit" style={{ backgroundColor: "#0f172a", border: "none", color: "white", padding: "6px 14px", borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontWeight: "700", textTransform: "uppercase" }}>Injetar na Esteira</button> {/* -> MUDANÇA SÓBRIA DE COR: Alterado de azul para o tom institucional Azul Escuro Profundo. */}
+            <button type="button" onClick={aoFechar} style={{ backgroundColor: "#ffffff", border: "1px solid #cbd5e1", color: "#475569", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontWeight: "600", transition: "all 0.15s ease" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f8fafc"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#ffffff"}>Cancelar</button> {/* -> Botão sóbrio de cancelamento da inclusão ativa. */}
+            <button type="submit" style={{ backgroundColor: "#0f172a", border: "none", color: "white", padding: "6px 14px", borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontWeight: "700", textTransform: "uppercase", transition: "background 0.15s ease" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#1e293b"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#0f172a"}>Injetar na Esteira</button> {/* -> MUDANÇA SÓBRIA DE COR: Alterado de azul para o tom institucional Azul Escuro Profundo. */}
           </div> {/* -> Encerra a barra de botões do rodapé. */}
 
         </form> {/* -> Encerra a tag de formulário operacional. */}

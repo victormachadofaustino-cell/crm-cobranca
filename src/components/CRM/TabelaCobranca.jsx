@@ -1,4 +1,5 @@
-import React from "react"; // -> Traz a biblioteca mestre do React e o gancho useState para monitorar as sanfonas locais de cada etapa.
+import React from "react"; // -> Traz a biblioteca mestre do React para permitir a leitura e interpretação da sintaxe de componentes .jsx.
+import { ChevronUp, ChevronDown, ChevronRight, TrendingUp, FolderMinus, Archive, ArchiveRestore, User, Inbox } from "lucide-react"; // -> Injeta as engines de ícones finos, monocromáticos e sóbrios da biblioteca Lucide sem quebras de layout.
 
 export default function TabelaCobranca({ cobrancas, aoClicarLinha, aoDeletar, campoOrdenado = "", direcaoOrdenacao = "asc", aoMudarOrdenacao, aoMudarStatusDireto, exibirArquivados = false }) { // -> RECALIBRADA: Recebe a flag de controle global do Limbo para chavear os ícones de ações da planilha de forma reativa.
   // -> CALCULO DE TOTALIZADOR GERAL: Varre toda a esteira de dados reativos e soma os valores brutos para o rodapé.
@@ -42,19 +43,31 @@ export default function TabelaCobranca({ cobrancas, aoClicarLinha, aoDeletar, ca
           <thead>
             <tr style={{ backgroundColor: "#f8fafc", borderBottom: "1px solid #e2e8f0", color: "#475569", fontWeight: "700" }}>
               <th onClick={() => aoMudarOrdenacao && aoMudarOrdenacao("codigo")} style={{ padding: "14px 20px", cursor: "pointer", userSelect: "none", width: "120px" }}>
-                CÓDIGO CONTA {campoOrdenado === "codigo" ? (direcaoOrdenacao === "asc" ? "🔼" : "🔽") : ""}
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <span>CÓDIGO CONTA</span>
+                  {campoOrdenado === "codigo" && (direcaoOrdenacao === "asc" ? <ChevronUp size={14} strokeWidth={2.5} /> : <ChevronDown size={14} strokeWidth={2.5} />)} {/* -> Substitui os triângulos por setas finas vetoriais do Lucide. */}
+                </div>
               </th>
               <th onClick={() => aoMudarOrdenacao && aoMudarOrdenacao("cliente")} style={{ padding: "14px 20px", cursor: "pointer", userSelect: "none" }}>
-                EMPRESA / RAZÃO SOCIAL {campoOrdenado === "cliente" ? (direcaoOrdenacao === "asc" ? "🔼" : "🔽") : ""}
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <span>EMPRESA / RAZÃO SOCIAL</span>
+                  {campoOrdenado === "cliente" && (direcaoOrdenacao === "asc" ? <ChevronUp size={14} strokeWidth={2.5} /> : <ChevronDown size={14} strokeWidth={2.5} />)} {/* -> Substitui os triângulos por setas finas vetoriais do Lucide. */}
+                </div>
               </th>
               <th onClick={() => aoMudarOrdenacao && aoMudarOrdenacao("responsavel")} style={{ padding: "14px 20px", cursor: "pointer", userSelect: "none", width: "200px" }}>
-                OPERADOR RESPONSÁVEL {campoOrdenado === "responsavel" ? (direcaoOrdenacao === "asc" ? "🔼" : "🔽") : ""}
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <span>OPERADOR RESPONSÁVEL</span>
+                  {campoOrdenado === "responsavel" && (direcaoOrdenacao === "asc" ? <ChevronUp size={14} strokeWidth={2.5} /> : <ChevronDown size={14} strokeWidth={2.5} />)} {/* -> Substitui os triângulos por setas finas vetoriais do Lucide. */}
+                </div>
               </th>
               <th style={{ padding: "14px 20px", width: "200px" }}>
                 ETAPA DO FUNIL (ALTERAR EM LINHA) {/* -> Indica que a célula agora é um comando ativo de transição de fase. */}
               </th>
               <th onClick={() => aoMudarOrdenacao && aoMudarOrdenacao("valorVencido")} style={{ padding: "14px 20px", textAlign: "right", cursor: "pointer", userSelect: "none", width: "160px" }}>
-                SALDO VENCIDO {campoOrdenado === "valorVencido" ? (direcaoOrdenacao === "asc" ? "🔼" : "🔽") : ""}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "6px" }}>
+                  <span>SALDO VENCIDO</span>
+                  {campoOrdenado === "valorVencido" && (direcaoOrdenacao === "asc" ? <ChevronUp size={14} strokeWidth={2.5} /> : <ChevronDown size={14} strokeWidth={2.5} />)} {/* -> Substitui os triângulos por setas finas vetoriais do Lucide. */}
+                </div>
               </th>
               <th style={{ padding: "14px 20px", textAlign: "center", width: "100px" }}>AÇÕES</th>
             </tr>
@@ -79,14 +92,18 @@ export default function TabelaCobranca({ cobrancas, aoClicarLinha, aoDeletar, ca
                   <td colSpan="6" style={{ padding: "10px 20px", fontSize: "11px", fontWeight: "800", color: coluna.corTexto, textAlign: "left", letterSpacing: "0.5px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <span style={{ fontSize: "12px" }}>{estaAberto ? "🔽" : "▶️"}</span> {/* -> Seta dinâmica indicando se o bloco está expandido ou colapsado. */}
-                        <span>📊 ETAPA: {coluna.nome.toUpperCase()} ({linhasDestaEtapa.length} EMPRESAS)</span>
+                        <span style={{ display: "flex", alignItems: "center", color: coluna.corTexto }}>
+                          {estaAberto ? <ChevronDown size={14} strokeWidth={2.5} /> : <ChevronRight size={14} strokeWidth={2.5} />} {/* -> CORREÇÃO DA LINHA 214: Mapeia estritamente a variável 'coluna' correta nas iterações e usa setas vazadas. */}
+                        </span>
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                          <TrendingUp size={13} strokeWidth={2.5} style={{ opacity: 0.8 }} /> {/* -> Troca o ícone de barras antigo pelo indicador gráfico de linhas finas do Lucide. */}
+                          <span>ETAPA: {coluna.nome.toUpperCase()} ({linhasDestaEtapa.length} EMPRESAS)</span>
+                        </div>
                       </div>
                       <span style={{ background: "#ffffff", padding: "2px 8px", borderRadius: "4px", border: `1px solid ${coluna.corBorda}` }}>
                         SUBTOTAL: R$ {dinheiroEtapa.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} {/* -> Exibe o caixa reativo travado naquela calha. */}
                       </span>
                     </div>
-                    {/* 🛠️ DIRETRIZ CUMPRIDA EXCLUSÃO DE PASTAS CORE: O elemento indicador visual '📁 CORE: [###]' foi sumido daqui com sucesso, limpando as planilhas active por completo! */}
                   </td>
                 </tr>
 
@@ -95,8 +112,11 @@ export default function TabelaCobranca({ cobrancas, aoClicarLinha, aoDeletar, ca
                   linhasDestaEtapa.length === 0 ? (
                     // -> COMPORTAMENTO DE RAIA VAZIA: Se a sanfona estiver aberta mas não houver ninguém na fase, exibe o aviso.
                     <tr>
-                      <td colSpan="6" style={{ padding: "16px", textAlign: "center", color: "#94a3b8", fontSize: "11px", fontStyle: "italic", backgroundColor: "#ffffff" }}>
-                        📭 Nenhuma empresa estacionada na etapa {coluna.nome} no momento.
+                      <td colSpan="6" style={{ padding: "20px", textAlign: "center", color: "#94a3b8", fontSize: "11px", fontStyle: "italic", backgroundColor: "#ffffff" }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
+                          <FolderMinus size={14} strokeWidth={2} /> {/* -> Injeta o ícone sóbrio de repositório vazio no lugar da caixa de correio colorida. */}
+                          <span>Nenhuma empresa estacionada na etapa {coluna.nome} no momento.</span>
+                        </div>
                       </td>
                     </tr>
                   ) : (
@@ -117,10 +137,11 @@ export default function TabelaCobranca({ cobrancas, aoClicarLinha, aoDeletar, ca
                           {/* CÉLULA 2: RAZÃO SOCIAL E BADGE PRICE (CLICÁVEL PARA ABRIR O PRONTUÁRIO) */}
                           <td onClick={() => aoClicarLinha(item, valorNum)} style={{ padding: "12px 20px", textTransform: "uppercase", color: "#0f172a", cursor: "pointer" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: "flex-start" }}>
-                              <span>{item.cliente}</span>
+                              <span style={{ fontWeight: "600" }}>{item.cliente}</span>
                               {item.proposta?.qtdParcelas && item.proposta.qtdParcelas > 1 && (
-                                <span style={{ fontSize: "9px", fontWeight: "800", background: "#eff6ff", color: "#1e40af", padding: "2px 6px", borderRadius: "4px", border: "1px solid #bfdbfe" }}>
-                                  📊 PRICE: {item.proposta.qtdParcelas}X
+                                <span style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "9px", fontWeight: "800", background: "#eff6ff", color: "#1e40af", padding: "2px 6px", borderRadius: "4px", border: "1px solid #bfdbfe" }}>
+                                  <Inbox size={10} strokeWidth={2.5} /> {/* -> Troca o gráfico rudimentar pelo componente fino de caixa de faturas vazada. */}
+                                  <span>PRICE: {item.proposta.qtdParcelas}X</span>
                                 </span>
                               )}
                             </div>
@@ -128,7 +149,10 @@ export default function TabelaCobranca({ cobrancas, aoClicarLinha, aoDeletar, ca
                           
                           {/* CÉLULA 3: OPERADOR MESA (CLICÁVEL PARA ABRIR O PRONTUÁRIO) */}
                           <td onClick={() => aoClicarLinha(item, valorNum)} style={{ padding: "12px 20px", color: "#334155", cursor: "pointer" }}>
-                            👤 {item.responsavel || "Sem operador"} 
+                            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                              <User size={13} strokeWidth={2} style={{ color: "#64748b" }} /> {/* -> Troca a silhueta emoji infantil pelo perfil geométrico fino em vetor cinza. */}
+                              <span>{item.responsavel || "Sem operador"}</span>
+                            </div>
                           </td>
                           
                           {/* CÉLULA 4 TRANSFORMATIVA: DROPDOWN INTERATIVO DE ALTERAÇÃO DE ETAPA EM LINHA DIRETA */}
@@ -149,12 +173,12 @@ export default function TabelaCobranca({ cobrancas, aoClicarLinha, aoDeletar, ca
                                 width: "100%"
                               }}
                             >
-                              <option value="novo">🆕 A Iniciar</option>
-                              <option value="contato">✉️ Notificação Enviada</option>
-                              <option value="negociacao">🤝 Em Negociação</option>
-                              <option value="acordo">📄 Termo em Andamento</option>
-                              <option value="cobranca">📊 Cobrança Parcelada</option>
-                              <option value="conta_corrente">⚡ Conta Corrente</option>
+                              <option value="novo">A Iniciar</option>
+                              <option value="contato">Notificação Enviada</option>
+                              <option value="negociacao">Em Negociação</option>
+                              <option value="acordo">Termo em Andamento</option>
+                              <option value="cobranca">Cobrança Parcelada</option>
+                              <option value="conta_corrente">Conta Corrente</option>
                               <option value="finalizado">Finalizado / Quitado</option>
                             </select>
                           </td>
@@ -172,18 +196,22 @@ export default function TabelaCobranca({ cobrancas, aoClicarLinha, aoDeletar, ca
                                 e.stopPropagation(); // -> Evita o clique involuntário de expansão de ficha de prontuário.
                                 aoDeletar(item.id, item.cliente); // -> Dispara o interruptor dinâmico (Arquivar / Desarquivar) no App.jsx.
                               }}
-                              style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer", fontSize: "14px", fontWeight: "bold" }}
+                              style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto", padding: "4px", transition: "color 0.2s" }}
                               title={exibirArquivados ? "Desarquivar cobrança e mandar para esteira ativa" : "Arquivar cobrança e mandar para o Limbo"} // -> Tooltip explicativa flutuante contextual baseada na aba ativa.
                             >
-                              {/* MUTAÇÃO DE EMOJI EM GRADE: Exibe a pasta com seta (📤) caso esteja no Limbo, ou a pasta de arquivos (📁) caso esteja na esteira de ativos comuns */}
-                              {exibirArquivados ? "📤" : "📁"}
+                              {/* MUTAÇÃO VETORIAL REATIVA EM GRADE: Substitui os emojis de pastas coloridas por componentes finos e vazados do Lucide */}
+                              {exibirArquivados ? (
+                                <ArchiveRestore size={15} strokeWidth={2} style={{ color: "#2563eb" }} /> // -> Exibe o vetor fino de descompressão/resgate azul sólido caso esteja listando o Limbo.
+                              ) : (
+                                <Archive size={15} strokeWidth={2} style={{ color: "#64748b" }} /> // -> Exibe o vetor geométrico fino e limpo de caixa organizadora para envio ao arquivo morto.
+                              )}
                             </button>
                           </td>
                         </tr>
                       );
-                    })
+                    }
                   )
-                )}
+                ))}
               </tbody>
             );
           })}

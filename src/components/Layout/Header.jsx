@@ -1,19 +1,20 @@
-import React from "react"; // -> Traz a biblioteca mestre do React para permitir a leitura e interpretação da sintaxe .jsx.
+import React from "react"; // -> Traz a biblioteca mestre do React para permitir a leitura e interpretação da sintaxe de componentes .jsx.
+import { LayoutDashboard, Columns3, CircleDollarSign, CalendarCheck2, Folder } from "lucide-react"; // -> Importa as ferramentas de ícones finos e sóbrios da biblioteca Lucide sem erros de compilação.
 
 export default function Header({ abaAtiva, aoMudarAba, aoLogof }) { // -> Define e exporta o componente mestre de navegação superior recebendo os estados de aba ativa e gatilhos do maestro.
-  // -> Lista oficial dos menus que você planejou para expandir a inteligência do DOCULOC.
+  // -> CONFIGURAÇÃO DE MENUS FINTECH: Matriz mestre que pareia cada rota técnica a seu respectivo componente gráfico do Lucide.
   const menusGlobais = [ // -> Configuração estável da matriz contendo os módulos de entrada do sistema.
-    { id: "crm", nome: " CRM " }, // -> Primeiro módulo: painel de raias e planilhas comerciais de faturamento.
-    { id: "dashboard", nome: " Dashboard" }, // -> Segundo módulo: central estatística de cubos e metas.
-    { id: "financeiro", nome: " Financeiro" }, // -> NOVO MÓDULO PLUGADO: Ativa o acesso direto ao painel de fluxo de caixa, alíquotas e baixas Price.
-    { id: "tarefas", nome: " Tarefas" }, // -> Quarto módulo: cronograma de notificações processuais e retornos.
-    { id: "cadastros", nome: " Cadastros" } // -> Quinto módulo: central de parametrização de assistidos e elos humanos.
-  ]; // -> Encerra a matriz de menus globais estáveis atualizada.
+    { id: "crm", nome: "CRM", IconeComponente: Columns3 }, // -> Módulo CRM: Vincula o painel comercial de raias ao componente geométrico de 3 colunas finas.
+    { id: "dashboard", nome: "Dashboard", IconeComponente: LayoutDashboard }, // -> Módulo Dashboard: Vincula a central de BI ao ícone sóbrio de painel de indicadores.
+    { id: "financeiro", nome: "Financeiro", IconeComponente: CircleDollarSign }, // -> Módulo Financeiro: Vincula as tabelas Price ao ícone tecnológico de cifrão vazado.
+    { id: "tarefas", nome: "Tarefas", IconeComponente: CalendarCheck2 }, // -> Módulo Tasks: Vincula o cronograma de ocorrências ao ícone fino de calendário de auditoria.
+    { id: "cadastros", nome: "Cadastros", IconeComponente: Folder } // -> Módulo Cadastros: Vincula a central de PJs e elos ao ícone executivo de pasta em linhas finas.
+  ]; // -> Encerra a matriz de menus globais estáveis atualizada com suporte a componentes Lucide.
 
   return ( // -> Inicia o retorno do componente visual que desenha a barra de topo permanente no navegador.
     <header 
       style={{ 
-        width: "100%", 
+        width: "100%", // -> Força a barra superior a ocupar a largura total horizontal da página.
         backgroundColor: "#0f172a", // -> Fundo escuro corporativo idêntico ao original preservado rigidamente. 
         padding: "0 20px", // -> Ajustado o espaçamento lateral para 20px para harmonizar com a Toolbar e as grades.
         height: "52px", // -> COMPACTAÇÃO DE ESPAÇO: Reduzido de 70px para 52px para liberar área útil vertical para os devedores.
@@ -40,6 +41,7 @@ export default function Header({ abaAtiva, aoMudarAba, aoLogof }) { // -> Define
           {menusGlobais.map((menu) => { // -> Executa o laço reativo varrendo as opções de menu mapeadas na memória ram.
             // -> Checa dinamicamente se este botão é a página que o usuário está visualizando agora.
             const estaAtivo = abaAtiva === menu.id; // -> Retorna verdadeiro se o ID do loop bater com a aba ativa do maestro.
+            const Icone = menu.IconeComponente; // -> Isola dinamicamente o componente gráfico do Lucide correspondente à aba.
 
             return ( // -> Retorna o botão individual formatado para cada item de menu.
               <button
@@ -50,15 +52,19 @@ export default function Header({ abaAtiva, aoMudarAba, aoLogof }) { // -> Define
                   background: estaAtivo ? "#1e293b" : "none", // -> Destaca o botão com fundo cinza escuro se estiver ativo.
                   color: estaAtivo ? "#ffffff" : "#94a3b8", // -> MUDANÇA SÓBRIA: Texto branco sólido se ativo, ou cinza estável se inativo.
                   border: estaAtivo ? "1px solid #334155" : "1px solid transparent", // -> Borda discreta de contorno se ativo.
-                  padding: "4px 10px", // -> Preenchimento compactado para se adequar à nova altura de 52px.
+                  padding: "6px 12px", // -> Ajustado o preenchimento interno para centralização confortável de ícones finos.
                   borderRadius: "4px", // -> Arredondamento sutil de 4px padrão corporativo.
                   fontSize: "12px", // -> Fonte recalibrada para 12px ideal para leitura ágil.
                   fontWeight: "700", // -> Peso de fonte em negrito denso estruturado.
                   cursor: "pointer", // -> Mouse em formato de ponteiro de clique interativo.
-                  transition: "all 0.2s ease", // -> Efeito visual suave ao passar o mouse em cima.
+                  display: "flex", // -> Ativa flexbox interno para alinhar o ícone geométrico e o texto lado a lado.
+                  alignItems: "center", // -> Centraliza na vertical o ícone e o texto do menu.
+                  gap: "6px", // -> Cria um espaçamento técnico e elegante de 6px entre o ícone do Lucide e o texto.
+                  transition: "all 0.2s ease" // -> Efeito visual suave ao passar o mouse em cima.
                 }}
               >
-                {menu.nome} {/* -> Cospe a string contendo o emoji e o título em português do botão. */}
+                <Icone size={14} strokeWidth={2} /> {/* -> Renderiza dinamicamente o ícone do Lucide em tamanho enxuto 14 e traço fino regular de espessura 2. */}
+                <span>{menu.nome}</span> {/* -> Escreve o texto limpo da aba, agora totalmente higienizado e sem espaços manuais. */}
               </button>
             );
           })}

@@ -1,43 +1,44 @@
-import React from "react"; // -> Traw a biblioteca mestre do React para permitir a leitura e interpretação da sintaxe .jsx.
+import React from "react"; // -> Traz a biblioteca mestre do React para permitir a leitura e interpretação da sintaxe de componentes .jsx.
+import { Layers, ClipboardList, User, Archive, ArchiveRestore } from "lucide-react"; // -> Injeta as engines de ícones finos, monocromáticos e sóbrios da biblioteca Lucide sem quebras de layout.
 
-export default function CardCobranca({ card, colunaId, aoIniciarArrasto, aoDeletar, aoClicarCard }) { // -> Define e exporta a função do cartão recebendo as informações da dívida, a raia ativa e as funções de controle do mestre.
-  // -> Transforma o saldo devedor vindo do banco em um número decimal limpo para evitar quebras.
+export default function CardCobranca({ card, colunaId, aoIniciarArrasto, aoDeletar, aoClicarCard, exibirArquivados = false }) { // -> Define e exporta a função do cartão recebendo as informações da dívida, a raia ativa e as funções de controle do mestre.
+  // -> Transforma o saldo devedor vindo do banco em um número decimal limpo para evitar quebras de amostragem.
   const valorNum = parseFloat(card.valorVencido) || 0; // -> Faz a higienização do número monetário para a formatação decimal em reais.
 
-  // 🛠️ REMANEJAMENTO DE LINHAS: Função movida para cima do return para estancar o ReferenceError e registrar a fiação no topo da memória de processamento.
-  const obterCorBordaEsquerda = () => { // -> Determina reativamente o tom do friso lateral de acordo com o substatus e calha.
-    if (card.subStatus === "sucesso") return "#10b981"; // -> Friso verde-esmeralda caso o acordo tenha sido homologado com sucesso.
-    if (card.subStatus === "insucesso") return "#ef4444"; // -> Friso vermelho-alerta caso a conta tenha sido despachada para o jurídico contencioso.
-    return colunaId === "finalizado" ? "#10b981" : "#0f172a"; // -> Mantém verde se estiver na calha final comum ou Azul Escuro Profundo sóbrio para as fases anteriores.
-  }; // -> Encerra o seletor de cores da borda.
+  // 🛠️ REPOSICIONAMENTO CIRÚRGICO ANTI-FALHAS: Declarado no topo absoluto interno para estancar o ReferenceError e registrar a fiação na memória RAM antes do return.
+  const obterCorBordaEsquerda = () => { // -> Determina reativamente o tom do friso lateral de acordo com o substatus e calha do pipeline.
+    if (card.subStatus === "sucesso") return "#10b981"; // -> Friso verde-esmeralda caso o acordo tenha sido homologado com sucesso de recebíveis.
+    if (card.subStatus === "insucesso") return "#ef4444"; // -> Friso vermelho-alerta caso a conta tenha sido despachada para o contencioso judicial.
+    return colunaId === "finalizado" ? "#10b981" : "#0f172a"; // -> Mantém verde se estiver na calha final ou Azul Escuro Profundo sóbrio corporativo para as raias anteriores.
+  }; // -> Encerra o seletor de cores de friso lateral.
 
   return ( // -> Inicia o retorno do componente visual que desenha o cartão do devedor no quadro Kanban após memorizar suas diretrizes lógicas.
     <div
-      draggable // -> Habilita a física de flutuação e arrasto nativa do navegador neste elemento. 
-      onDragStart={(e) => aoIniciarArrasto(e, card.id, colunaId)} // -> Disparado no instante em que o operador pinça o card com o mouse. 
-      onClick={() => aoClicarCard(card, valorNum)} // -> Ouve quando o operador clica na superfície branca do cartão para abrir o prontuário. 
+      draggable // -> Habilita a física de flutuação e arrastar-e-soltar nativa do navegador neste elemento. 
+      onDragStart={(e) => aoIniciarArrasto(e, card.id, colunaId)} // -> Disparado no instante em que o operador segura o card com o clique do mouse. 
+      onClick={() => aoClicarCard(card, valorNum)} // -> Ouve quando o operador clica na área interna branca do cartão para expandir o prontuário 360. 
       style={{
-        background: "#ffffff", // -> Fundo branco impecável do cartão de faturamento. 
+        background: "#ffffff", // -> Fundo branco limpo impecável do cartão de faturamento. 
         padding: "12px", // -> COMPACTAÇÃO DE ESPAÇO: Reduzido de 16px para 12px para otimização tridimensional das raias do funil. 
-        borderRadius: "6px", // -> Cantos suavizados em 6px padrão executivo. 
-        boxShadow: "0 1px 3px rgba(0,0,0,0.02)", // -> Micro-sombra minimalista sutil e elegante. 
-        border: "1px solid #e2e8f0", // -> Contorno cinza claro de proteção estrutural. 
-        borderLeft: `4px solid ${obterCorBordaEsquerda()}`, // -> MUTAÇÃO LÓGICA: Aplica dinamicamente a cor da borda baseado no sucesso, insucesso ou raia ativa puxando o registro de cabeceira.
-        display: "flex", // -> Ativa o alinhamento flexível interno para divisão de blocos. 
-        flexDirection: "column", // -> Organiza as linhas de dados empilhadas de cima para baixo. 
-        gap: "6px", // -> Espaçamento interno calibrado para acomodar os novos badges técnicos sem estouro. 
-        cursor: "grab", // -> Muda o ponteiro do mouse para mão aberta indicando que o objeto é arrastável. 
+        borderRadius: "6px", // -> Cantos suavizados em 6px padrão executivo moderno. 
+        boxShadow: "0 1px 3px rgba(0,0,0,0.02)", // -> Micro-sombra minimalista sutil e elegante de profundidade. 
+        border: "1px solid #e2e8f0", // -> Contorno cinza claro de proteção estrutural de bordas. 
+        borderLeft: `4px solid ${obterCorBordaEsquerda()}`, // -> MUTAÇÃO LÓGICA CONSOLIDADA: Aplica com segurança a cor do friso, agora carregando a função sem travamentos de console.
+        display: "flex", // -> Ativa o alinhamento flexível interno para divisão harmônica de blocos. 
+        flexDirection: "column", // -> Organiza as linhas de dados empilhadas verticalmente de cima para baixo. 
+        gap: "6px", // -> Espaçamento interno calibrado para acomodar os novos badges técnicos sem estouros de margem. 
+        cursor: "grab", // -> Muda o ponteiro do mouse para mão aberta indicando que o objeto pode ser arrastado no pipeline. 
       }}
     >
       
-      {/* LINHA 1: CÓDIGO DO CLIENTE AND VALOR MONETÁRIO FORMATADO */}
+      {/* LINHA 1: CÓDIGO DO CLIENTE E VALOR MONETÁRIO FORMATADO */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}> {/* -> Alinhador horizontal das informações do topo do cartão. */}
         <span style={{ fontSize: "10px", fontWeight: "700", color: "#64748b", background: "#f1f5f9", padding: "2px 5px", borderRadius: "4px" }}> {/* -> Define a mini etiqueta cinza quadrada do código identificador. */}
           ID: {card.codigo} {/* -> Exibe o número identificador da conta judicial em caixa cinza compacta. */}
         </span> {/* -> Encerra a etiqueta do identificador. */}
         <span style={{ fontSize: "12px", fontWeight: "800", color: card.subStatus === "sucesso" ? "#10b981" : "#0f172a" }}> {/* -> Muda a cor do preço para verde se o caso for ganho. */}
           R$ {valorNum.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} {/* -> Formata o preço em formato de moeda nacional de forma reativa. */}
-        </span> {/* -> Encerra o texto do saldo financeiro. */}
+        </span> {/* -> Encerra o texto del saldo financeiro. */}
       </div> {/* -> Encerra o alinhador horizontal superior. */}
 
       {/* LINHA 2: RAZÃO SOCIAL DA EMPRESA DEVEDORA HIGIENIZADA */}
@@ -51,15 +52,17 @@ export default function CardCobranca({ card, colunaId, aoIniciarArrasto, aoDelet
           
           {/* BADGE FINANCEIRO: Mostra o fracionamento Price do acordo ativo direto no cartão */}
           {card.proposta?.qtdParcelas && card.proposta.qtdParcelas > 1 && (
-            <span style={{ fontSize: "9px", fontWeight: "800", background: "#eff6ff", color: "#1e40af", padding: "2px 6px", borderRadius: "4px", border: "1px solid #bfdbfe", textTransform: "uppercase" }}>
-              📊 Acordo: {card.proposta.qtdParcelas}x
+            <span style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "9px", fontWeight: "800", background: "#eff6ff", color: "#1e40af", padding: "2px 6px", borderRadius: "4px", border: "1px solid #bfdbfe", textTransform: "uppercase" }}>
+              <Layers size={10} strokeWidth={2.5} /> {/* -> Injeta o componente vetorial de camadas vazadas do Lucide substituindo o antigo emoji de barras coloridas. */}
+              <span>Acordo: {card.proposta.qtdParcelas}x</span>
             </span>
           )}
 
           {/* BADGE DE EXECUÇÃO: Mostra o número de ocorrências e retornos pendentes na esteira */}
           {card.tarefas && card.tarefas.length > 0 && (
-            <span style={{ fontSize: "9px", fontWeight: "800", background: "#f8fafc", color: "#475569", padding: "2px 6px", borderRadius: "4px", border: "1px solid #cbd5e1" }}>
-              📋 Ocorrências: {card.tarefas.length}
+            <span style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "9px", fontWeight: "800", background: "#f8fafc", color: "#475569", padding: "2px 6px", borderRadius: "4px", border: "1px solid #cbd5e1" }}>
+              <ClipboardList size={10} strokeWidth={2.5} /> {/* -> Injeta o componente sutil de linhas de log do Lucide no lugar da antiga prancheta escolar. */}
+              <span>Ocorrências: {card.tarefas.length}</span>
             </span>
           )}
           
@@ -68,7 +71,11 @@ export default function CardCobranca({ card, colunaId, aoIniciarArrasto, aoDelet
 
       {/* LINHA 3: OPERADOR RESPONSÁVEL E BOTÃO MINIMALISTA DE ARQUIVAMENTO INTEGRADO */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "10px", color: "#64748b", fontWeight: "600", marginTop: "2px" }}> {/* -> Alinhador horizontal do rodapé do cartão com fonte compactada em 10px. */}
-        <span style={{ color: card.subStatus ? "#94a3b8" : "#64748b" }}>👤 {card.responsavel || "Sem operador"}</span> {/* -> Exibe o crachá do preposto cobrador suavizando o tom caso o caso já esteja arquivado. */}
+        <span style={{ display: "flex", alignItems: "center", gap: "4px", color: card.subStatus ? "#94a3b8" : "#64748b" }}>
+          <User size={11} strokeWidth={2} style={{ color: "#94a3b8" }} /> {/* -> Troca a silhueta antiga pelo vetor fino e geométrico de perfil do usuário. */}
+          <span>{card.responsavel || "Sem operador"}</span> {/* -> Exibe o crachá do preposto cobrador suavizando o tom caso o caso já esteja arquivado. */}
+        </span>
+        
         <button
           type="button" // -> Especifica o tipo como botão nativo para blindagem de cliques falsos.
           onClick={(e) => {
@@ -80,14 +87,21 @@ export default function CardCobranca({ card, colunaId, aoIniciarArrasto, aoDelet
             border: "none", // -> Remove contornos antigos para visual minimalista plano. 
             color: "#94a3b8", // -> Cor cinza neutra de descanso para o ícone da pasta. 
             cursor: "pointer", // -> Transforma o mouse em mãozinha de clique interativo. 
-            fontSize: "12px", // -> Tamanho milimetricamente calibrado. 
-            fontWeight: "bold", // -> Dá destaque estrutural ao desenho. 
+            display: "flex", // -> Alinhamento flexbox interno.
+            alignItems: "center", // -> Centraliza verticalmente o vetor.
+            justifyContent: "center", // -> Centraliza horizontalmente o vetor.
             padding: 0, // -> Zera preenchimentos espúrios de botão.
+            transition: "color 0.15s ease" // -> Transição de hover sutil.
           }}
-          title="Arquivar este card (Ocultar da esteira ativa)" // -> Legenda explicativa premium removendo o medo de deleção definitiva.
+          title={exibirArquivados ? "Desarquivar este card e mandar para esteira ativa" : "Arquivar este card (Ocultar da esteira ativa)"} // -> Legenda explicativa premium contextual baseada no estado ativo da esteira.
         >
-          📁
-        </button> {/* -> MUDANÇA VISUAL COMPLETA: Injetada a pasta de arquivos em substituição à lixeira antiga. */}
+          {/* MUTAÇÃO VETORIAL REATIVA EM CARD: Substitui de forma estrita o antigo emoji de pasta colorida pelos componentes monocromáticos sóbrios do Lucide */}
+          {exibirArquivados ? (
+            <ArchiveRestore size={13} strokeWidth={2} style={{ color: "#2563eb" }} /> // -> Vetor fino de resgate/extração azul se o card estiver posicionado dentro do Limbo.
+          ) : (
+            <Archive size={13} strokeWidth={2} style={{ color: "#94a3b8" }} /> // -> Vetor fino de caixa organizadora neutra se o card estiver navegando na esteira operacional ativa.
+          )}
+        </button>
       </div> {/* -> Encerra o alinhador horizontal del rodapé do cartão. */}
     </div> // -> Encerra o contêiner estrutural do cartão do devedor.
   );

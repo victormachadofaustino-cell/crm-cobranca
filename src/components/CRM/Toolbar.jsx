@@ -1,4 +1,5 @@
-import React from "react"; // -> Traz a biblioteca mestre do React para permitir a leitura e interpretação da sintaxe .jsx.
+import React from "react"; // -> Traz a biblioteca mestre do React para permitir a leitura e interpretação da sintaxe de componentes .jsx.
+import { Kanban, TableProperties, Archive, ArchiveX, Filter, PlusCircle } from "lucide-react"; // -> Injeta as ferramentas de ícones finos, monocromáticos e ultra modernos da biblioteca Lucide.
 
 export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbrirGavetaFiltros, totalFiltrosAtivos = 0, exibirArquivados = false, aoAlternarArquivados }) { // -> Define a função mestre que desenha a barra de ferramentas recebendo os estados de controle do mestre App.jsx.
   return ( // -> Inicia o retorno do componente visual que desenha a barra de controle na tela.
@@ -21,12 +22,14 @@ export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbri
             color: visaoAtual === "kanban" ? "#ffffff" : "#475569", // -> Texto branco no fundo escuro, ou cinza ardósia corporativo no fundo claro. 
             cursor: "pointer", // -> Transforma a seta do mouse em ponteiro de clique interativo.
             display: "flex", // -> Ativa flexbox interno para centralização geométrica perfeita do ícone.
-            alignItems: "center", // -> Centraliza verticalmente o ícone interno.
-            justifyContent: "center", // -> Centraliza horizontalmente o ícone interno.
+            alignItems: "center", // -> Centraliza verticalmente o ícone interno do Lucide.
+            justifyContent: "center", // -> Centraliza horizontalmente o ícone interno do Lucide.
+            gap: "6px", // -> Cria um espaçamento técnico e elegante de 6px entre o componente gráfico e o texto.
             transition: "all 0.2s ease" // -> Transição suave de cores ao chavear os cliques.
           }}
         >
-          📊
+          <Kanban size={14} strokeWidth={2} /> {/* -> Renderiza o ícone geométrico de raias do Lucide em tamanho enxuto 14 e traço fino de espessura 2. */}
+          <span>Kanban</span> {/* -> Texto limpo e institucional substituindo o emoji antigo por extenso. */}
         </button> {/* -> Encerra o botão alternador do Kanban. */}
 
         {/* BOTÃO: VISÃO TABELA EXECUTIVA */}
@@ -43,12 +46,14 @@ export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbri
             color: visaoAtual === "tabela" ? "#ffffff" : "#475569", // -> Texto branco no fundo escuro, ou cinza ardósia corporativo no fundo claro. 
             cursor: "pointer", // -> Transforma a seta do mouse em ponteiro de clique interativo.
             display: "flex", // -> Ativa flexbox interno para centralização geométrica perfeita do ícone.
-            alignItems: "center", // -> Centraliza verticalmente o ícone interno.
-            justifyContent: "center", // -> Centraliza horizontalmente o ícone interno.
+            alignItems: "center", // -> Centraliza verticalmente o ícone interno do Lucide.
+            justifyContent: "center", // -> Centraliza horizontalmente o ícone interno do Lucide.
+            gap: "6px", // -> Cria um espaçamento técnico de 6px entre o ícone do Lucide e o texto.
             transition: "all 0.2s ease" // -> Transição suave de cores ao chavear os cliques.
           }}
         >
-          📋
+          <TableProperties size={14} strokeWidth={2} /> {/* -> Renderiza o ícone de propriedades de tabela em linhas finas vazadas. */}
+          <span>Planilha</span> {/* -> Texto executivo e sóbrio substituindo o emoji antigo por extenso. */}
         </button> {/* -> Encerra o botão alternador da planilha executiva. */}
 
       </div> {/* -> Encerra o contêiner esquerdo de alternadores de visão. */}
@@ -72,13 +77,19 @@ export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbri
             display: "flex", // -> Alinhador flexbox interno para centralização perfeita.
             alignItems: "center", // -> Centralização vertical absoluta dos elementos.
             justifyContent: "center", // -> Centralização horizontal estrita para botões baseados apenas em ícones.
+            gap: "6px", // -> Cria um espaçamento técnico de 6px entre o componente gráfico e a legenda do limbo.
             boxShadow: "0 1px 2px rgba(0,0,0,0.02)", // -> Micro-sombra protetiva de profundidade de interface.
             transition: "all 0.2s ease" // -> Transição suave de cor de preenchimento ao clicar.
           }}
           title={exibirArquivados ? "Exibindo Arquivos Mortos - Clique para voltar à esteira ativa" : "Exibindo Cards Ativos - Clique para visualizar o Limbo de Arquivados"} // -> Tooltip flutuante explicativa em português que aparece ao passar o mouse.
         >
-          {/* MUDANÇA ESTÉTICA COMPLETA: Removido todo o texto poluído. Exibe a gaveta aberta/envelope aberto se ativo, ou a pasta fechada/envelope fechado se inativo */}
-          <span>{exibirArquivados ? "📂 Limbo" : "📁 Limbo"}</span> 
+          {/* MUDANÇA ESTÉTICA COMPLETA: Removido todo o texto poluído e emojis coloridinhos antigos. */}
+          {exibirArquivados ? (
+            <ArchiveX size={14} strokeWidth={2} /> // -> Exibe a caixa organizadora com um friso fino indicando que o limbo está ativo e pode ser fechado.
+          ) : (
+            <Archive size={14} strokeWidth={2} /> // -> Exibe a caixa organizadora clássica vazada indicando acesso ao repositório do arquivo morto.
+          )}
+          <span>Limbo</span> {/* -> Legenda corporativa enxuta e elegante. */}
         </button>
 
         {/* GATILHO DA GAVETA DE FILTROS SIMULTÂNEOS */}
@@ -101,7 +112,8 @@ export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbri
           }}
           title="Filtros Avançados de Busca" // -> Dica de tela informativa para o operador.
         >
-          <span>🔍 Filtros</span> {/* -> Legenda do comando da gaveta de buscas. */}
+          <Filter size={14} strokeWidth={2} /> {/* -> Injeta o funil geométrico e fino do Lucide no lugar da antiga lupa tradicional. */}
+          <span>Filtros</span> {/* -> Legenda do comando da gaveta de buscas totalmente higienizada. */}
           {/* PÍLULA DE CONTAGEM: Só exibe o círculo numérico se houver ao menos 1 filtro ativado na esteira */}
           {totalFiltrosAtivos > 0 && (
             <span style={{ background: "#ef4444", color: "white", fontSize: "10px", padding: "1px 5px", borderRadius: "10px", fontWeight: "bold" }}>
@@ -131,7 +143,8 @@ export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbri
           }}
           title="Cadastrar Nova Cobrança no Funil" // -> Dica de tela para o acionador de inclusões de dívidas.
         >
-          <span>+ Nova Cobrança</span> {/* -> Texto mestre do comando de novas inclusões de devedores. */}
+          <PlusCircle size={14} strokeWidth={2} /> {/* -> Injeta o círculo técnico com o símbolo de adição em linhas minimalistas. */}
+          <span>Nova Cobrança</span> {/* -> Texto mestre do comando de novas inclusões de devedores, totalmente limpo. */}
         </button> {/* -> Encerra o botão de disparo de inclusões. */}
 
       </div> {/* -> Encerra o agrupador flexbox da ala direita de ferramentas. */}
