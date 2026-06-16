@@ -1,5 +1,5 @@
 import React, { useState } from "react"; // -> Traz a biblioteca mestre do React e o gancho useState para monitorar as caixas locais do CRM de faturamento.
-import { FileText, X, ArchiveRestore, Archive, ShieldAlert, Activity, User, Phone, Mail, Link, CheckCircle2, XCircle, ListTodo, History, BadgePercent, Coins, Plus, Calendar, Percent, FolderMinus, Info, Trash2 } from "lucide-react"; // -> CORREÇÃO CIRÚRGICA: Adicionado 'FolderMinus' e 'Trash2' na fiação de importações do topo para estancar travamentos e permitir a deleção física.
+import { FileText, X, ArchiveRestore, Archive, ShieldAlert, Activity, User, Phone, Mail, Link, CheckCircle2, XCircle, ListTodo, History, BadgePercent, Coins, Plus, Calendar, Percent, FolderMinus, Info, Trash2, Send } from "lucide-react"; // -> CORREÇÃO CIRÚRGICA: Adicionado 'Send' na fiação de importações do topo para criar os botões de disparo de mensagens contextuales.
 
 export default function ModalProntuario({ aberto, aoFechar, card, colunaId, contatosBase = [], aoSalvarProntuário, exibirArquivados = false, aoAlternarArquivamentoNoModal, aoExcluirCardNoModal }) { // -> RECALIBRADA PREMIUM: Recebe a nova trigger assíncrona 'aoExcluirCardNoModal' vinda diretamente do barramento mestre do App.jsx.
   if (!aberto || !card) return null; // -> TRAVA DE SEGURANÇA: Se o maestro disser que o modal não deve aparecer, retorna nulo e não consome processamento.
@@ -26,6 +26,29 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
   // -> CONTROLADOR DE NAVEGAÇÃO INTERNA DA ALA DIREITA (ABAS OPERACIONAIS)
   const [abaAtiva, setAbaAtiva] = useState("tarefas"); // -> NATIVA POR PADRÃO: Inicializa a visualização focada no painel imediato de Tarefas.
 
+  // -> ESTADOS DE EXCLUSIVIDADE DE MENUS DE DISPARO DINÂMICO (WHATSAPP E E-MAIL)
+  const [menuWhatsAberto, setMenuWhatsAberto] = useState(null); // -> Controla qual ID de contato está com o menu do WhatsApp aberto na tela.
+  const [menuEmailAberto, setMenuEmailAberto] = useState(null); // -> Controla qual ID de contato está com o menu de e-mails aberto na tela.
+
+  // -> CENTRAL ADMINISTRATIVA AUTÔNOMA: DICIONÁRIO DE TEXTOS PADRÃO POR ETAPA DO KANBAN
+  const scriptsPorEtapa = {
+    "A Iniciar": {
+      whats: "Olá, {nome_contato}! Tudo bem? Entramos em contato em nome da equipe financeira sobre a conta nº {codigo} da empresa {empresa}. Temos em aberto o saldo de R$ {valor}. Como podemos facilitar o pagamento?",
+      emailAssunto: "Aviso de Cobrança Preventiva - Conta #{codigo}",
+      emailCorpo: "Prezado(a) {nome_contato},\n\nIdentificamos em nosso sistema um saldo em aberto no valor de R$ {valor} referente à empresa {empresa}.\n\nPor favor, entre em contato para alinhar a quitação.\n\nAtenciosamente,\nEquipe Financeira."
+    },
+    "cobranca": {
+      whats: "Atenção, {nome_contato}. Notificação de cobrança ativa sobre o débito de R$ {valor} da empresa {empresa}. Solicito o envio do comprovante ou retorno urgente para evitar a quebra do fluxo comercial.",
+      emailAssunto: "⚠️ NOTIFICAÇÃO DE COBRANÇA ATIVA - CONTA #{codigo}",
+      emailCorpo: "Prezado(a) {nome_contato},\n\nInformamos que a pendência financeira de R$ {valor} vinculada à empresa {empresa} permanece em aberto.\n\nPedimos regularização imediata.\n\nCordialmente,\nSetor de Cobrança."
+    },
+    "finalizado": {
+      whats: "Olá, {nome_contato}. Consta em nosso sistema o processo de encerramento de lote para a empresa {empresa}. Precisamos definir a quitação do saldo remanescente de R$ {valor} hoje.",
+      emailAssunto: "🚨 NOTIFICAÇÃO FINAL DE DÉBITO - CONTA #{codigo}",
+      emailCorpo: "Prezado(a) {nome_contato},\n\nSeu processo foi direcionado para a etapa final de conciliação. O valor de R$ {valor} da empresa {empresa} precisa ser liquidado para baixa definitiva.\n\nFicamos no aguardo do comprovante.\n\nAtenciosamente."
+    }
+  }; // -> Configuração centralizada que você pode expandir ou alterar livremente.
+
   // -> FILTRO RELACIONAL EM TEMPO REAL: Cruza os dados e isola APENAS os contatos humanos que pertencem a este devedor específico.
   const contatosDesteDevedor = contatosBase.filter((con) => con.empresaId === card.id); // -> Varre a base e monta o mini-grid telefônico do assistido.
 
@@ -44,9 +67,9 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
   // -> INTERCEPTADOR DO SALVAMENTO DE ALTERAÇÕES EM LOTE PARA O FIRESTORE
   const tratarSalvarDados = (subStatusForçado = "") => { // -> Consolida os blocos da calculadora, notas e tarefas para despachar ao Firestore.
     let parcelasGeradas = []; // -> Inicializa a esteira estruturada vazia.
-    let propostaConsolidada = {}; // -> Inicializa o mapa técnico.
+    let propuestaConsolidada = {}; // -> Inicializa o mapa técnico.
 
-    if (regimeLiquidacao === "acordo") { // -> SE ESTIVER NO MODO RESTRITO: Dispara a montagem clássica das datas futuras da Price.
+    if (regimeLiquidacao === "acordo") { // -> SE ESTIVER NO MODO RESTRITO: Dispara a montagem clássica das datas futures da Price.
       const totalMeses = parseInt(propostaParcelas) || 1; // -> Puxa a volumetria de meses.
       for (let i = 1; i <= totalMeses; i++) { // -> Roda o laço gerando parcela por parcela.
         const dataVenc = new Date(dataPrimeiroVenc + "T00:00:00"); // -> Instancia a data base de largada.
@@ -81,7 +104,7 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
       ...card, // -> Preserva os dados imutáveis de nascimento do cartão de cobrança.
       subStatus: subStatusForçado || card.subStatus, // -> Carimba o veredito comercial (sucesso/insucesso) se houver encerramento de lote.
       planoParcelas: parcelasGeradas, // -> Injeta a matriz financeira decidida pelo operador.
-      proposta: propostaConsolidada // -> Acopla o sub-objeto Price ou de Conta Corrente correspondente.
+      proposta: propuestaConsolidada // -> Acopla o sub-objeto Price ou de Conta Corrente correspondente.
     };
 
     if (subStatusForçado) { // -> Se houver fechamento definitivo de lote da carteira.
@@ -134,6 +157,51 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
     
     setTextoTarefa(""); // -> Limpa a caixa de entrada da aba.
     alert("📌 Ação registrada na esteira! Clique em 'Salvar Prontuário' para sincronizar com a nuvem."); // -> Feedback sóbrio.
+  };
+
+  // -> TRATADOR E PARSER DO SCRIPT DINÂMICO DE TEXTOS
+  const processarTextoTags = (textoBase, nomeContato) => { // -> Localiza e substitui os marcadores de texto pelos dados da conta devedora.
+    if (!textoBase) return ""; // -> Tratamento anti-quebra se a string estiver nula.
+    return textoBase
+      .replace(/{nome_contato}/g, nomeContato) // -> Substitui a tag pelo nome humano do contato.
+      .replace(/{codigo}/g, card.codigo || "") // -> Substitui pelo número do contrato espelho.
+      .replace(/{empresa}/g, card.cliente || "") // -> Substitui pela razão social ou nome fantasia da PJ.
+      .replace(/{valor}/g, valorOriginalDívida.toLocaleString("pt-BR", { minimumFractionDigits: 2 })); // -> Injeta a dívida limpa formatada em Reais.
+  };
+
+  // -> PROCESSADOR DE DISPARO DA CALHA DO WHATSAPP (MENSAGEM AUTOMÁTICA DA ETAPA VS CONVERSA LIVRE)
+  const dispararWhatsApp = (nomeContato, telefoneCompleto, modoLivre = false) => { // -> Trata o telefone e despacha o deep link correspondente.
+    const foneLimpo = String(telefoneCompleto).replace(/\D/g, ""); // -> Expulsa parênteses e traços deixando números puros.
+    const foneFormatado = foneLimpo.startsWith("55") ? foneLimpo : `55${foneLimpo}`; // -> Garante a injeção do DDI nacional.
+    
+    let textoMensagem = ""; // -> Inicializa o container de texto.
+    if (!modoLivre) { // -> Se o clique foi no botão de mensagem padrão da etapa.
+      const scriptEtapa = scriptsPorEtapa[colunaId] || scriptsPorEtapa["A Iniciar"]; // -> Encontra o script ou joga o padrão de segurança.
+      textoMensagem = processarTextoTags(scriptEtapa.whats, nomeContato); // -> Roda o parser de variáveis humanas.
+    }
+
+    const linkFinal = `https://web.whatsapp.com/send?phone=${foneFormatado}&text=${encodeURIComponent(textoMensagem)}`; // -> Costura a URL sanitizada para o navegador.
+    window.open(linkFinal, "_blank"); // -> Abre o chat na calha do WhatsApp Web.
+    setMenuWhatsAberto(null); // -> Fecha o menu suspenso.
+  };
+
+  // -> PROCESSADOR SELETOR MULTI-CANAL DE E-MAILS (GMAIL, OUTLOOK WEB OU NATIVO)
+  const dispararEmail = (emailDestinatario, nomeContato, provedor) => { // -> Prepara o texto e monta a URL específica do provedor escolhido.
+    const scriptEtapa = scriptsPorEtapa[colunaId] || scriptsPorEtapa["A Iniciar"]; // -> Capta a matriz de texto da raia atual.
+    const assuntoStr = processarTextoTags(scriptEtapa.emailAssunto, nomeContato); // -> Processa as variáveis do cabeçalho.
+    const corpoStr = processarTextoTags(scriptEtapa.emailCorpo, nomeContato); // -> Processa as variáveis do corpo de texto.
+
+    if (provedor === "nativo") { // -> SE ESCOLHEU APP DE MÁQUINA / OUTLOOK DESKTOP
+      const linkMailto = `mailto:${emailDestinatario}?subject=${encodeURIComponent(assuntoStr)}&body=${encodeURIComponent(corpoStr)}`; // -> Cria o link clássico mailto.
+      window.location.href = linkMailto; // -> Dispara o disparador local do sistema operacional.
+    } else if (provedor === "gmail") { // -> SE ESCOLHEU GMAIL WEB CORPORATIVO
+      const urlGmail = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailDestinatario}&su=${encodeURIComponent(assuntoStr)}&body=${encodeURIComponent(corpoStr)}`; // -> Monta a URL de compose do ecossistema Google.
+      window.open(urlGmail, "_blank"); // -> Arremessa em uma nova aba do Chrome/Navegador.
+    } else if (provedor === "outlook_web") { // -> SE ESCOLHEU HOTMAIL / OUTLOOK WEB
+      const urlOutlook = `https://outlook.live.com/default.aspx?rru=compose&to=${emailDestinatario}&subject=${encodeURIComponent(assuntoStr)}&body=${encodeURIComponent(corpoStr)}`; // -> Estrutura o deeplink da Microsoft Web.
+      window.open(urlOutlook, "_blank"); // -> Abre o compose na nuvem da Microsoft.
+    }
+    setMenuEmailAberto(null); // -> Fecha o menu suspenso de e-mails.
   };
 
   return ( // -> Renderiza o super-painel tridimensional espelhado na tela.
@@ -225,7 +293,7 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
               </div>
             </div>
 
-            {/* BLOCO 2: MINI-GRID DE CONTACTOS HUMANOS DA BASE */}
+            {/* BLOCO 2: MINI-GRID DE CONTACTOS HUMANOS DA BASE COM DISPARO CONTEXTUAL INTEGRADO */}
             <div style={{ textAlign: "left" }}>
               <h4 style={{ display: "flex", alignItems: "center", gap: "6px", margin: "0 0 6px 0", fontSize: "11px", fontWeight: "800", color: "#475569", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                 <Phone size={13} strokeWidth={2.5} style={{ color: "#475569" }} />
@@ -233,21 +301,79 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
               </h4>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 {card.contato && (
-                  <div style={{ padding: "8px", background: "#ffffff", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", borderLeft: "3px solid #0f172a" }}>
+                  <div style={{ padding: "8px", background: "#ffffff", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", borderLeft: "3px solid #0f172a", position: "relative" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "5px", fontWeight: "700", color: "#0f172a" }}><User size={12} strokeWidth={2} /> <span>{card.contato.nome} (Principal)</span></div>
                     <div style={{ display: "flex", flexDirection: "column", gap: "2px", fontSize: "11px", color: "#64748b", marginTop: "4px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "4px" }}><Link size={10} strokeWidth={2} /> <span>Vínculo Fiscal: {card.contato.vinculo || "proprio"}</span></div>
                       <div style={{ display: "flex", alignItems: "center", gap: "4px" }}><Mail size={10} strokeWidth={2} /> <span>{card.contato.email}</span></div>
                     </div>
                     <div style={{ marginTop: "6px", fontWeight: "800", color: "#2563eb", display: "flex", alignItems: "center", gap: "4px" }}><Phone size={11} strokeWidth={2.5} /> <span>{card.contato.telefone}</span></div>
+                    
+                    {/* ⚡ DISPARADORES CONTEXTUAIS DA MESA PRINCIPAL COM MENU SUSPENSO */}
+                    <div style={{ display: "flex", gap: "6px", marginTop: "8px", borderTop: "1px dashed #e2e8f0", paddingTop: "8px" }}>
+                      <div style={{ flex: 1, position: "relative" }}>
+                        <button type="button" onClick={() => setMenuWhatsAberto(menuWhatsAberto === "principal" ? null : "principal")} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px", background: "#25d366", color: "white", border: "none", padding: "4px 8px", borderRadius: "4px", fontSize: "10px", fontWeight: "700", cursor: "pointer" }} title="Opções de disparo de mensagem via WhatsApp">
+                          <Send size={10} strokeWidth={2.5} /> <span>WhatsApp</span>
+                        </button>
+                        {menuWhatsAberto === "principal" && (
+                          <div style={{ position: "absolute", bottom: "100%", left: 0, background: "white", border: "1px solid #cbd5e1", borderRadius: "4px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", zIndex: 7000, minWidth: "160px", marginBottom: "4px" }}>
+                            <button type="button" onClick={() => dispararWhatsApp(card.contato.nome, card.contato.telefone, false)} style={{ display: "block", width: "100%", padding: "6px 10px", border: "none", background: "none", textAlign: "left", fontSize: "11px", fontWeight: "600", color: "#1e293b", cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.background = "#f1f5f9"} onMouseLeave={(e) => e.currentTarget.style.background = "none"}>⚡ Script da Etapa</button>
+                            <button type="button" onClick={() => dispararWhatsApp(card.contato.nome, card.contato.telefone, true)} style={{ display: "block", width: "100%", padding: "6px 10px", border: "none", background: "none", textAlign: "left", fontSize: "11px", fontWeight: "600", color: "#1e293b", cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.background = "#f1f5f9"} onMouseLeave={(e) => e.currentTarget.style.background = "none"}>💬 Conversa Livre</button>
+                          </div>
+                        )}
+                      </div>
+
+                      <div style={{ flex: 1, position: "relative" }}>
+                        <button type="button" onClick={() => setMenuEmailAberto(menuEmailAberto === "principal" ? null : "principal")} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px", background: "#2563eb", color: "white", border: "none", padding: "4px 8px", borderRadius: "4px", fontSize: "10px", fontWeight: "700", cursor: "pointer" }} title="Escolher plataforma de disparo de E-mail">
+                          <Mail size={10} strokeWidth={2.5} /> <span>E-mail</span>
+                        </button>
+                        {menuEmailAberto === "principal" && (
+                          <div style={{ position: "absolute", bottom: "100%", left: 0, background: "white", border: "1px solid #cbd5e1", borderRadius: "4px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", zIndex: 7000, minWidth: "150px", marginBottom: "4px" }}>
+                            <button type="button" onClick={() => dispararEmail(card.contato.email, card.contato.nome, "gmail")} style={{ display: "block", width: "100%", padding: "6px 10px", border: "none", background: "none", textAlign: "left", fontSize: "11px", fontWeight: "600", color: "#1e293b", cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.background = "#f1f5f9"} onMouseLeave={(e) => e.currentTarget.style.background = "none"}>🌐 Web Gmail</button>
+                            <button type="button" onClick={() => dispararEmail(card.contato.email, card.contato.nome, "outlook_web")} style={{ display: "block", width: "100%", padding: "6px 10px", border: "none", background: "none", textAlign: "left", fontSize: "11px", fontWeight: "600", color: "#1e293b", cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.background = "#f1f5f9"} onMouseLeave={(e) => e.currentTarget.style.background = "none"}>🔵 Outlook Web</button>
+                            <button type="button" onClick={() => dispararEmail(card.contato.email, card.contato.nome, "nativo")} style={{ display: "block", width: "100%", padding: "6px 10px", border: "none", background: "none", textAlign: "left", fontSize: "11px", fontWeight: "600", color: "#1e293b", cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.background = "#f1f5f9"} onMouseLeave={(e) => e.currentTarget.style.background = "none"}>🏢 App Nativo / Outlook</button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 )}
                 {contatosDesteDevedor.map((con) => (
-                  <div key={con.id} style={{ padding: "8px", background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "6px", fontSize: "11px" }}>
+                  <div key={con.id} style={{ padding: "8px", background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "6px", fontSize: "11px", position: "relative" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "5px", fontWeight: "700", color: "#334155" }}><User size={11} strokeWidth={2} /> <span>{con.nome}</span></div>
                     <div style={{ display: "flex", flexDirection: "column", gap: "2px", color: "#64748b", marginTop: "4px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "4px" }}><Link size={10} strokeWidth={2} /> <span>Papel: {con.tipoVinculo}</span></div>
                       <div style={{ display: "flex", alignItems: "center", gap: "4px", color: "#2563eb", fontWeight: "bold" }}><Phone size={10} strokeWidth={2} /> <span>{con.telefone}</span></div>
+                    </div>
+
+                    {/* ⚡ DISPARADORES CONTEXTUAIS DA COLAÇÃO SECUNDÁRIA DE CONTATOS */}
+                    <div style={{ display: "flex", gap: "6px", marginTop: "8px", borderTop: "1px dashed #e2e8f0", paddingTop: "6px" }}>
+                      <div style={{ flex: 1, position: "relative" }}>
+                        <button type="button" onClick={() => setMenuWhatsAberto(menuWhatsAberto === con.id ? null : con.id)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px", background: "#25d366", color: "white", border: "none", padding: "3px 6px", borderRadius: "4px", fontSize: "10px", fontWeight: "700", cursor: "pointer" }} title="Opções de disparo de mensagem via WhatsApp">
+                          <Send size={10} strokeWidth={2.5} /> <span>WhatsApp</span>
+                        </button>
+                        {menuWhatsAberto === con.id && (
+                          <div style={{ position: "absolute", bottom: "100%", left: 0, background: "white", border: "1px solid #cbd5e1", borderRadius: "4px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", zIndex: 7000, minWidth: "140px", marginBottom: "4px" }}>
+                            <button type="button" onClick={() => dispararWhatsApp(con.nome, con.telefone, false)} style={{ display: "block", width: "100%", padding: "5px 8px", border: "none", background: "none", textAlign: "left", fontSize: "10px", fontWeight: "600", color: "#1e293b", cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.background = "#f1f5f9"} onMouseLeave={(e) => e.currentTarget.style.background = "none"}>⚡ Script da Etapa</button>
+                            <button type="button" onClick={() => dispararWhatsApp(con.nome, con.telefone, true)} style={{ display: "block", width: "100%", padding: "5px 8px", border: "none", background: "none", textAlign: "left", fontSize: "10px", fontWeight: "600", color: "#1e293b", cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.background = "#f1f5f9"} onMouseLeave={(e) => e.currentTarget.style.background = "none"}>💬 Conversa Livre</button>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {con.email && (
+                        <div style={{ flex: 1, position: "relative" }}>
+                          <button type="button" onClick={() => setMenuEmailAberto(menuEmailAberto === con.id ? null : con.id)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px", background: "#2563eb", color: "white", border: "none", padding: "3px 6px", borderRadius: "4px", fontSize: "10px", fontWeight: "700", cursor: "pointer" }} title="Escolher plataforma de disparo de E-mail">
+                            <Mail size={10} strokeWidth={2.5} /> <span>E-mail</span>
+                          </button>
+                          {menuEmailAberto === con.id && (
+                            <div style={{ position: "absolute", bottom: "100%", left: 0, background: "white", border: "1px solid #cbd5e1", borderRadius: "4px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", zIndex: 7000, minWidth: "140px", marginBottom: "4px" }}>
+                              <button type="button" onClick={() => dispararEmail(con.email, con.nome, "gmail")} style={{ display: "block", width: "100%", padding: "5px 8px", border: "none", background: "none", textAlign: "left", fontSize: "10px", fontWeight: "600", color: "#1e293b", cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.background = "#f1f5f9"} onMouseLeave={(e) => e.currentTarget.style.background = "none"}>🌐 Web Gmail</button>
+                              <button type="button" onClick={() => dispararEmail(con.email, con.nome, "outlook_web")} style={{ display: "block", width: "100%", padding: "5px 8px", border: "none", background: "none", textAlign: "left", fontSize: "10px", fontWeight: "600", color: "#1e293b", cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.background = "#f1f5f9"} onMouseLeave={(e) => e.currentTarget.style.background = "none"}>🔵 Outlook Web</button>
+                              <button type="button" onClick={() => dispararEmail(con.email, con.nome, "nativo")} style={{ display: "block", width: "100%", padding: "5px 8px", border: "none", background: "none", textAlign: "left", fontSize: "10px", fontWeight: "600", color: "#1e293b", cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.background = "#f1f5f9"} onMouseLeave={(e) => e.currentTarget.style.background = "none"}>🏢 App Nativo</button>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -308,7 +434,7 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
                     {(card.tarefas || []).length === 0 ? (
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", fontSize: "11px", color: "#94a3b8", padding: "12px", background: "#f8fafc", borderRadius: "6px", fontStyle: "italic" }}>
                         <FolderMinus size={13} strokeWidth={2} /> {/* -> Sincronizado reativamente na RAM. */}
-                        <span>Nenhuma ação pendente fixada na carcaça deste devedor.</span>
+                        <span>Nenhuma action pendente fixada na carcaça deste devedor.</span>
                       </div>
                     ) : (
                       card.tarefas.map((tar, idx) => (

@@ -55,7 +55,8 @@ export default function ModuloFunil() { // -> Define e exporta a função mestre
       return; // -> Aborta a descida.
     }
 
-    const novaEtapaObjeto = { id: idLimpo, nome: nomeLimpo, categoria: novaCategoria }; // -> Estrutura o novo mapa simétrico compatível com o ClickUp.
+    // -> Mantém a estrutura limpa inserindo strings vazias para os templates novos não virem nulos
+    const novaEtapaObjeto = { id: idLimpo, nome: nomeLimpo, categoria: novaCategoria, templateWhats: "", templateEmail: "" }; // -> Estrutura o novo mapa simétrico compatível com o ClickUp incluindo os campos de mensageria vazios.
     const novoArrayConsolidado = [...etapas, novaEtapaObjeto]; // -> Cria uma nova lista fundindo as etapas antigas com o novo membro.
 
     try { // -> Escudo de proteção para disparar a gravação internacional da Google.
@@ -77,7 +78,8 @@ export default function ModuloFunil() { // -> Define e exporta a função mestre
 
     const listaModificada = etapas.map((etapa) => { // -> Transforma o lote inteiro na RAM local alterando cirurgicamente o ID sob modificação.
       if (typeof etapa === "object" && etapa !== null && etapa.id === idTarget) { // -> Encontra o alvo da alteração.
-        return { ...etapa, nome: nomeHigienizado, categoria: editCategoria }; // -> Insere o novo nome e a nova raia do ClickUp mantendo o ID fixo.
+        // -> PROTEÇÃO: O uso do '...etapa' garante que os templates salvos anteriormente não sumam ao mudar nome ou categoria.
+        return { ...etapa, nome: nomeHigienizado, categoria: editCategoria }; // -> Insere o novo nome e a nova raia do ClickUp preservando as configurações de mensagens existentes.
       }
       return etapa; // -> Mantém as outras linhas intactas.
     });
@@ -110,7 +112,7 @@ export default function ModuloFunil() { // -> Define e exporta a função mestre
 
     try { // -> Arremessa a nova lista reordenada de uma vez para o cofre da Google.
       const docRef = doc(db, "config_funil", "padrao"); // -> Localiza o endereço físico fixo.
-      await updateDoc(docRef, { etapas: arrayRascunhoRAM }); // -> Sobrescreve a sequência indexada salvando a nova ordem.
+      await updateDoc(docRef, { etapas: arrayRascunhoRAM }); // -> Sobrescreve a sequência indexada salvando a nova ordem (preservando o conteúdo interno de cada etapa).
     } catch (err) {
       alert("Falha de comunicação ao sincronizar prioridade de índices!"); // -> Proteção contra perdas de sinal.
     }
@@ -122,8 +124,8 @@ export default function ModuloFunil() { // -> Define e exporta a função mestre
 
     const novoArrayFiltrado = etapas.filter(etapa => typeof etapa === "object" && etapa !== null ? etapa.id !== idEtapa : true); // -> Expurga o item selecionado filtrando a lista em memória RAM.
 
-    try { // -> Tenta a remoção física no servidor.
-      const docRef = doc(db, "config_funil", "padrao"); // -> Localiza a rota física estável.
+    try { // -> Tenta a limpeza física no servidor.
+      const docRef = doc(db, "config_funil", "padrao"); // -> Localiza la rota física estável.
       await updateDoc(docRef, { etapas: novoArrayFiltrado }); // -> Atualiza o nó na nuvem refletindo o descarte imediatamente no Kanban.
       alert("🟩 EXCLUSÃO CONCLUÍDA!\nA coluna foi retirada das grades do sistema."); // -> Alerta o sucesso.
     } catch (err) {
@@ -140,7 +142,7 @@ export default function ModuloFunil() { // -> Define e exporta a função mestre
       
       {/* 🧭 CABEÇALHO DA INTERFACE PREMIUM */}
       <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "24px", borderBottom: "1px solid #e2e8f0", paddingBottom: "16px" }}>
-        <Settings size={20} strokeWidth={2.5} style={{ color: "#0f172a" }} /> {/* -> Troca o emoji de engrenagem pelo componente vetorial fino do Lucide. */}
+        <Settings size={20} strokeWidth={2.5} style={{ color: "#0f172a" }} /> {/* -> Componente vetorial fino do Lucide. */}
         <div>
           <h3 style={{ margin: 0, fontSize: "14px", fontWeight: "900", color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.8px" }}>Configuração de Etapas do Funil (CRM)</h3> {/* -> Título formalizado limpo. */}
           <p style={{ margin: "4px 0 0 0", fontSize: "12px", color: "#64748b", lineHeight: "1.5" }}>Configure, reordene e mude as regras das raias verticais do seu funil ClickUp conectadas à automação NoSQL.</p>
@@ -166,7 +168,7 @@ export default function ModuloFunil() { // -> Define e exporta a função mestre
           </select>
         </div>
         <button type="submit" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", background: "#0f172a", color: "#ffffff", border: "none", padding: "10px 14px", borderRadius: "6px", fontSize: "11px", fontWeight: "800", cursor: "pointer", textTransform: "uppercase", letterSpacing: "0.5px", height: "37px", transition: "background 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#1e293b"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#0f172a"}>
-          <PlusCircle size={14} strokeWidth={2.5} /> {/* -> Injeta o componente sutil de adição linear do Lucide removendo o antigo texto bruto (+). */}
+          <PlusCircle size={14} strokeWidth={2.5} /> {/* -> Componente sutil de adição linear do Lucide. */}
           <span>Inserir</span>
         </button>
       </form>
@@ -188,7 +190,7 @@ export default function ModuloFunil() { // -> Define e exporta a função mestre
               <tr>
                 <td colSpan="5" style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontStyle: "italic" }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
-                    <FolderMinus size={14} strokeWidth={2} /> {/* -> Substitui o antigo emoji pelo componente vetorial fino do Lucide. */}
+                    <FolderMinus size={14} strokeWidth={2} /> {/* -> Componente vetorial fino do Lucide. */}
                     <span>Nenhuma raia configurada no documento padrão de funil.</span>
                   </div>
                 </td>
@@ -197,16 +199,16 @@ export default function ModuloFunil() { // -> Define e exporta a função mestre
               etapas.map((etapa, idx) => typeof etapa === "object" && etapa !== null ? ( 
                 <tr key={etapa.id} style={{ borderBottom: "1px solid #f1f5f9", backgroundColor: idEtapaEmEdicao === etapa.id ? "#fff7ed" : "transparent", transition: "background 0.2s" }}>
                   
-                  {/* 🛠 * ALINHAMENTO DO BLOCO DE CONTROLE DE ÍNDICES DE SEQUENCIA */}
+                  {/* 🛠 ALINHAMENTO DO BLOCO DE CONTROLE DE ÍNDICES DE SEQUENCIA */}
                   <td style={{ padding: "12px 16px", verticalAlign: "middle" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                       <span style={{ fontSize: "10px", background: "#f1f5f9", color: "#475569", padding: "2px 6px", borderRadius: "4px", fontWeight: "bold", fontFamily: "monospace" }}>#{idx + 1}</span>
                       <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
                         <button type="button" disabled={idx === 0} onClick={() => lidarMoverEtapaLote(idx, "subir")} style={{ background: "none", border: "none", cursor: idx === 0 ? "not-allowed" : "pointer", color: "#64748b", display: "flex", alignItems: "center", justifyContent: "center", padding: "2px", opacity: idx === 0 ? 0.15 : 0.7, transition: "color 0.15s" }} onMouseEnter={(e) => !idx && (e.currentTarget.style.color = "#2563eb")} onMouseLeave={(e) => !idx && (e.currentTarget.style.color = "#64748b")} title="Subir prioridade (Mover para esquerda no Kanban)">
-                          <ChevronUp size={13} strokeWidth={2.5} /> {/* -> Substitui o antigo caractere de triângulo em texto pelo componente vetorial fino ChevronUp. */}
+                          <ChevronUp size={13} strokeWidth={2.5} /> {/* -> Componente vetorial fino ChevronUp. */}
                         </button>
                         <button type="button" disabled={idx === etapas.length - 1} onClick={() => lidarMoverEtapaLote(idx, "descer")} style={{ background: "none", border: "none", cursor: idx === etapas.length - 1 ? "not-allowed" : "pointer", color: "#64748b", display: "flex", alignItems: "center", justifyContent: "center", padding: "2px", opacity: idx === etapas.length - 1 ? 0.15 : 0.7, transition: "color 0.15s" }} onMouseEnter={(e) => idx !== etapas.length - 1 && (e.currentTarget.style.color = "#2563eb")} onMouseLeave={(e) => idx !== etapas.length - 1 && (e.currentTarget.style.color = "#64748b")} title="Descer prioridade (Mover para direita no Kanban)">
-                          <ChevronDown size={13} strokeWidth={2.5} /> {/* -> Substitui o antigo caractere de triângulo em texto pelo componente vetorial fino ChevronDown. */}
+                          <ChevronDown size={13} strokeWidth={2.5} /> {/* -> Componente vetorial fino ChevronDown. */}
                         </button>
                       </div>
                     </div>
@@ -218,7 +220,7 @@ export default function ModuloFunil() { // -> Define e exporta a função mestre
                       <input type="text" value={editNome} onChange={(e) => setEditNome(e.target.value)} style={{ padding: "5px 10px", border: "1px solid #cbd5e1", borderRadius: "4px", fontSize: "12px", width: "90%", fontWeight: "700", color: "#0f172a", backgroundColor: "#ffffff", outline: "none" }} />
                     ) : (
                       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                        <Kanban size={13} strokeWidth={2} style={{ color: "#64748b" }} /> {/* -> Troca o emoji de gráfico antigo pelo vetor fino monocromático Kanban do Lucide. */}
+                        <Kanban size={13} strokeWidth={2} style={{ color: "#64748b" }} /> {/* -> Vetor fino monocromático Kanban do Lucide. */}
                         <span style={{ color: "#0f172a", fontWeight: "700", fontSize: "13px" }}>{etapa.nome}</span>
                       </div>
                     )}
@@ -237,7 +239,7 @@ export default function ModuloFunil() { // -> Define e exporta a função mestre
                       </select>
                     ) : (
                       <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "10px", background: etapa.categoria === "feito" ? "#eff6ff" : etapa.categoria === "final" ? "#f0fdf4" : "#f1f5f9", color: etapa.categoria === "feito" ? "#1e40af" : etapa.categoria === "final" ? "#065f46" : "#475569", padding: "3px 8px", borderRadius: "4px", fontWeight: "800", border: `1px solid ${etapa.categoria === "feito" ? "#bfdbfe" : etapa.categoria === "final" ? "#bbf7d0" : "#e2e8f0"}`, letterSpacing: "0.5px" }}>
-                        <ShieldCheck size={11} strokeWidth={2.5} /> {/* -> Injeta o componente sutil de escudo de governança no lugar da antiga pasta emoji. */}
+                        <ShieldCheck size={11} strokeWidth={2.5} /> {/* -> Componente sutil de escudo de governança do Lucide. */}
                         <span>{etapa.categoria ? etapa.categoria.toUpperCase() : "N/D"}</span>
                       </span>
                     )}
@@ -246,21 +248,21 @@ export default function ModuloFunil() { // -> Define e exporta a função mestre
                   {/* COLUNA 5: GATILHOS DE COMANDOS SELETIVOS ALINHADOS EM TOOLBELT */}
                   <td style={{ padding: "12px 16px", verticalAlign: "middle", textAlign: "center" }}>
                     {idEtapaEmEdicao === etapa.id ? ( 
-                      <div style={{ display: "flex", gap: "12px", shortcuts: "center", justifyContent: "center", alignItems: "center" }}>
+                      <div style={{ display: "flex", gap: "12px", justifyContent: "center", alignItems: "center" }}>
                         <button type="button" onClick={() => lidarSalvarEdicaoEtapa(etapa.id)} title="Gravar alterações no Firebase" style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: "4px", color: "#10b981", transition: "opacity 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.opacity = 0.7} onMouseLeave={(e) => e.currentTarget.style.opacity = 1}>
-                          <Check size={15} strokeWidth={2.5} /> {/* -> Substitui o disquete antigo pelo componente de visto fino em linhas vazadas do Lucide. */}
+                          <Check size={15} strokeWidth={2.5} /> {/* -> Componente de visto fino em linhas vazadas do Lucide. */}
                         </button>
                         <button type="button" onClick={() => setIdEtapaEmEdicao(null)} title="Cancelar e restaurar histórico" style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: "4px", color: "#64748b", transition: "opacity 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.opacity = 0.7} onMouseLeave={(e) => e.currentTarget.style.opacity = 1}>
-                          <X size={15} strokeWidth={2.5} /> {/* -> Substitui o antigo emoji de cruz vermelha pelo componente X em linhas finas monocromáticas. */}
+                          <X size={15} strokeWidth={2.5} /> {/* -> Componente X em linhas finas monocromáticas do Lucide. */}
                         </button>
                       </div>
                     ) : ( 
                       <div style={{ display: "flex", gap: "12px", justifyContent: "center", alignItems: "center" }}>
                         <button type="button" onClick={() => prepararModoEdicao(etapa)} title="Editar nome ou categoria core" style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: "4px", color: "#94a3b8", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#2563eb"} onMouseLeave={(e) => e.currentTarget.style.color = "#94a3b8"}>
-                          <SquarePen size={14} strokeWidth={2} /> {/* -> Injeta a caneta de edição em linhas finas outline eliminando o antigo emoji de lápis. */}
+                          <SquarePen size={14} strokeWidth={2} /> {/* -> Caneta de edição em linhas finas outline do Lucide. */}
                         </button>
                         <button type="button" onClick={() => lidarDeletarEtapa(etapa.id, etapa.nome)} title="Excluir esta etapa permanentemente do funil" style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: "4px", color: "#94a3b8", transition: "color 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.color = "#ef4444"} onMouseLeave={(e) => e.currentTarget.style.color = "#94a3b8"}>
-                          <Trash2 size={14} strokeWidth={2} /> {/* -> Injeta a lixeira geométrica fina vazada eliminando o antigo emoji colorido. */}
+                          <Trash2 size={14} strokeWidth={2} /> {/* -> Lixeira geométrica fina vazada do Lucide. */}
                         </button>
                       </div>
                     )}
