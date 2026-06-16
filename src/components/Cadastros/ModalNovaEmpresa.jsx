@@ -31,7 +31,7 @@ export default function ModalNovaEmpresa({ aberto, aoFechar, tratarCadastroEmpre
           {/* CAMPO: RAZÃO SOCIAL */}
           <div style={{ display: "flex", flexDirection: "column" }}> {/* -> Alinhador vertical em lote para o campo de nome corporativo. */}
             <label style={{ fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px" }}>RAZÃO SOCIAL *</label> {/* -> Rótulo em caixa alta indicando campo rigidamente obrigatório. */}
-            <input type="text" required placeholder="Ex: Alfa Transportes LTDA" value={empNome} onChange={(e) => setEmpNome(e.target.value)} style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", color: "#0f172a" }} /> {/* -> Entrada de texto livre para digitação del nome oficial da empresa cliente. */}
+            <input type="text" required placeholder="Ex: Alfa Transportes LTDA" value={empNome} onChange={(e) => setEmpNome(e.target.value)} style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", color: "#0f172a" }} /> {/* -> Entrada de texto livre para digitação do nome oficial da empresa cliente. */}
           </div> {/* -> Fim do campo de razão social. */}
 
           {/* LINHA DUPLA RECONFIGURADA: CNPJ E SELECT DINÂMICO DE SEGMENTOS */}
@@ -75,7 +75,7 @@ export default function ModalNovaEmpresa({ aberto, aoFechar, tratarCadastroEmpre
             <button type="submit" style={{ background: "#0f172a", color: "#ffffff", border: "none", padding: "6px 14px", borderRadius: "6px", fontWeight: "700", cursor: "pointer", fontSize: "12px" }}>Gravar Registro</button> {/* -> Botão mestre de salvaguarda sólido Azul Escuro Profundo. */}
           </div> {/* -> Encerra o agrupador de botões do rodapé. */}
 
-        </form> {/* -> Encerra a tag estrutural del formulário de inserções. */}
+        </form> {/* -> Encerra a tag estrutural do formulário de inserções. */}
       </div> {/* -> Encerra o cartão interno branco do modal. */}
     </div> // -> Encerra o contêiner flutuante mestre de isolamento de tela.
   );

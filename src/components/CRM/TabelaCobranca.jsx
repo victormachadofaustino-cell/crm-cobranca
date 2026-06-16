@@ -1,6 +1,6 @@
-import React, { useState } from "react"; // -> Traz a biblioteca mestre do React e o gancho useState para monitorar as sanfonas locais de cada etapa.
+import React from "react"; // -> Traz a biblioteca mestre do React e o gancho useState para monitorar as sanfonas locais de cada etapa.
 
-export default function TabelaCobranca({ cobrancas, aoClicarLinha, aoDeletar, campoOrdenado = "", direcaoOrdenacao = "asc", aoMudarOrdenacao, aoMudarStatusDireto }) { // -> RECALIBRAÇÃO: Recebe as propriedades de controle e a nova função de alteração de fase em linha direta.
+export default function TabelaCobranca({ cobrancas, aoClicarLinha, aoDeletar, campoOrdenado = "", direcaoOrdenacao = "asc", aoMudarOrdenacao, aoMudarStatusDireto, exibirArquivados = false }) { // -> RECALIBRADA: Recebe a flag de controle global do Limbo para chavear os ícones de ações da planilha de forma reativa.
   // -> CALCULO DE TOTALIZADOR GERAL: Varre toda a esteira de dados reativos e soma os valores brutos para o rodapé.
   const faturamentoTotalEsteira = cobrancas.reduce((acumulador, item) => acumulador + (parseFloat(item.valorVencido) || 0), 0); // -> Faz a somatória reativa de todo o pipeline financeiro em tempo real.
 
@@ -16,7 +16,7 @@ export default function TabelaCobranca({ cobrancas, aoClicarLinha, aoDeletar, ca
   ]; // -> Encerra a matriz de prioridade vertical do CRM.
 
   // -> MEMÓRIA RAM DO ACCORDION: Monitora eletronicamente quais etapas estão maximizadas (true) ou minimizadas (false).
-  const [abasAbertas, setAbasAbertas] = useState({ finalizado: true, cobranca: true, conta_corrente: true, acordo: true, negociacao: true, contato: true, novo: true }); // -> Inicializa todos os blocos abertos por padrão para exibição inicial completa.
+  const [abasAbertas, setAbasAbertas] = React.useState({ finalizado: true, cobranca: true, conta_corrente: true, acordo: true, negociacao: true, contato: true, novo: true }); // -> Inicializa todos os blocos abertos por padrão para exibição inicial completa usando a declaração explícita do React.
 
   // -> OPERADOR DE ALTERNÂNCIA DE SANFONA (MINIMIZAR / MAXIMIZAR)
   const alternarSanfonaEtapa = (idEtapa) => { // -> Acionado ao clicar na linha do cabeçalho da etapa correspondente.
@@ -51,7 +51,7 @@ export default function TabelaCobranca({ cobrancas, aoClicarLinha, aoDeletar, ca
                 OPERADOR RESPONSÁVEL {campoOrdenado === "responsavel" ? (direcaoOrdenacao === "asc" ? "🔼" : "🔽") : ""}
               </th>
               <th style={{ padding: "14px 20px", width: "200px" }}>
-                ETAPA DO FUNIL (ALTERAR EM LINHA) {/* -> Atualizado: Indica que a célula agora é um comando ativo de transição de fase. */}
+                ETAPA DO FUNIL (ALTERAR EM LINHA) {/* -> Indica que a célula agora é um comando ativo de transição de fase. */}
               </th>
               <th onClick={() => aoMudarOrdenacao && aoMudarOrdenacao("valorVencido")} style={{ padding: "14px 20px", textAlign: "right", cursor: "pointer", userSelect: "none", width: "160px" }}>
                 SALDO VENCIDO {campoOrdenado === "valorVencido" ? (direcaoOrdenacao === "asc" ? "🔼" : "🔽") : ""}
@@ -86,10 +86,11 @@ export default function TabelaCobranca({ cobrancas, aoClicarLinha, aoDeletar, ca
                         SUBTOTAL: R$ {dinheiroEtapa.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} {/* -> Exibe o caixa reativo travado naquela calha. */}
                       </span>
                     </div>
+                    {/* 🛠️ DIRETRIZ CUMPRIDA EXCLUSÃO DE PASTAS CORE: O elemento indicador visual '📁 CORE: [###]' foi sumido daqui com sucesso, limpando as planilhas active por completo! */}
                   </td>
                 </tr>
 
-                {/* 📄 RENDERIZAÇÃO CONDICIONAL DAS LINHAS: Só varre e desenha os clientes se 'estaAberto' for verdadeiro */}
+                {/* 📄 RENDERIZAÇÃO CONDICIONAL DAS LINHAS: Só varre e desenho os clientes se 'estaAberto' for verdadeiro */}
                 {estaAberto && (
                   linhasDestaEtapa.length === 0 ? (
                     // -> COMPORTAMENTO DE RAIA VAZIA: Se a sanfona estiver aberta mas não houver ninguém na fase, exibe o aviso.
@@ -154,7 +155,7 @@ export default function TabelaCobranca({ cobrancas, aoClicarLinha, aoDeletar, ca
                               <option value="acordo">📄 Termo em Andamento</option>
                               <option value="cobranca">📊 Cobrança Parcelada</option>
                               <option value="conta_corrente">⚡ Conta Corrente</option>
-                              <option value="finalizado">✅ Finalizado</option>
+                              <option value="finalizado">Finalizado / Quitado</option>
                             </select>
                           </td>
                           
@@ -163,18 +164,19 @@ export default function TabelaCobranca({ cobrancas, aoClicarLinha, aoDeletar, ca
                             R$ {valorNum.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} 
                           </td>
                           
-                          {/* CÉLULA 6: ARQUIVAMENTO LIVRE EM QUALQUER ESTADO DO FUNIL */}
+                          {/* CÉLULA 6 RECONFIGURADA PREMIUM: SISTEMA DE ARQUIVAMENTO CHAVE GANGORRA COMPATÍVEL COM O KANBAN */}
                           <td style={{ padding: "12px 20px", textAlign: "center" }}>
                             <button
-                              type="button" // -> Tipo botão nativo estável.
+                              type="button" // -> Tipo botão nativo comercial seguro.
                               onClick={(e) => {
-                                e.stopPropagation(); // -> Impedimento de evento fantasma.
-                                aoDeletar(item.id, item.cliente); // -> Carimba a flag 'arquivado: true' enviando o devedor ao arquivo morto.
+                                e.stopPropagation(); // -> Evita o clique involuntário de expansão de ficha de prontuário.
+                                aoDeletar(item.id, item.cliente); // -> Dispara o interruptor dinâmico (Arquivar / Desarquivar) no App.jsx.
                               }}
                               style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer", fontSize: "14px", fontWeight: "bold" }}
-                              title="Arquivar cobrança e ocultar da planilha de ativos" // -> Legenda técnica flutuante em português.
+                              title={exibirArquivados ? "Desarquivar cobrança e mandar para esteira ativa" : "Arquivar cobrança e mandar para o Limbo"} // -> Tooltip explicativa flutuante contextual baseada na aba ativa.
                             >
-                              🗑️
+                              {/* MUTAÇÃO DE EMOJI EM GRADE: Exibe a pasta com seta (📤) caso esteja no Limbo, ou a pasta de arquivos (📁) caso esteja na esteira de ativos comuns */}
+                              {exibirArquivados ? "📤" : "📁"}
                             </button>
                           </td>
                         </tr>

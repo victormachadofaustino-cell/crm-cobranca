@@ -1,6 +1,6 @@
 import React from "react"; // -> Traz a biblioteca mestre do React para permitir a leitura e interpretação da sintaxe .jsx.
 
-export default function ModuloDashboard({ cobrancas = [] }) { // -> Declara e exporta o componente mestre de inteligência analítica recebendo o array vivo do Firebase.
+export default function ModuloDashboard({ cobrancas = [], etapasFunilExternas = [] }) { // 🛠️ RECALIBRAÇÃO ANALÍTICA: Abre o barramento para receber a lista viva de etapas customizadas vindas do cofre da nuvem.
 
   // =========================================================================================
   // 📊 ENGINE MATEMÁTICA: Extração de Indicadores de Caixa em Tempo Real (NoSQL RAM)
@@ -17,20 +17,23 @@ export default function ModuloDashboard({ cobrancas = [] }) { // -> Declara e ex
   const totalEmpresasAtivas = cobrancas.filter(item => !item.arquivado).length; // -> Conta quantos CNPJs estão trafegando nas raias sem contar o arquivo morto.
 
   // =========================================================================================
-  // 📈 MOTOR DE PROPORÇÃO VOLUMÉTRICA (GRÁFICO DE BARRAS NATIVO)
+  // 📈 MOTOR DE PROPORÇÃO VOLUMÉTRICA PARMETRIZÁVEL (GRÁFICO DE BARRAS DINÂMICO)
   // =========================================================================================
-  // -> Agrupa os valores exatos por cada uma das etapas do usuário para alimentar as colunas horizontais
-  const dadosStatus = {
-    novo: cobrancas.filter(item => (item.status || "novo") === "novo").reduce((acc, item) => acc + (parseFloat(item.valorVencido) || 0), 0),
-    contato: cobrancas.filter(item => item.status === "contato").reduce((acc, item) => acc + (parseFloat(item.valorVencido) || 0), 0),
-    negociacao: cobrancas.filter(item => item.status === "negociacao").reduce((acc, item) => acc + (parseFloat(item.valorVencido) || 0), 0),
-    acordo: cobrancas.filter(item => item.status === "acordo").reduce((acc, item) => acc + (parseFloat(item.valorVencido) || 0), 0),
-    recebimento: volumeTotalRecebimentos,
-    finalizado: totalRecuperado
-  };
+  // 🛠️ EVOLUÇÃO DE SAAS COM MAP INTERNO: Mapeia o array vivo de etapas da nuvem calculando a volumetria financeira exata de forma elástica.
+  const etapasDinamicasProcessadas = etapasFunilExternas.map((coluna) => { // -> Percorre etapa por etapa parametrizada pelo usuário.
+    const saldoFinanceiroRaia = cobrancas // -> Inicia a triagem de devedores associados a esta calha específica.
+      .filter((item) => (item.status || "novo") === coluna.id) // -> Filtra se a fase do card bate simetricamente com a ID da etapa.
+      .reduce((acc, item) => acc + (parseFloat(item.valorVencido) || 0), 0); // -> Agrupa e soma os saldos vencidos em float numérico.
+    
+    return {
+      id: coluna.id, // -> Chave identificadora técnica.
+      nome: coluna.nome.toUpperCase(), // -> Força o nome invisível a ficar em caixa alta nas legendas.
+      valor: saldoFinanceiroRaia // -> Atribui o montante em dinheiro acumulado.
+    };
+  });
 
-  // -> Descobre qual etapa tem o maior volume de dinheiro para servir de teto 100% na escala do gráfico
-  const maiorValorEtapa = Math.max(dadosStatus.novo, dadosStatus.contato, dadosStatus.negociacao, dadosStatus.acordo, dadosStatus.recebimento, dadosStatus.finalizado, 1);
+  // -> Garimpa o teto monetário máximo do array dinâmico para servir de escala 100% calibrada de altura.
+  const maiorValorEtapa = Math.max(...etapasDinamicasProcessadas.map(e => e.valor), 1); // -> Evita divisão por zero estabelecendo teto padrão de 1.
 
   // -> Função auxiliar que calcula o percentual de altura de cada barra para evitar estouros de layout
   const calcularAlturaBarra = (valor) => {
@@ -76,60 +79,32 @@ export default function ModuloDashboard({ cobrancas = [] }) { // -> Declara e ex
       {/* 📈 SEÇÃO 2: GRÁFICOS ESTRATÉGICOS DE VOLUMETRIA (MESA DE DECISÃO) */}
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "20px", flexWrap: "wrap" }}>
         
-        {/* GRÁFICO A: DISTRIBUIÇÃO CAPITAL FINANCEIRO POR ETAPA DO FUNIL */}
+        {/* GRÁFICO A: DISTRIBUIÇÃO CAPITAL FINANCEIRO POR ETAPA DO FUNIL DINÂMICA */}
         <div style={{ background: "#ffffff", padding: "24px", borderRadius: "12px", border: "1px solid #e2e8f0", boxShadow: "0 4px 6px rgba(0,0,0,0.02)", display: "flex", flexDirection: "column" }}>
           <h3 style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.5px" }}>📊 Alocação de Capital por Etapa Comercial</h3>
-          <p style={{ margin: "0 0 24px 0", fontSize: "12px", color: "#64748b" }}>Volume de dinheiro vivo retido em cada calha do funil.</p>
+          <p style={{ margin: "0 0 24px 0", fontSize: "12px", color: "#64748b" }}>Volume de dinheiro vivo retido em cada calha parametrizada do funil.</p>
           
-          {/* GRADE VISUAL DO GRÁFICO DE BARRAS VERTICAIS */}
+          {/* GRADE VISUAL DO GRÁFICO DE BARRAS VERTICAIS AUTOMATIZADO */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", height: "260px", borderBottom: "2px solid #cbd5e1", padding: "0 10px", gap: "12px" }}>
-            
-            {/* BARRA: A INICIAR */}
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", height: "100%", justifyContent: "flex-end" }}>
-              <div style={{ fontSize: "10px", fontWeight: "800", color: "#475569", marginBottom: "6px" }}>R$ {Math.round(dadosStatus.novo/1000)}k</div>
-              <div style={{ width: "100%", maxWidth: "45px", height: calcularAlturaBarra(dadosStatus.novo), backgroundColor: "#94a3b8", borderRadius: "4px 4px 0 0", transition: "height 0.3s ease" }}></div>
-            </div>
-
-            {/* BARRA: NOTIFICAÇÃO ENVIADA */}
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", height: "100%", justifyContent: "flex-end" }}>
-              <div style={{ fontSize: "10px", fontWeight: "800", color: "#6b21a8", marginBottom: "6px" }}>R$ {Math.round(dadosStatus.contato/1000)}k</div>
-              <div style={{ width: "100%", maxWidth: "45px", height: calcularAlturaBarra(dadosStatus.contato), backgroundColor: "#c084fc", borderRadius: "4px 4px 0 0", transition: "height 0.3s ease" }}></div>
-            </div>
-
-            {/* BARRA: EM NEGOCIAÇÃO */}
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", height: "100%", justifyContent: "flex-end" }}>
-              <div style={{ fontSize: "10px", fontWeight: "800", color: "#b45309", marginBottom: "6px" }}>R$ {Math.round(dadosStatus.negociacao/1000)}k</div>
-              <div style={{ width: "100%", maxWidth: "45px", height: calcularAlturaBarra(dadosStatus.negociacao), backgroundColor: "#fbbf24", borderRadius: "4px 4px 0 0", transition: "height 0.3s ease" }}></div>
-            </div>
-
-            {/* BARRA: TERMO EM ANDAMENTO */}
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", height: "100%", justifyContent: "flex-end" }}>
-              <div style={{ fontSize: "10px", fontWeight: "800", color: "#be185d", marginBottom: "6px" }}>R$ {Math.round(dadosStatus.acordo/1000)}k</div>
-              <div style={{ width: "100%", maxWidth: "45px", height: calcularAlturaBarra(dadosStatus.acordo), backgroundColor: "#f472b6", borderRadius: "4px 4px 0 0", transition: "height 0.3s ease" }}></div>
-            </div>
-
-            {/* BARRA: REGIME RECEBIMENTO */}
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", height: "100%", justifyContent: "flex-end" }}>
-              <div style={{ fontSize: "10px", fontWeight: "800", color: "#1e40af", marginBottom: "6px" }}>R$ {Math.round(dadosStatus.recebimento/1000)}k</div>
-              <div style={{ width: "100%", maxWidth: "45px", height: calcularAlturaBarra(dadosStatus.recebimento), backgroundColor: "#60a5fa", borderRadius: "4px 4px 0 0", transition: "height 0.3s ease" }}></div>
-            </div>
-
-            {/* BARRA: FINALIZADO */}
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", height: "100%", justifyContent: "flex-end" }}>
-              <div style={{ fontSize: "10px", fontWeight: "800", color: "#065f46", marginBottom: "6px" }}>R$ {Math.round(dadosStatus.finalizado/1000)}k</div>
-              <div style={{ width: "100%", maxWidth: "45px", height: calcularAlturaBarra(dadosStatus.finalizado), backgroundColor: "#34d399", borderRadius: "4px 4px 0 0", transition: "height 0.3s ease" }}></div>
-            </div>
-
+            {etapasDinamicasProcessadas.length === 0 ? ( // -> UX de contingência: se não existirem raias criadas no Firebase.
+              <div style={{ width: "100%", textAling: "center", fontSize: "12px", color: "#94a3b8", paddingBottom: "100px" }}>Aguardando conexão com as raias dinâmicas...</div>
+            ) : ( // -> Havendo colunas salvas, monta o gráfico elástico de forma responsiva.
+              etapasDinamicasProcessadas.map((item) => ( // -> Varre a lista processada desenhando o componente de barra simétrico.
+                <div key={item.id} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", height: "100%", justifyContent: "flex-end" }}>
+                  <div style={{ fontSize: "10px", fontWeight: "800", color: item.id === "finalizado" ? "#065f46" : "#475569", marginBottom: "6px" }}>R$ {Math.round(item.valor/1000)}k</div> {/* -> Exibe o indicador em Milhares (K) escalonado. */}
+                  <div style={{ width: "100%", maxWidth: "45px", height: calcularAlturaBarra(item.valor), backgroundColor: item.id === "finalizado" ? "#34d399" : item.id === "negociacao" ? "#fbbf24" : "#94a3b8", borderRadius: "4px 4px 0 0", transition: "height 0.3s ease" }}></div> {/* -> Desenha a coluna sólida reativa. */}
+                </div>
+              ))
+            )}
           </div>
 
-          {/* LEGENDAS OPERACIONAIS DO EIXO HORIZONTAL */}
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "10px", fontSize: "10px", fontWeight: "700", color: "#64748b", textAlign: "center" }}>
-            <div style={{ flex: 1 }}>A INICIAR</div>
-            <div style={{ flex: 1 }}>NOTIFICADO</div>
-            <div style={{ flex: 1 }}>EM NEGOCIAÇÃO</div>
-            <div style={{ flex: 1 }}>TERMO ANDAM.</div>
-            <div style={{ flex: 1 }}>RECEBIMENTO</div>
-            <div style={{ flex: 1, color: "#10b981" }}>FINALIZADO</div>
+          {/* LEGENDAS OPERACIONAIS DINÂMICAS DO EIXO HORIZONTAL */}
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "10px", fontSize: "9px", fontWeight: "700", color: "#64748b", textAlign: "center", gap: "12px" }}>
+            {etapasDinamicasProcessadas.map((item) => ( // -> Varre a mesma fila imprimindo as legendas alinhadas em flexbox na base.
+              <div key={item.id} style={{ flex: 1, color: item.id === "finalizado" ? "#10b981" : "#64748b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={item.nome}>
+                {item.nome}
+              </div>
+            ))}
           </div>
         </div>
 

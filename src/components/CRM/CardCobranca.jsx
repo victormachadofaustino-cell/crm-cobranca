@@ -1,17 +1,17 @@
-import React from "react"; // -> Traz a biblioteca mestre do React para permitir a leitura e interpretação da sintaxe .jsx.
+import React from "react"; // -> Traw a biblioteca mestre do React para permitir a leitura e interpretação da sintaxe .jsx.
 
-export default function CardCobranca({ card, colunaId, aoIniciarArrasto, aoDeletar, aoClicarCard }) { // -> Define e exporta la função do cartão recebendo as informações da dívida, a raia ativa e as funções de controle do mestre.
+export default function CardCobranca({ card, colunaId, aoIniciarArrasto, aoDeletar, aoClicarCard }) { // -> Define e exporta a função do cartão recebendo as informações da dívida, a raia ativa e as funções de controle do mestre.
   // -> Transforma o saldo devedor vindo do banco em um número decimal limpo para evitar quebras.
   const valorNum = parseFloat(card.valorVencido) || 0; // -> Faz a higienização do número monetário para a formatação decimal em reais.
 
-  // -> CONFIGURADOR DE MUTAR COR DE BORDA BASEADO NO VEREDITO COMERCIAL DO SCRIPT
+  // 🛠️ REMANEJAMENTO DE LINHAS: Função movida para cima do return para estancar o ReferenceError e registrar a fiação no topo da memória de processamento.
   const obterCorBordaEsquerda = () => { // -> Determina reativamente o tom do friso lateral de acordo com o substatus e calha.
     if (card.subStatus === "sucesso") return "#10b981"; // -> Friso verde-esmeralda caso o acordo tenha sido homologado com sucesso.
     if (card.subStatus === "insucesso") return "#ef4444"; // -> Friso vermelho-alerta caso a conta tenha sido despachada para o jurídico contencioso.
     return colunaId === "finalizado" ? "#10b981" : "#0f172a"; // -> Mantém verde se estiver na calha final comum ou Azul Escuro Profundo sóbrio para as fases anteriores.
   }; // -> Encerra o seletor de cores da borda.
 
-  return ( // -> Inicia o retorno do componente visual que desenha o cartão do devedor no quadro Kanban.
+  return ( // -> Inicia o retorno do componente visual que desenha o cartão do devedor no quadro Kanban após memorizar suas diretrizes lógicas.
     <div
       draggable // -> Habilita a física de flutuação e arrasto nativa do navegador neste elemento. 
       onDragStart={(e) => aoIniciarArrasto(e, card.id, colunaId)} // -> Disparado no instante em que o operador pinça o card com o mouse. 
@@ -22,7 +22,7 @@ export default function CardCobranca({ card, colunaId, aoIniciarArrasto, aoDelet
         borderRadius: "6px", // -> Cantos suavizados em 6px padrão executivo. 
         boxShadow: "0 1px 3px rgba(0,0,0,0.02)", // -> Micro-sombra minimalista sutil e elegante. 
         border: "1px solid #e2e8f0", // -> Contorno cinza claro de proteção estrutural. 
-        borderLeft: `4px solid ${obterCorBordaEsquerda()}`, // -> MUTAÇÃO LÓGICA: Aplica dinamicamente a cor da borda baseado no sucesso, insucesso ou raia ativa.
+        borderLeft: `4px solid ${obterCorBordaEsquerda()}`, // -> MUTAÇÃO LÓGICA: Aplica dinamicamente a cor da borda baseado no sucesso, insucesso ou raia ativa puxando o registro de cabeceira.
         display: "flex", // -> Ativa o alinhamento flexível interno para divisão de blocos. 
         flexDirection: "column", // -> Organiza as linhas de dados empilhadas de cima para baixo. 
         gap: "6px", // -> Espaçamento interno calibrado para acomodar os novos badges técnicos sem estouro. 
@@ -41,7 +41,7 @@ export default function CardCobranca({ card, colunaId, aoIniciarArrasto, aoDelet
       </div> {/* -> Encerra o alinhador horizontal superior. */}
 
       {/* LINHA 2: RAZÃO SOCIAL DA EMPRESA DEVEDORA HIGIENIZADA */}
-      <h3 style={{ fontSize: "11px", fontWeight: "700", color: "#1e293b", margin: "1px 0", textTransform: "uppercase", textAlign: "left", lineHeight: "1.3" }}> {/* -> Fonte reduzida para 11px em caixa alta para manter o rigor técnico. */}
+      <h3 style={{ fontSize: "11px", fontWeight: "700", color: "#1e293b", margin: "1px 0", textTransform: "uppercase", textAlign: "left", lineHeight: "1.3" }}> {/* -> Fonte reduzida para 11px in caixa alta para manter o rigor técnico. */}
         {card.cliente} {/* -> Cospe a Razão Social da carteira vinda da nuvem do banco de dados após a migração. */}
       </h3> {/* -> Encerra o título do nome do cliente. */}
 
@@ -66,29 +66,29 @@ export default function CardCobranca({ card, colunaId, aoIniciarArrasto, aoDelet
         </div>
       )}
 
-      {/* LINHA 3: OPERADOR RESPONSÁVEL E LIXEIRA DE DELEÇÃO PERMANENTE */}
+      {/* LINHA 3: OPERADOR RESPONSÁVEL E BOTÃO MINIMALISTA DE ARQUIVAMENTO INTEGRADO */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "10px", color: "#64748b", fontWeight: "600", marginTop: "2px" }}> {/* -> Alinhador horizontal do rodapé do cartão com fonte compactada em 10px. */}
         <span style={{ color: card.subStatus ? "#94a3b8" : "#64748b" }}>👤 {card.responsavel || "Sem operador"}</span> {/* -> Exibe o crachá do preposto cobrador suavizando o tom caso o caso já esteja arquivado. */}
         <button
           type="button" // -> Especifica o tipo como botão nativo para blindagem de cliques falsos.
           onClick={(e) => {
             e.stopPropagation(); // -> Trava de segurança: impede que o clique dispare a abertura do prontuário por acidente. 
-            aoDeletar(card.id, card.cliente); // -> Dispara a ordem de trituração segura para o mestre App.jsx. 
+            aoDeletar(card.id, card.cliente); // -> Dispara a ordem de arquivamento no limbo seguro do ClickUp para o mestre App.jsx. 
           }}
           style={{
             background: "none", // -> Remove fundos cinzas padrão de botões. 
             border: "none", // -> Remove contornos antigos para visual minimalista plano. 
-            color: "#94a3b8", // -> Cor cinza neutra de descanso para o ícone. 
+            color: "#94a3b8", // -> Cor cinza neutra de descanso para o ícone da pasta. 
             cursor: "pointer", // -> Transforma o mouse em mãozinha de clique interativo. 
             fontSize: "12px", // -> Tamanho milimetricamente calibrado. 
-            fontWeight: "bold", // -> Dá destaque estrutural ao desenho da lixeira. 
+            fontWeight: "bold", // -> Dá destaque estrutural ao desenho. 
             padding: 0, // -> Zera preenchimentos espúrios de botão.
           }}
-          title="Deletar cobrança permanentemente do Firebase" // -> Legenda explicativa flutuante em português ao pairar o mouse.
+          title="Arquivar este card (Ocultar da esteira ativa)" // -> Legenda explicativa premium removendo o medo de deleção definitiva.
         >
-          🗑️
-        </button> {/* -> Encerra o botão de descarte em ícone minimalista. */}
-      </div> {/* -> Encerra o alinhador horizontal do rodapé do cartão. */}
+          📁
+        </button> {/* -> MUDANÇA VISUAL COMPLETA: Injetada a pasta de arquivos em substituição à lixeira antiga. */}
+      </div> {/* -> Encerra o alinhador horizontal del rodapé do cartão. */}
     </div> // -> Encerra o contêiner estrutural do cartão do devedor.
   );
 }

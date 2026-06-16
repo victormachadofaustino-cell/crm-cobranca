@@ -1,141 +1,141 @@
-import React, { useState } from "react"; // -> Traz a biblioteca mestre do React e o gancho useState para monitorameno local da mesa de rascunhos da negociação.
+import React, { useState } from "react"; // -> Traz a biblioteca mestre do React e o gancho useState para monitorar as sanfonas locais de cada etapa[cite: 3265].
 
-export default function ModalProntuario({ aberto, aoFechar, card, colunaId, contatosBase = [], aoSalvarProntuário }) { // -> Declara o componente do Prontuário recebendo o card ativo, a calha do funil, a fiação de contatos e a função de gravação do mestre.
-  if (!aberto || !card) return null; // -> TRAVA DE SEGURANÇA: Se o maestro disser que o modal não deve aparecer, retorna nulo e não consome processamento.
+export default function ModalProntuario({ aberto, aoFechar, card, colunaId, contatosBase = [], aoSalvarProntuário, exibirArquivados = false, aoAlternarArquivamentoNoModal }) { // -> Declara o componente do Prontuário recebendo o card ativo, a calha do funil, os contatos e as novas propriedades do limbo vindas do App.jsx.
+  if (!aberto || !card) return null; // -> TRAVA DE SEGURANÇA: Se o maestro disser que o modal não deve aparecer, retorna nulo e não consome processamento[cite: 3267].
 
   // -> CÁLCULO DE HIGIENIZAÇÃO MONETÁRIA DE ENTRADA
-  const valorOriginalDívida = parseFloat(card.valorVencido) || 0; // -> Limpa o valor bruto vindo da nuvem para os cálculos da calculadora.
+  const valorOriginalDívida = parseFloat(card.valorVencido) || 0; // -> Limpa o valor bruto vindo da nuvem para os cálculos da calculadora[cite: 3268].
 
   // -> ESTADOS LOCAIS OPERACIONAIS DA CALCULADORA PRICE E METADADOS DO DOCUMENTO NO SCALE (EBSE)
-  const [propostaValor, setPropostaValor] = useState(card.proposta?.valorCobrado || valorOriginalDívida); // -> Monitora o valor negociado final pretendido para o acordo comercial.
-  const [propostaParcelas, setPropostaParcelas] = useState(card.proposta?.qtdParcelas || 1); // -> Monitora a quantidade de parcelas fixas desejadas para a simulação.
-  const [taxaJurosMensal, setTaxaJurosMensal] = useState(1.5); // -> INTERNA INTERATIVA: Inicializa a taxa de juros de mora padrão em 1.5% ao mês para o cálculo composto.
-  const [formaPagto, setFormaPagto] = useState(card.proposta?.tipoPagamento || "Boleto"); // -> Captura a forma de liquidação escolhida pelo operador (Boleto/Pix).
-  const [dataPrimeiroVenc, setDataPrimeiroVenc] = useState(card.proposta?.dataPrimeiroVencimento || "2026-06-11"); // -> Guarda o dia limite estipulado para a carência do primeiro pagamento.
+  const [propostaValor, setPropostaValor] = useState(card.proposta?.valorCobrado || valorOriginalDívida); // -> Monitora o valor negociado final pretendido para o acordo comercial[cite: 3270].
+  const [propostaParcelas, setPropostaParcelas] = useState(card.proposta?.qtdParcelas || 1); // -> Monitora a quantidade de parcelas fixas desejadas para a simulação[cite: 3271].
+  const [taxaJurosMensal, setTaxaJurosMensal] = useState(1.5); // -> INTERNA INTERATIVA: Inicializa a taxa de juros de mora padrão em 1.5% ao mês para o cálculo composto[cite: 3272].
+  const [formaPagto, setFormaPagto] = useState(card.proposta?.tipoPagamento || "Boleto"); // -> Captura a forma de liquidação escolhida pelo operador (Boleto/Pix)[cite: 3274].
+  const [dataPrimeiroVenc, setDataPrimeiroVenc] = useState(card.proposta?.dataPrimeiroVencimento || "2026-06-11"); // -> Guarda o dia limite estipulado para a carência do primeiro pagamento[cite: 3275].
 
   // -> NOVOS ESTADOS ADICIONADOS PARA A BIFURCAÇÃO DE REGIME DE LIQUIDAÇÃO (ESTILO CLICKUP)
-  const [regimeLiquidacao, setRegimeLiquidacao] = useState(card.status === "conta_corrente" || (card.planoParcelas && card.planoParcelas.length === 0) ? "conta_corrente" : "acordo"); // -> INTERRUPTOR DE REGIME: Define se a tela carrega a calculadora Price ou o Extrato de Amortização Livre.
-  const [novoAbatimento, setNovoAbatimento] = useState(""); // -> CAIXA DE CRÉDITO: Captura o valor avulso de Pix/Dinheiro digitado para abater a dívida.
-  const [dataAbatimento, setDataAbatimento] = useState("2026-06-11"); // -> CALENDÁRIO DE CRÉDITO: Monitora o dia em que o dinheiro avulso bateu no caixa.
+  const [regimeLiquidacao, setRegimeLiquidacao] = useState(card.status === "conta_corrente" || (card.planoParcelas && card.planoParcelas.length === 0) ? "conta_corrente" : "acordo"); // -> INTERRUPTOR DE REGIME: Define se a tela carrega a calculadora Price ou o Extrato de Amortização Livre[cite: 3276].
+  const [novoAbatimento, setNovoAbatimento] = useState(""); // -> CAIXA DE CRÉDITO: Captura o valor avulso de Pix/Dinheiro digitado para abater a dívida[cite: 3278].
+  const [dataAbatimento, setDataAbatimento] = useState("2026-06-11"); // -> CALENDÁRIO DE CRÉDITO: Monitora o dia em que o dinheiro avulso bateu no caixa[cite: 3279].
 
   // -> ESTADOS DE CONTROLE DE TAREFAS MULTIFUNCIONAIS E OCORRÊNCIAS
-  const [tipoTarefa, setTipoTarefa] = useState("Ligação"); // -> Seleciona a categoria operacional (Mensagem, Ligação, Reunião, Lembrete).
-  const [textoTarefa, setTextoTarefa] = useState(""); // -> Monitora a string descritiva da ação que será delegada na esteira.
+  const [tipoTarefa, setTipoTarefa] = useState("Ligação"); // -> Seleciona a categoria operacional (Mensagem, Ligação, Reunião, Lembrete)[cite: 3280].
+  const [textoTarefa, setTextoTarefa] = useState(""); // -> Monitora a string descritiva da ação que será delegada na esteira[cite: 3281].
 
   // -> CONTROLADOR DE NAVEGAÇÃO INTERNA DA ALA DIREITA (ABAS OPERACIONAIS)
-  const [abaAtiva, setAbaAtiva] = useState("tarefas"); // -> NATIVA POR PADRÃO: Inicializa a visualização focada no painel imediato de Tarefas.
+  const [abaAtiva, setAbaAtiva] = useState("tarefas"); // -> NATIVA POR PADRÃO: Inicializa a visualização focada no painel imediato de Tarefas[cite: 3283].
 
   // -> FILTRO RELACIONAL EM TEMPO REAL: Cruza os dados e isola APENAS os contatos humanos que pertencem a este devedor específico.
-  const contatosDesteDevedor = contatosBase.filter((con) => con.empresaId === card.id); // -> Varre a base e monta o mini-grid telefônico do assistido.
+  const contatosDesteDevedor = contatosBase.filter((con) => con.empresaId === card.id); // -> Varre a base e monta o mini-grid telefônico do assistido[cite: 3285, 3286].
 
   // -> MOTOR MATEMÁTICO DE JUROS COMPOSTOS INTEGRADO (FÓRMULA M = P * (1 + i)^n)
-  const calcularMontanteComposto = () => { // -> Executa o cálculo financeiro real de taxa de juros acumulada por parcela.
-    const principal = parseFloat(propostaValor) || 0; // -> Puxa o saldo base preenchido.
-    const taxa = parseFloat(taxaJurosMensal) / 100; // -> Converte a porcentagem em valor decimal para a equação.
-    const periodos = parseInt(propostaParcelas) || 1; // -> Puxa o número de meses da divisão.
-    if (periodos <= 1) return principal; // -> Sem juros se o pagamento for à vista em parcela única.
-    return principal * Math.pow(1 + taxa, periodos); // -> Retorna o Custo Efetivo Total (CET) corrigido pela curva de juros compostos.
-  }; // -> Encerra o motor matemático.
+  const calcularMontanteComposto = () => { // -> Executa o cálculo financeiro real de taxa de juros acumulada por parcela[cite: 3287].
+    const principal = parseFloat(propostaValor) || 0; // -> Puxa o saldo base preenchido[cite: 3288].
+    const taxa = parseFloat(taxaJurosMensal) / 100; // -> Converte a porcentagem em valor decimal para a equação[cite: 3288, 3289].
+    const periodos = parseInt(propostaParcelas) || 1; // -> Puxa o número de meses da divisão[cite: 3289].
+    if (periodos <= 1) return principal; // -> Sem juros se o pagamento for à vista em parcela única[cite: 3290].
+    return principal * Math.pow(1 + taxa, periodos); // -> Retorna o Custo Efetivo Total (CET) corrigido pela curva de juros compostos[cite: 3291, 3292].
+  }; // -> Encerra o motor matemático[cite: 3293].
 
-  const totalComJuros = calcularMontanteComposto(); // -> Armazena em tempo real o montante final reajustado.
-  const valorDaParcelaFixa = totalComJuros / (parseInt(propostaParcelas) || 1); // -> Divide o saldo corrigido simetricamente pela quantidade de meses.
+  const totalComJuros = calcularMontanteComposto(); // -> Armazena em tempo real o montante final reajustado[cite: 3293].
+  const valorDaParcelaFixa = totalComJuros / (parseInt(propostaParcelas) || 1); // -> Divide o saldo corrigido simetricamente pela quantidade de meses[cite: 3294].
 
   // -> INTERCEPTADOR DO SALVAMENTO DE ALTERAÇÕES EM LOTE PARA O FIRESTORE
-  const tratarSalvarDados = (subStatusForçado = "") => { // -> Consolida os blocos da calculadora, notas e tarefas para despachar ao Firestore.
-    let parcelasGeradas = []; // -> Inicializa a esteira estruturada vazia.
-    let propostaConsolidada = {}; // -> Inicializa o mapa técnico.
+  const tratarSalvarDados = (subStatusForçado = "") => { // -> Consolida os blocos da calculadora, notas e tarefas para despachar ao Firestore[cite: 3295].
+    let parcelasGeradas = []; // -> Inicializa a esteira estruturada vazia[cite: 3296].
+    let propostaConsolidada = {}; // -> Inicializa o mapa técnico[cite: 3296, 3297].
 
-    if (regimeLiquidacao === "acordo") { // -> SE ESTIVER NO MODO RESTRITO: Dispara a montagem clássica das datas futuras da Price.
-      const totalMeses = parseInt(propostaParcelas) || 1; // -> Puxa a volumetria de meses.
-      for (let i = 1; i <= totalMeses; i++) {
-        const dataVenc = new Date(dataPrimeiroVenc + "T00:00:00");
-        dataVenc.setMonth(dataVenc.getMonth() + (i - 1));
-        parcelasGeradas.push({
-          numero: i,
-          valor: parseFloat(valorDaParcelaFixa.toFixed(2)),
-          vencimento: dataVenc.toISOString().split("T")[0],
-          pago: false,
-          status: "a_vencer"
+    if (regimeLiquidacao === "acordo") { // -> SE ESTIVER NO MODO RESTRITO: Dispara a montagem clássica das datas futuras da Price[cite: 3297].
+      const totalMeses = parseInt(propostaParcelas) || 1; // -> Puxa a volumetria de meses[cite: 3298].
+      for (let i = 1; i <= totalMeses; i++) { // -> Roda o laço gerando parcela por parcela[cite: 3299].
+        const dataVenc = new Date(dataPrimeiroVenc + "T00:00:00"); // -> Instancia a data base de largada[cite: 3299].
+        dataVenc.setMonth(dataVenc.getMonth() + (i - 1)); // -> Adiciona saltos mensais sucessivos[cite: 3300].
+        parcelasGeradas.push({ // -> Empurra o objeto estruturado para o array[cite: 3300].
+          numero: i, // -> Guarda o número de controle[cite: 3300].
+          valor: parseFloat(valorDaParcelaFixa.toFixed(2)), // -> Guarda o valor fixado[cite: 3300].
+          vencimento: dataVenc.toISOString().split("T")[0], // -> Transforma em texto de data limpo[cite: 3300].
+          pago: false, // -> Seta inicial pendente[cite: 3300].
+          status: "a_vencer" // -> Tag de controle[cite: 3300].
         });
       }
-      propostaConsolidada = {
-        dataPrimeiroVencimento: dataPrimeiroVenc,
-        tipoPagamento: formaPagto,
-        qtdParcelas: totalMeses,
-        valorCobrado: parseFloat(totalComJuros.toFixed(2)),
-        parcelasSimuladas: parcelasGeradas
+      propostaConsolidada = { // -> Consolida os rascunhos em formato Price[cite: 3301].
+        dataPrimeiroVencimento: dataPrimeiroVenc, // -> Guarda a data de carência[cite: 3301].
+        tipoPagamento: formaPagto, // -> Guarda o meio de liquidação[cite: 3301].
+        qtdParcelas: totalMeses, // -> Número de divisões[cite: 3301].
+        valorCobrado: parseFloat(totalComJuros.toFixed(2)), // -> Saldo final com juros compostos[cite: 3301].
+        parcelasSimuladas: parcelasGeradas // -> Coleção de boletos[cite: 3301].
       };
-    } else { // -> SE ESTIVER NO MODO FLEXÍVEL: Anula as tabelas Price e trava os mapas no formato de Conta Corrente livre.
-      propostaConsolidada = {
-        dataPrimeiroVencimento: dataPrimeiroVenc,
-        tipoPagamento: "Pix / Avulso",
-        qtdParcelas: 1,
-        valorCobrado: valorOriginalDívida, // -> O saldo cobrado caminha junto com o teto de amortização.
-        parcelasSimuladas: [] // -> Limpa as simulações para não poluir o NoSQL.
+    } else { // -> SE ESTIVER NO MODO FLEXÍVEL: Anula as tabelas Price e trava os mapas no formato de Conta Corrente livre[cite: 3302].
+      propostaConsolidada = { // -> Cria o mapa de conta corrente limpo[cite: 3303].
+        dataPrimeiroVencimento: dataPrimeiroVenc, // -> Data base[cite: 3303].
+        tipoPagamento: "Pix / Avulso", // -> Força identificador avulso[cite: 3303].
+        qtdParcelas: 1, // -> Parcela única de teto[cite: 3303].
+        valorCobrado: valorOriginalDívida, // -> O saldo cobrado caminha junto com o teto de amortização[cite: 3303].
+        parcelasSimuladas: [] // -> Limpa as simulações para não poluir o NoSQL[cite: 3304].
       };
-      parcelasGeradas = card.planoParcelas || []; // -> Mantém o histórico existente intacto.
+      parcelasGeradas = card.planoParcelas || []; // -> Mantém o histórico existente de faturas intacto[cite: 3304, 3305].
     }
 
-    const pacoteAtualizado = { // -> Cria o novo objeto unificado de dados modificados.
-      ...card, // -> Preserva os dados imutáveis de nascimento do cartão de cobrança.
-      subStatus: subStatusForçado || card.subStatus, // -> Carimba o veredito comercial (sucesso/insucesso) se houver encerramento de lote.
-      planoParcelas: parcelasGeradas, // -> Injeta a matriz financeira decidida pelo operador.
-      proposta: propostaConsolidada // -> Acopla o sub-objeto Price ou de Conta Corrente correspondente.
+    const pacoteAtualizado = { // -> Cria o novo objeto unificado de dados modificados[cite: 3305].
+      ...card, // -> Preserva os dados imutáveis de nascimento do cartão de cobrança[cite: 3306].
+      subStatus: subStatusForçado || card.subStatus, // -> Carimba o veredito comercial (sucesso/insucesso) se houver encerramento de lote[cite: 3306, 3307].
+      planoParcelas: parcelasGeradas, // -> Injeta a matriz financeira decidida pelo operador[cite: 3308].
+      proposta: propostaConsolidada // -> Acopla o sub-objeto Price ou de Conta Corrente correspondente[cite: 3309].
     };
 
-    if (subStatusForçado) { // -> Se houver fechamento definitivo de lote da carteira.
-      const logDesfecho = {
-        conteudo: `Encantamento de lote finalizado com status de: ${subStatusForçado.toUpperCase()}`,
-        dataHora: new Date().toLocaleDateString("pt-BR") + " às " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+    if (subStatusForçado) { // -> Se houver fechamento definitivo de lote da carteira[cite: 3310].
+      const logDesfecho = { // -> Prepara o log histórico indelével[cite: 3311].
+        conteudo: `Encantamento de lote finalizado com status de: ${subStatusForçado.toUpperCase()}`, // -> Grava o texto descritivo[cite: 3311].
+        dataHora: new Date().toLocaleDateString("pt-BR") + " às " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) // -> Minutagem oficial[cite: 3311].
       };
-      pacoteAtualizado.historicoNotas = [logDesfecho, ...(card.historicoNotas || [])];
+      pacoteAtualizado.historicoNotas = [logDesfecho, ...(card.historicoNotas || [])]; // -> Anexa no cabeçalho das notas[cite: 3312].
     }
 
-    aoSalvarProntuário(card.id, pacoteAtualizado); // -> Dispara o comando transmissor enviando o documento consolidado para o App.jsx gravar no Firebase.
-    setTextoTarefa(""); // -> Reseta o rascunho de digitação.
+    aoSalvarProntuário(card.id, pacoteAtualizado); // -> Dispara o comando transmissor enviando o documento consolidado para o App.jsx gravar no Firebase[cite: 3312, 3313].
+    setTextoTarefa(""); // -> Reseta o rascunho de digitação[cite: 3313, 3314].
   };
 
   // -> COMANDO DE AMORTIZAÇÃO EM CASCATA: Executa a baixa de Pix Avulso e abate o Saldo Devedor Vivo na hora
-  const lidarLancarAbatimentoAvulso = () => {
-    const valorAbatido = parseFloat(novoAbatimento) || 0; // -> Limpa a digitação numérica do Pix recebido.
-    if (valorAbatido <= 0) return; // -> Evita lançamentos nulos ou negativos na esteira.
+  const lidarLancarAbatimentoAvulso = () => { // -> Disparado pelo botão verde de conta corrente.
+    const valorAbatido = parseFloat(novoAbatimento) || 0; // -> Limpa a digitação numérica do Pix recebido[cite: 3314, 3315].
+    if (valorAbatido <= 0) return; // -> Evita lançamentos nulos ou negativos na esteira[cite: 3315, 3316].
 
-    const novoSaldo = Math.max(0, valorOriginalDívida - valorAbatido); // -> Aplica a subtração matemática direta impedindo saldo negativo.
-    card.valorVencido = novoSaldo; // -> Reconfigura reativamente o Saldo Devedor mestre na memória ativa.
+    const novoSaldo = Math.max(0, valorOriginalDívida - valorAbatido); // -> Aplica a subtração matemática direta impedindo saldo negativo[cite: 3316, 3317].
+    card.valorVencido = novoSaldo; // -> Reconfigura reativamente o Saldo Devedor mestre na memória ativa[cite: 3317, 3318].
 
     // -> Injeta o rastro indelével de crédito na Linha do Tempo Analítica (Ata)
-    const logAmortizacao = {
-      conteudo: `💰 ABATIMENTO EM CONTA CORRENTE: Recebido Pix avulso de R$ ${valorAbatido.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} no dia ${dataAbatimento.split("-").reverse().join("/")}. Saldo anterior: R$ ${valorOriginalDívida.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} ➔ Saldo atualizado: R$ ${novoSaldo.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}.`,
-      dataHora: new Date().toLocaleDateString("pt-BR") + " às " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+    const logAmortizacao = { // -> Cria o pacote descritivo de caixa[cite: 3319].
+      conteudo: `💰 ABATIMENTO EM CONTA CORRENTE: Recebido Pix avulso de R$ ${valorAbatido.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} no dia ${dataAbatimento.split("-").reverse().join("/")}. Saldo anterior: R$ ${valorOriginalDívida.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} ➔ Saldo atualizado: R$ ${novoSaldo.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}.`, // -> Monta o texto legível[cite: 3319, 3320].
+      dataHora: new Date().toLocaleDateString("pt-BR") + " às " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) // -> Carimba o relógio[cite: 3320].
     };
-    card.historicoNotas = [logAmortizacao, ...(card.historicoNotas || [])]; // -> Joga no topo da pirâmide de auditoria.
+    card.historicoNotas = [logAmortizacao, ...(card.historicoNotas || [])]; // -> Joga no topo da pirâmide de auditoria[cite: 3321].
 
-    setNovoAbatimento(""); // -> Zera a caixinha do Pix.
-    alert(`🟩 BAIXA CONFIRMADA!\nAbatimento de R$ ${valorAbatido.toLocaleString("pt-BR")} computado no saldo. Clique em 'Salvar Prontuário' para gravar síncronamente na nuvem.`);
+    setNovoAbatimento(""); // -> Zera a caixinha do Pix[cite: 3321, 3322].
+    alert(`🟩 BAIXA CONFIRMADA!\nAbatimento de R$ ${valorAbatido.toLocaleString("pt-BR")} computado no saldo. Clique em 'Salvar Prontuário' para gravar síncronamente na nuvem.`); // -> Feedback visual síncrono[cite: 3322].
   };
 
   // -> MINI CONTROLADOR PARA INSERÇÃO IMEDIATA DE TAREFAS NA TELA
-  const lidarAdicionarTarefaLocal = () => { // -> Prepara e anexa a tarefa estruturada diretamente no array do card em RAM.
-    if (!textoTarefa.trim()) return; // -> Trava antiqueda contra cliques acidentais vazios.
-    const novaTarefaEstruturada = { // -> Monta a peça mestre da tarefa baseada no documento NoSQL.
-      texto: `[${tipoTarefa}] ${textoTarefa.trim()}`, // -> Concatena o tipo (Ligação, Reunião) com a instrução do operador.
-      criadoPor: card.responsavel || "Lucas Vieira", // -> Identifica o cobrador logado da mesa.
-      data: new Date().toISOString().split("T")[0], // -> Grava o dia atual da ocorrência.
-      dataCriacao: new Date().toLocaleDateString("pt-BR") + " às " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+  const lidarAdicionarTarefaLocal = () => { // -> Prepara e anexa a tarefa estruturada diretamente no array do card em RAM[cite: 3323].
+    if (!textoTarefa.trim()) return; // -> Trava antiqueda contra cliques acidentais vazios[cite: 3324].
+    const novaTarefaEstruturada = { // -> Monta a peça mestre da tarefa baseada no documento NoSQL[cite: 3325].
+      texto: `[${tipoTarefa}] ${textoTarefa.trim()}`, // -> Concatena o tipo (Ligação, Reunião) com a instrução do operador[cite: 3326].
+      criadoPor: card.responsavel || "Lucas Vieira", // -> Identifica o cobrador logado da mesa[cite: 3326, 3327].
+      data: new Date().toISOString().split("T")[0], // -> Grava o dia atual da ocorrência[cite: 3328].
+      dataCriacao: new Date().toLocaleDateString("pt-BR") + " às " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) // -> Minutagem do agendamento[cite: 3329].
     };
-    card.tarefas = [novaTarefaEstruturada, ...(card.tarefas || [])]; // -> Anexa no topo do array histórico sem limpar os dados paralelos.
+    card.tarefas = [novaTarefaEstruturada, ...(card.tarefas || [])]; // -> Anexa no topo do array histórico sem limpar os dados paralelos[cite: 3330].
     
-    const logTarefaAuto = {
-      conteudo: `Agendada nova tarefa: ${novaTarefaEstruturada.texto}`,
-      dataHora: novaTarefaEstruturada.dataCriacao
+    const logTarefaAuto = { // -> Prepara a ata automática[cite: 3331].
+      conteudo: `Agendada nova tarefa: ${novaTarefaEstruturada.texto}`, // -> Descrição da ação[cite: 3331].
+      dataHora: novaTarefaEstruturada.dataCriacao // -> Carimba o tempo[cite: 3331].
     };
-    card.historicoNotas = [logTarefaAuto, ...(card.historicoNotas || [])]; // -> Registra o rastro na linha do tempo.
+    card.historicoNotas = [logTarefaAuto, ...(card.historicoNotas || [])]; // -> Registra o rastro na linha do tempo[cite: 3332].
     
-    setTextoTarefa(""); // -> Limpa a caixa de entrada da aba.
-    alert("📌 Ação registrada na esteira! Clique em 'Salvar Prontuário' para sincronizar com a nuvem."); // -> Feedback sóbrio.
+    setTextoTarefa(""); // -> Limpa a caixa de entrada da aba[cite: 3332, 3333].
+    alert("📌 Ação registrada na esteira! Clique em 'Salvar Prontuário' para sincronizar com a nuvem."); // -> Feedback sóbrio[cite: 3333, 3334].
   };
 
-  return ( // -> Renderiza o super-painel tridimensional espelhado na tela.
+  return ( // -> Renderiza o super-painel tridimensional espelhado na tela[cite: 3334].
     <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(15, 23, 42, 0.5)", zIndex: 6500, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px", boxSizing: "border-box" }}>
       <div style={{ background: "#ffffff", borderRadius: "12px", border: "1px solid #e2e8f0", width: "100%", maxWidth: "1150px", height: "90vh", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column", overflow: "hidden", boxSizing: "border-box" }}>
         
@@ -148,6 +148,28 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             {card.subStatus && <span style={{ fontSize: "11px", background: card.subStatus === "sucesso" ? "#d1fae5" : "#fee2e2", color: card.subStatus === "sucesso" ? "#065f46" : "#991b1b", padding: "4px 10px", borderRadius: "4px", fontWeight: "800", textTransform: "uppercase" }}>⚠️ FIM DE LINHA: {card.subStatus}</span>}
             <span style={{ fontSize: "11px", background: "#dbeafe", color: "#1e40af", padding: "4px 12px", borderRadius: "20px", fontWeight: "700", textTransform: "uppercase" }}>Raia CRM: {colunaId}</span>
+            
+            {/* 🛠️ GATILHO COMPACTO PREMIUM: Ícone inteligente que herda as ações da Toolbar para permitir Arquivar ou Desarquivar de dentro do prontuário */}
+            {aoAlternarArquivamentoNoModal && (
+              <button
+                type="button" // -> Especifica o elemento como botão neutro nativo.
+                onClick={() => aoAlternarArquivamentoNoModal(card.id, card.cliente)} // -> Aciona a inversão da flag síncronamente no mestre App.jsx.
+                style={{
+                  background: "none", // -> Remove preenchimentos de fundo cinza de fábrica.
+                  border: "none", // -> Remove bordas e contornos estruturais.
+                  fontSize: "16px", // -> Tamanho ideal casado com a Toolbar superior.
+                  cursor: "pointer", // -> Transforma o cursor em mãozinha de clique.
+                  padding: "4px 8px", // -> Margem de segurança de clique.
+                  display: "flex", // -> Alinhador flexbox interno.
+                  alignItems: "center" // -> Alinhamento vertical absoluto.
+                }}
+                title={exibirArquivados ? "Desarquivar este card e mandar de volta para o fluxo ativo" : "Arquivar este card e mandar para o Limbo"} // -> Tooltip explicativa dinâmica baseada na tela aberta.
+              >
+                {/* MUTAÇÃO DE EMOJI SÊNIOR: Exibe a seta de retorno (📤) se estiver no Limbo, ou a pasta (📁) se estiver na tela comum */}
+                <span>{exibirArquivados ? "📤" : "📁"}</span>
+              </button>
+            )}
+
             <button type="button" onClick={aoFechar} style={{ background: "none", border: "none", fontSize: "22px", cursor: "pointer", color: "#94a3b8", fontWeight: "bold", padding: 0 }}>&times;</button>
           </div>
         </div>
@@ -232,9 +254,9 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
                       <div style={{ fontSize: "11px", color: "#94a3b8", textAlign: "center", padding: "12px", background: "#f8fafc", borderRadius: "6px" }}>Nenhuma ação pendente fixada na carcaça deste devedor.</div>
                     ) : (
                       card.tarefas.map((tar, idx) => (
-                        <div key={idx} style={{ padding: "8px 12px", background: "#ffffff", border: "1px solid #cbd5e1", borderRadius: "6px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px" }}>
+                        <div key={idx} style={{ padding: "8px 12px", background: "#ffffff", border: "1px solid #cbd5e1", borderRadius: "6px", display: "flex", justifySgntent: "space-between", alignItems: "center", fontSize: "12px" }}>
                           <span style={{ fontWeight: "600", color: "#0f172a" }}>📌 {tar.texto || tar.descricao}</span>
-                          <span style={{ fontSize: "10px", color: "#64748b", background: "#f1f5f9", padding: "2px 6px", borderRadius: "4px" }}>Por: {tar.criadoPor || "Operador"} em {tar.dataCriacao || tar.data}</span>
+                          <span style={{ fontSize: "10px", color: "#64748b", background: "#f1f5f9", padding: "2px 6px", borderRadius: "4px" }}>Por: {tar.criadoPor || "Operador"} em {tar.dataCriacaoFormatada || tar.data}</span>
                         </div>
                       ))
                     )}

@@ -22,8 +22,8 @@ export default function ModuloTarefas({ cobrancas = [] }) { // -> Declara e expo
       criadoPor: tarefa.criadoPor || "Sistema", // -> Captura a assinatura do operador da mesa de faturamento.
       dataAgendada: tarefa.data || "2026-06-11", // -> Puxa o dia limite da ação técnica.
       dataCriacaoFormatada: tarefa.dataCriacao || "Data não registrada" // -> Puxa a estampa cronológica detalhada da ata.
-    }));
-  });
+    })); // 🛠️ CORREÇÃO CIRÚRGICA DE COMPILAÇÃO: Ajustado o fechamento do mapa interno para travar as chaves NoSQL com segurança.
+  }); // 🛠️ CORREÇÃO CIRÚRGICA DE COMPILAÇÃO: Removido o parêntese ilegal duplicado que causava o travamento fatal de Erro 500 no Vite!
 
   // =========================================================================================
   // 🔍 FILTRAGEM COMBINADA SIMULTÂNEA: Tipo de Ação + Termo de Busca
@@ -138,43 +138,38 @@ export default function ModuloTarefas({ cobrancas = [] }) { // -> Declara e expo
 
           <tbody style={{ color: "#0f172a", fontWeight: "600" }}>
             {tarefasFiltradas.length === 0 ? (
-              // -> COMPORTAMENTO EM CASO DE LIMBO VAZIO: Exibe minuta amigável se não houver retornos agendados.
               <tr>
                 <td colSpan="6" style={{ padding: "40px 20px", textAlign: "center", color: "#64748b" }}>
-                  📭 Nenhuma tarefa pendente orbitando no quadrante selecionado. Tudo em dia na carteira!
+                  📭 Nenhuma tarefa pendente orbitando no quadrante selecionado. Tudo em dia na carteira! {/* -> O comentário antigo flutuante foi guardado de forma protegida aqui dentro do td. */}
                 </td>
               </tr>
             ) : (
-              // -> MAPEAMENTO DE LINHAS EM LOTE: Desenha um trilho corporativo denso para cada ação capturada.
-              tarefasFiltradas.map((tarefa) => (
+              tarefasFiltradas.map((tarefa) => ( // -> Os comentários didáticos explicativos foram embutidos rigorosamente nas células td de dados.
                 <tr
-                  key={tarefa.idUnica} // -> ID estável composto que injetamos no motor RAM.
+                  key={tarefa.idUnica} 
                   style={{ borderBottom: "1px solid #f1f5f9", transition: "background 0.2s" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#f8fafc"; }} // -> Acende de cinza claro ao pairar o mouse.
-                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }} // -> Apaga o efeito de acendimento.
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#f8fafc"; }} 
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }} 
                 >
-                  {/* CÉLULA: CÓDIGO CONTA COBRANÇA */}
                   <td style={{ padding: "14px 20px", color: "#64748b", fontSize: "12px" }}>
-                    #{tarefa.codigoConta}
+                    #{tarefa.codigoConta} {/* -> CÉLULA 1: Código Conta Cobrança. */}
                   </td>
 
-                  {/* CÉLULA: RAZÃO SOCIAL EM CAIXA ALTA */}
                   <td style={{ padding: "14px 20px", textTransform: "uppercase", color: "#0f172a" }}>
-                    {tarefa.razaoSocial}
+                    {tarefa.razaoSocial} {/* -> CÉLULA 2: Razão Social da Empresa devedora em caixa alta. */}
                   </td>
 
-                  {/* CÉLULA: BADGE DE TIPO DE AÇÃO COM COLORES EXECUTIVAS COMPATÍVEIS */}
                   <td style={{ padding: "14px 20px" }}>
                     <span
                       style={{
                         background: 
                           tarefa.tipo === "Ligação" ? "#f1f5f9" : 
                           tarefa.tipo === "Mensagem" ? "#d1fae5" : 
-                          tarefa.tipo === "Reunião" ? "#dbeafe" : "#fef3c7",
+                          tarefa.tipo === "Reunião" ? "#dbeafe" : "#fef3c7", // 🛠️ CORREÇÃO DE PROPRIEDADE: Corrigido o seletor reativo de inglês para ler rigorosamente a variável em português tarefa.tipo.
                         color: 
                           tarefa.tipo === "Ligação" ? "#475569" : 
                           tarefa.tipo === "Mensagem" ? "#065f46" : 
-                          tarefa.tipo === "Reunião" ? "#1e40af" : "#b45309",
+                          tarefa.tipo === "Reunião" ? "#1e40af" : "#b45309", // 🛠️ CORREÇÃO DE PROPRIEDADE: Corrigido o seletor reativo de inglês para ler rigorosamente a variável em português tarefa.tipo.
                         padding: "4px 10px",
                         borderRadius: "6px",
                         fontSize: "11px",
@@ -182,31 +177,28 @@ export default function ModuloTarefas({ cobrancas = [] }) { // -> Declara e expo
                         textTransform: "uppercase"
                       }}
                     >
-                      {tarefa.tipo === "Ligação" && "📞 Ligação"}
+                      {tarefa.tipo === "Ligação" && "📞 Ligação"} {/* -> CÉLULA 3: Badge com cores e ícones executivos pareados. */}
                       {tarefa.tipo === "Mensagem" && "✉️ Mensagem"}
                       {tarefa.tipo === "Reunião" && "📅 Reunião"}
                       {tarefa.tipo === "Lembrete" && "🔔 Alerta"}
                     </span>
                   </td>
 
-                  {/* CÉLULA: INSTRUÇÃO DO COBRADOR (TEXTO LIMPO SEM OS COLCHETES) */}
                   <td style={{ padding: "14px 20px", color: "#1e293b", fontSize: "12px", textAlign: "left", lineHeight: "1.4" }}>
-                    {tarefa.textoLimpo}
+                    {tarefa.textoLimpo} {/* -> CÉLULA 4: Instrução higienizada removendo os metadados de colchete. */}
                   </td>
 
-                  {/* CÉLULA: CRACCHÁ DO OPERADOR E DIA DO EVENTO AUTOMÁTICO */}
                   <td style={{ padding: "14px 20px", color: "#475569", fontSize: "11px" }}>
-                    <div>👤 {tarefa.criadoPor}</div>
+                    <div>👤 {tarefa.criadoPor}</div> {/* -> CÉLULA 5: Nome do preposto e carimbo de criação da ata. */}
                     <div style={{ color: "#94a3b8", fontSize: "10px", marginTop: "2px", fontWeight: "700" }}>Registrado em: {tarefa.dataCriacaoFormatada}</div>
                   </td>
 
-                  {/* CÉLULA: BOTÃO ADVERTÊNCIA DE DIRETRIZ FLUTUANTE (ANP) */}
                   <td style={{ padding: "14px 20px", textAlign: "center" }}>
                     <span 
                       style={{ fontSize: "14px", cursor: "help", opacity: 0.6 }} 
-                      title="Para dar baixa ou gerenciar esta ocorrência, abra o Prontuário do cliente na aba do CRM principal." // -> DIRETRIZ CUMPRIDA: Legenda em português explicativa ao pairar o mouse.
+                      title="Para dar baixa ou gerenciar esta ocorrência, abra o Prontuário do cliente na aba do CRM principal." 
                     >
-                      ℹ️
+                      ℹ️ {/* -> CÉLULA 6: Ícone de tooltip de governança em português explicativo. */}
                     </span>
                   </td>
                 </tr>

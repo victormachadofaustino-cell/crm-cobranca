@@ -1,6 +1,6 @@
 import React from "react"; // -> Traz a biblioteca mestre do React para permitir a leitura e interpretação da sintaxe .jsx.
 
-export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbrirGavetaFiltros, totalFiltrosAtivos = 0, exibirArquivados = false, aoAlternarArquivados }) { // -> RECALIBRAÇÃO: Recebe as novas propriedades de controle do limbo de arquivados vindas do mestre App.jsx.
+export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbrirGavetaFiltros, totalFiltrosAtivos = 0, exibirArquivados = false, aoAlternarArquivados }) { // -> Define a função mestre que desenha a barra de ferramentas recebendo os estados de controle do mestre App.jsx.
   return ( // -> Inicia o retorno do componente visual que desenha a barra de controle na tela.
     <div style={{ maxWidth: "1400px", margin: "16px auto 0 auto", padding: "0 20px", display: "flex", justifyContent: "space-between", alignItems: "center", boxSizing: "border-box" }}> {/* -> Espaçamento compactado para 16px para otimizar espaço vertical e alinhar elementos nas extremidades laterais. */}
       
@@ -14,12 +14,15 @@ export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbri
           style={{ 
             backgroundColor: visaoAtual === "kanban" ? "#0f172a" : "#f1f5f9", // -> MUDANÇA SÓBRIA: Azul Escuro Profundo se ativo, ou cinza plano se inativo. 
             border: visaoAtual === "kanban" ? "1px solid #0f172a" : "1px solid #cbd5e1", // -> Ajusta o contorno de contorno combinando com a cor do estado ativo. 
-            padding: "6px 12px", // -> Espaçamento interno reduzido para compactação tridimensional do layout. 
+            padding: "6px 14px", // -> Espaçamento interno calibrado para compactação tridimensional do layout. 
             borderRadius: "6px", // -> Cantos arredondados de 6px padrão executivo sério.
-            fontSize: "12px", // -> Fonte recalibrada para 12px densa ideal para rotinas fiscais.
+            fontSize: "13px", // -> Fonte recalibrada para densidade ideal para rotinas fiscais.
             fontWeight: "700", // -> Peso de fonte destacado para leitura imediata da aba.
             color: visaoAtual === "kanban" ? "#ffffff" : "#475569", // -> Texto branco no fundo escuro, ou cinza ardósia corporativo no fundo claro. 
             cursor: "pointer", // -> Transforma a seta do mouse em ponteiro de clique interativo.
+            display: "flex", // -> Ativa flexbox interno para centralização geométrica perfeita do ícone.
+            alignItems: "center", // -> Centraliza verticalmente o ícone interno.
+            justifyContent: "center", // -> Centraliza horizontalmente o ícone interno.
             transition: "all 0.2s ease" // -> Transição suave de cores ao chavear os cliques.
           }}
         >
@@ -33,12 +36,15 @@ export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbri
           style={{ 
             backgroundColor: visaoAtual === "tabela" ? "#0f172a" : "#f1f5f9", // -> MUDANÇA SÓBRIA: Azul Escuro Profundo se ativo, ou cinza plano se inativo. 
             border: visaoAtual === "tabela" ? "1px solid #0f172a" : "1px solid #cbd5e1", // -> Ajusta o contorno de contorno de acordo com o estado ativo. 
-            padding: "6px 12px", // -> Espaçamento interno reduzido para compactação tridimensional do layout. 
+            padding: "6px 14px", // -> Espaçamento interno calibrado para compactação tridimensional do layout. 
             borderRadius: "6px", // -> Cantos arredondados de 6px padrão executivo sério.
-            fontSize: "12px", // -> Fonte recalibrada para 12px densa ideal para rotinas fiscais.
+            fontSize: "13px", // -> Fonte recalibrada para densidade ideal para rotinas fiscais.
             fontWeight: "700", // -> Peso de fonte destacado para leitura imediata da aba.
             color: visaoAtual === "tabela" ? "#ffffff" : "#475569", // -> Texto branco no fundo escuro, ou cinza ardósia corporativo no fundo claro. 
             cursor: "pointer", // -> Transforma a seta do mouse em ponteiro de clique interativo.
+            display: "flex", // -> Ativa flexbox interno para centralização geométrica perfeita do ícone.
+            alignItems: "center", // -> Centraliza verticalmente o ícone interno.
+            justifyContent: "center", // -> Centraliza horizontalmente o ícone interno.
             transition: "all 0.2s ease" // -> Transição suave de cores ao chavear os cliques.
           }}
         >
@@ -50,29 +56,29 @@ export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbri
       {/* SEÇÃO DA DIREITA: FILTROS AVANÇADOS, BOTÃO DE ALTERNÂNCIA DO LIMBO E NOVO PROTOCOLO */}
       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}> {/* -> Alinhador horizontal com espaçamento otimizado para 8px. */}
         
-        {/* BOTÃO TOGGLE INÉDITO: Ativa ou desativa a exibição do Limbo de Arquivados do ClickUp */}
+        {/* BOTÃO TOGGLE PREMIUM: Transforma-se em Ícone-Puro (Icon-Only) de arquivo aberto/fechado conforme o estado do Limbo */}
         <button
-          type="button" // -> Define o tipo como botão padrão estável.
-          onClick={() => aoAlternarArquivados && aoAlternarArquivados(!exibirArquivados)} // -> Inverte o booleano de busca no mestre ao ser pressionado pelo cobrador.
+          type="button" // -> Define o tipo como botão padrão estável del sistema.
+          onClick={() => aoAlternarArquivados && aoAlternarArquivados(!exibirArquivados)} // 🛠️ FIÇÃO CORRIGIDA: Casado perfeitamente o gatilho reativo com a propriedade 'aoAlternarArquivados' para estancar quebras lógicas.
           style={{
             background: exibirArquivados ? "#0f172a" : "#ffffff", // -> Fica escuro se o limbo estiver à vista, ou branco se a esteira limpa estiver ativa.
-            color: exibirArquivados ? "#ffffff" : "#475569", // -> Letras brancas ou cinza ardósia corporativo dependendo do estado do interruptor.
-            border: exibirArquivados ? "1px solid #0f172a" : "1px solid #cbd5e1", // -> Casamento simétrico de contorno de bordas.
-            padding: "6px 12px", // -> Altura padrão unificada de ferramentas do CRM.
+            color: exibirArquivados ? "#ffffff" : "#475569", // -> Elementos internos brancos ou cinza ardósia dependendo do estado do interruptor.
+            border: exibirArquivados ? "1px solid #0f172a" : "1px solid #cbd5e1", // -> Casamento simétrico de contorno de bordas corporativas.
+            padding: "6px 14px", // -> Altura padrão unificada de ferramentas do CRM.
             borderRadius: "6px", // -> Arredondamento corporativo estável de 6px.
             fontWeight: "700", // -> Força do texto em modo negrito sênior.
-            fontSize: "12px", // -> Fonte milimetricamente calibrada em 12px.
+            fontSize: "13px", // -> Uniformizado em 13px para manter consistência com o grid esquerdo.
             cursor: "pointer", // -> Ponteiro indicador de clique ativo.
-            display: "flex", // -> Alinhador flexbox interno.
+            display: "flex", // -> Alinhador flexbox interno para centralização perfeita.
             alignItems: "center", // -> Centralização vertical absoluta dos elementos.
-            gap: "6px", // -> Distanciamento interno do ícone de 6px.
-            boxShadow: "0 1px 2px rgba(0,0,0,0.02)", // -> Micro-sombra protetiva de profundidade.
-            transition: "all 0.2s ease" // -> Transição suave de cor de preenchimento.
+            justifyContent: "center", // -> Centralização horizontal estrita para botões baseados apenas em ícones.
+            boxShadow: "0 1px 2px rgba(0,0,0,0.02)", // -> Micro-sombra protetiva de profundidade de interface.
+            transition: "all 0.2s ease" // -> Transição suave de cor de preenchimento ao clicar.
           }}
-          title={exibirArquivados ? "Voltar para a esteira de cobrança ativa" : "Exibir contas arquivadas (Limbo Oculto)"} // -> Legenda explicativa em português ao pairar o ponteiro do mouse.
+          title={exibirArquivados ? "Exibindo Arquivos Mortos - Clique para voltar à esteira ativa" : "Exibindo Cards Ativos - Clique para visualizar o Limbo de Arquivados"} // -> Tooltip flutuante explicativa em português que aparece ao passar o mouse.
         >
-          <span>👁️</span> {/* -> Ícone do olho interativo de monitoramento do arquivo morto. */}
-          <span>{exibirArquivados ? "Ver Ativos" : "Ver Arquivados"}</span> {/* -> Texto dinâmico que muta para instruir as ações do advogado. */}
+          {/* MUDANÇA ESTÉTICA COMPLETA: Removido todo o texto poluído. Exibe a gaveta aberta/envelope aberto se ativo, ou a pasta fechada/envelope fechado se inativo */}
+          <span>{exibirArquivados ? "📂 Limbo" : "📁 Limbo"}</span> 
         </button>
 
         {/* GATILHO DA GAVETA DE FILTROS SIMULTÂNEOS */}
@@ -83,7 +89,7 @@ export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbri
             background: "#ffffff", // -> Fundo branco limpo.
             color: "#475569", // -> Texto cinza corporativo estável.
             border: "1px solid #cbd5e1", // -> Contorno suave de limitação.
-            padding: "6px 12px", // -> Altura reduzida alinhada simetricamente à ala esquerda.
+            padding: "6px 14px", // -> Altura reduzida alinhada simetricamente à ala esquerda.
             borderRadius: "6px", // -> Cantos arredondados de 6px padrão executivo.
             fontWeight: "700", // -> Força do texto em modo negrito denso.
             fontSize: "12px", // -> Fonte calibrada em 12px.
@@ -93,8 +99,9 @@ export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbri
             gap: "6px", // -> Espaço de 6px entre a legenda e o círculo de avisos.
             boxShadow: "0 1px 2px rgba(0,0,0,0.02)" // -> Micro-sombra protetiva de profundidade.
           }}
+          title="Filtros Avançados de Busca" // -> Dica de tela informativa para o operador.
         >
-          <span>🔍</span> {/* -> Legenda do comando da gaveta de buscas. */}
+          <span>🔍 Filtros</span> {/* -> Legenda do comando da gaveta de buscas. */}
           {/* PÍLULA DE CONTAGEM: Só exibe o círculo numérico se houver ao menos 1 filtro ativado na esteira */}
           {totalFiltrosAtivos > 0 && (
             <span style={{ background: "#ef4444", color: "white", fontSize: "10px", padding: "1px 5px", borderRadius: "10px", fontWeight: "bold" }}>
@@ -111,17 +118,20 @@ export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbri
             background: "#0f172a", // -> MUDANÇA SÓBRIA: Alterado do azul anterior para o Azul Escuro Profundo institucional da advocacia. 
             color: "white", // -> Texto em alta nitidez na cor branca.
             border: "none", // -> Remove contornos para manter o visual sólido plano.
-            padding: "7px 14px", // -> Altura milimetricamente ajustada para casar com a linha de botões horizontais. 
+            padding: "6px 16px", // -> Altura milimetricamente ajustada para casar com a linha de botões horizontais. 
             borderRadius: "6px", // -> Arredondamento corporativo estável de 6px.
-            fontWeight: "700", // -> Negrito de destaque operacional sênior.
+            fontWeight: "800", // -> Negrito de destaque operacional sênior.
             fontSize: "12px", // -> Fonte em 12px mantendo a uniformidade densa da barra.
             cursor: "pointer", // -> Ponteiro indicador de clique ativo.
             display: "flex", // -> Flexbox para alinhar o ícone de adição e o texto interno.
             alignItems: "center", // -> Centralização vertical absoluta dos textos.
-            gap: "6px" // -> Distanciamento interno do ícone de 6px.
+            gap: "6px", // -> Distanciamento interno do ícone de 6px.
+            height: "30px", // -> Fixada altura simétrica para travar o barramento visual.
+            boxShadow: "0 1px 3px rgba(0,0,0,0.05)" // -> Sombra sutil executiva.
           }}
+          title="Cadastrar Nova Cobrança no Funil" // -> Dica de tela para o acionador de inclusões de dívidas.
         >
-          <span>+</span> {/* -> Texto mestre do comando de novas inclusões de devedores. */}
+          <span>+ Nova Cobrança</span> {/* -> Texto mestre do comando de novas inclusões de devedores. */}
         </button> {/* -> Encerra o botão de disparo de inclusões. */}
 
       </div> {/* -> Encerra o agrupador flexbox da ala direita de ferramentas. */}

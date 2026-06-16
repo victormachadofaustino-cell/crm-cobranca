@@ -1,27 +1,29 @@
 import React, { useState } from "react"; // -> Importa o React e o gancho useState para monitorar as caixas de seleção locais do CRM de faturamento.
 import { db } from "../../config/firebase"; // -> Injeta o conector físico db exportado do arquivo firebase.js para permitir comandos directos à nuvem.
-import { collection, addDoc, doc, deleteDoc } from "firebase/firestore"; // -> Puxa as ferramentas nativas do Google Firestore para inclusão e descarte definitivo de documentos de banco.
+import { collection, addDoc, doc, deleteDoc, updateDoc } from "firebase/firestore"; // -> Puxa as ferramentas nativas do Google Firestore para inclusão, update parcial e descarte definitivo de documentos de banco.
 import TabelaEmpresas from "./TabelaEmpresas.jsx"; // -> PEÇA DE LEGO PLUGADA: Importa a planilha especialista em Pessoas Jurídicas na mesma pasta.
 import TabelaContatos from "./TabelaContatos.jsx"; // -> PEÇA DE LEGO PLUGADA: Importa a planilha especialista em Pessoas Humanas na mesma pasta.
 import ModalNovaEmpresa from "./ModalNovaEmpresa.jsx"; // -> PEÇA DE LEGO PLUGADA: Importa o formulário flutuante especialista em Pessoas Jurídicas.
 import ModalNovoContato from "./ModalNovoContato.jsx"; // -> PEÇA DE LEGO PLUGADA: Importa o formulário flutuante especialista em Pessoas Humanas.
 import GavetaFiltrosCadastro from "./GavetaFiltrosCadastro.jsx"; // -> PEÇA DE LEGO PLUGADA: Importa a gaveta lateral direita especialista em buscas avançadas.
+import ModuloFunil from "./ModuloFunil.jsx"; // -> PEÇA DE LEGO PLUGADA: Importa a nova central especialista em criação e parametrização de etapas dinâmicas.
 
-export default function ModuloCadastros({ empresasAtivasExternas = [], contatosAtivosExternos = [], aoAtualizarEmpresasExternas, segmentosExternos = [], vinculosExternos = [] }) { // -> CONEXÃO DE REDE INTEGRADA: Abre as portas para receber as empresas, os contatos reais e as coleções parametrizadas da nuvem enviadas pelo pai App.jsx.
+export default function ModuloCadastros({ empresasAtivasExternas = [], contatosAtivosExternos = [], aoAtualizarEmpresasExternas, segmentosExternos = [], vinculosExternos = [], etapasFunilExternas = [] }) { // 🛠️ CORREÇÃO CIRÚRGICA: Injetada explicitamente a propriedade externa 'etapasFunilExternas' na assinatura para receber o barramento do pai App.jsx.
   const empresas = empresasAtivasExternas; // -> Mapeia a variável local para espelhar em tempo real a base unificada compartilhada com o Kanban.
-  const contatos = contatosAtivosExternos; // -> Garante que o contato do 'Hamilton' e outros registros do script entrem direto na esteira de visualização.
+  const contatos = contatosAtivosExternos; // -> Limpada a fiação cenográfica residual para ler única e estritamente a bandeja viva da nuvem.
   const segmentosBase = segmentosExternos; // -> INVERSÃO DE LÓGICA CONCLUÍDA: Sincroniza a grade visual de nichos com a coleção independente real do Firestore.
   const vinculosBase = vinculosExternos; // -> INVERSÃO DE LÓGICA CONCLUÍDA: Sincroniza a grade visual de elos com a coleção independente real do Firestore.
+  const etapasFunilBase = etapasFunilExternas; // 🛠️ FIÇÃO CONECTADA: Declara simetricamente o espelho de RAM local para extinguir de vez o ReferenceError da linha 364.
 
   // CONTROLADORES DE FLUXO VISUAL (ESTADOS DE LAYOUT): Gerenciam as telas dinâmicas e o surgimento dos novos modais sóbrios.
-  const [visaoPainel, setVisaoPainel] = useState("hub"); // -> HUB DE ENTRADA: Controla se a tela exibe os cartões principais ("hub"), "empresas", "contatos", ou as novas telas de "segmentos" e "vinculos".
+  const [visaoPainel, setVisaoPainel] = useState("hub"); // -> HUB EVOLUÍDO: Controla se exibe os cartões ("hub"), "empresas", "contatos", "segmentos", "vinculos" ou o novo gerenciador "funil".
   const [modalEmpresaAberto, setModalEmpresaAberto] = useState(false); // -> MODAL EMPRESA: Controla o aparecimento flutuante del formulário de novos assistidos.
   const [modalContatoAberto, setModalContatoAberto] = useState(false); // -> MODAL CONTATO: Controla o aparecimento flutuante del formulário de novos representantes humanos.
   const [gavetaFiltrosAberta, setGavetaFiltrosAberta] = useState(false); // -> GAVETA DE FILTROS: Abre ou fecha a cortina lateral direita administrative de buscas.
 
   // REGISTROS EM EDIÇÃO: Estados auxiliares técnicos para identificar se a operação atual é de alteração ou de inclusão nova.
   const [empresaEmEdicaoId, setEmpresaEmEdicaoId] = useState(null); // -> CORREÇÃO LÓGICA SÍNCRONA: Alinha o nome da função de estado para bater simetricamente com as chamadas de salvamento das linhas subsequentes.
-  const [contatoEmEdicaoId, setContatoEmEdicaoId] = useState(null); // -> Armazena a ID exclusiva do documento Firestore do representante que está sendo alterado pelo operador.
+  const [contatoEmEdicaoId, setContatoEmEdicaoId] = useState(null); // -> Armazena a ID exclusiva do documento Firestore do representative que está sendo alterado pelo operador.
 
   // GAVETAS DE MONITORAMENTO DE INPUT PARA AS NOVAS COLEÇÕES INDEPENDENTES
   const [novoSegmentoTexto, setNovoSegmentoTexto] = useState(""); // -> Guarda caractere por caractere o texto digitado para criar um novo segmento de mercado.
@@ -79,7 +81,7 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
     try { // -> Escudo protetivo de chamadas assíncronas.
       const colecaoRef = collection(db, "cadastros_vinculos"); // -> Abre o canal visando diretamente a coleção independente raiz no Firestore.
       await addDoc(colecaoRef, { label: novoVinculoTexto.trim() }); // -> Grava a nova categoria de elo civil de forma fixa e definitiva na nuvem.
-      novoVinculoTexto(""); // -> Limpa a caixa de digitação local na tela.
+      setNovoVinculoTexto(""); // -> CORREÇÃO DE MODIFICADOR: Ajustado para usar setNovoVinculoTexto impedindo estouros de compilação no terminal.
     } catch (err) { alert("Erro de rede ao salvar vínculo no Firebase!"); }
   };
 
@@ -97,14 +99,14 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
   const lidarComMudarOrdenacao = (campo) => { // -> Recebe a string da coluna clicada pelo operador no cabeçalho.
     if (campoOrdenado === campo) { // -> Se o operador clicou na mesma coluna que já estava filtrando.
       setDirecaoOrdenacao(direcaoOrdenacao === "asc" ? "desc" : "asc"); // -> Inverte a direção do fluxo alternando entre crescente e decrescente.
-    } else { // -> Caso seja um clique em uma coluna inédita.
+    } else { // -> Caso seja um clique in uma coluna inédita.
       setCampoOrdenado(campo); // -> Define a nova coluna mestre da ordenação.
       setDirecaoOrdenacao("asc"); // -> Inicializa o sentido em modo crescente padrão.
     } // -> Encerra o chaveamento.
   }; // -> Encerra a função manipuladora de ordenação.
 
   // AUXILIAR MATEMÁTICO DE ORDENAÇÃO EM RAM
-  const poolOrdenacaoArray = (arrayParaOrdenar, campo, direcao) => { // -> Recebe o lote de dados filtrados para organizar antes da renderização na tela.
+  const poolOrdenacaoArray = (arrayParaOrdenar, campo, direcao) => { // -> Recebe o lote de dados filtrados para organize antes da renderização na tela.
     if (!campo) return arrayParaOrdenar; // -> Trava antiqueda: Se nenhuma coluna foi clicada, Devolve o lote no formato original de fábrica.
     return [...arrayParaOrdenar].sort((a, b) => { // -> Abre a ordenação comparando item por item.
       const valorA = String(a[campo] || "").toLowerCase(); // -> Extrai a propriedade do item A forçando formato de texto minúsculo para ordenação limpa.
@@ -135,7 +137,7 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
     dadosParaExportar.forEach((item) => { // -> Percorre registro por registro higienizando as quebras para o Excel ler sem distorções.
       if (visaoPainel === "empresas") { // -> Montagem das strings da linha da empresa assistida.
         corpoPlanilha += `${item.codigo || ""};${item.cliente || ""};${item.cnpj || ""};${item.tipo || ""};${item.segmento || ""};${item.endereco || ""}\n`; // -> Concatena as células divididas por ponto e vírgula e salta a linha.
-      } else { // -> Montagem das strings da linha do contato representante humano.
+      } else { // -> Montagem das strings da linha do contato representative humano.
         const empresaPai = empresas.find((e) => e.id === item.empresaId); // -> Cruza na memória para resgatar o nome corporativo da empresa-pai vinculada.
         corpoPlanilha += `${item.nome || ""};${item.cpf || ""};${item.telefone || ""};${item.email || ""};${item.tipoVinculo || ""};${window.encodeURIComponent(empresaPai ? empresaPai.cliente : "Não Encontrada")}\n`; // -> Concatena as células humanas divididas por ponto e vírgula e salta a linha.
       }
@@ -174,21 +176,27 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
     setModalContatoAberto(true); // -> Levanta o modal flutuante humano com todos os dados preenchidos na tela.
   }; // -> Encerra o gatilho de edição do contato.
 
-  // CORREÇÃO CRÍTICA: RE-ESTABILIZAÇÃO DAS FUNÇÕES DE EXCLUSÃO MESTRE COM NOMENCLATURA SIMÉTRICA EXIGIDA PELAS PLANILHAS
-  const lidarComExcluirEmpresa = (id, cliente) => { // -> ADADE EXATA: Restaura o token físico 'lidarComExcluirEmpresa' para zerar o erro da linha 442.
+  const lidarComExcluirEmpresa = (id, cliente) => { // -> Restaural o token físico 'lidarComExcluirEmpresa' para zerar o erro da linha 442.
     const confirmacao = window.confirm(`⚠️ EXCLUSÃO CADASTRAL:\nDeseja banir permanentemente a empresa "${cliente}"?\n\nEsta ação removerá o registro da esteira.`); // -> Alerta o advogado.
     if (confirmacao && aoAtualizarEmpresasExternas) { // -> Se confirmado e a fiação de rede estiver de pé.
-      const baseLimpa = empresas.filter((e) => e.id !== id); // -> Expruga o item da RAM local.
+      const baseLimpa = empresas.filter((e) => e.id !== id); // -> Expurga o item da RAM local.
       aoAtualizarEmpresasExternas(baseLimpa); // -> Propaga o update síncrono para o Firebase.
-    } // -> Encerra a tranca humana.
-  }; // -> Encerra a função.
+    }
+  };
 
-  const lidarComExcluirContato = (id, nome) => { // -> ADADE EXATA: Restaura o token físico 'lidarComExcluirContato' para estancar o ReferenceError das linhas subsequentes.
-    const confirmacao = window.confirm(`⚠️ EXCLUSÃO CADASTRAL:\nDeseja banir permanentemente o representante "${nome}"?\n\nEsta ação revoga os elos associativos.`); // -> Alerta o advogado.
-    if (confirmacao) { // -> Se confirmado pelo operador comercial.
-      alert("Operação autorizada. O registro humano foi desvinculado das grades cadastrais."); // -> Retorno sóbrio de governança.
-    } // -> Encerra a tranca humana.
-  }; // -> Encerra a função.
+  // RE-SOLDA REATIVA DO BARRAMENTO HUMANO: Soldado o cabo real NoSQL assíncrono para triturar e excluir o contato direto do Firebase
+  const lidarComExcluirContato = async (id, nome) => { // -> Transmutada em assíncrona para detonar nós NoSQL.
+    const confirmacao = window.confirm(`⚠️ EXCLUSÃO DEFINITIVA NoSQL:\nDeseja apagar permanentemente o representante humano "${nome}" do Firebase?\n\nEsta ação não pode ser desfeita.`); // -> Dispara o balão de barreira humana.
+    if (confirmacao) { // -> Se o administrador der o aval positivo.
+      try { // -> Tenta detonar o endereço físico do documento na nuvem Google.
+        const documentoRef = doc(db, "cadastros_contatos", id); // -> Localiza o ID física do contato na coleção.
+        await deleteDoc(documentoRef); // -> Comando cirúrgico de destruição NoSQL na nuvem do Firebase, limpando a grade na hora.
+        alert(`🟩 EXCLUSÃO CONCLUÍDA!\nO representante "${nome}" foi expurgado com sucesso.`); // -> Alerta amigável.
+      } catch (err) { 
+        alert("Falha de rede ou falta de privilégio técnico para excluir contato!"); // -> Proteção contra quedas de internet.
+      }
+    }
+  };
 
   // RE-HOMOLOGAÇÃO DA FUNÇÃO TRATAR CADASTRO EMPRESA
   const tratarCadastroEmpresa = (e) => { // -> Garante a existência física del token de escopo na memória da tabela.
@@ -212,8 +220,8 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
     setEmpCodigo(""); setEmpNome(""); setEmpCnpj(""); setEmpIsFilial(false); setEmpSegmento(""); setEmpEndereco(""); setEmpCep("");
   };
 
-  // RE-INJEÇÃO COMPLETA: FUNÇÃO TRATAR CADASTRO CONTATO
-  const tratarCadastroContato = (e) => { // -> Devolve o motor reativo de salvamento de representantes civis ao fluxo do visor.
+  // RE-SOLDA COMPLETA DO GRAVADOR ASSÍNCRONO DE CONTATOS DO FIRESTORE
+  const tratarCadastroContato = async (e) => { // -> Conecta o salvamento e a alteração parcial síncrona diretamente ao banco da Google.
     e.preventDefault(); // -> Bloqueia o recarregamento del navegador para proteger os inputs armazenados na memória RAM.
     if (!conNome.trim() || !conCpf.trim() || !conTelefone.trim() || !conEmpresaId) { // -> Validação de preenchimento rígido obrigatório.
       alert("⚠️ CAMPOS OBRIGATÓRIOS:\n\nÉ obrigatório preencher o Nome Completo, CPF, Telefone e selecionar uma Empresa-Pai."); // -> Emite o aviso.
@@ -227,14 +235,32 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
       alert("⚠️ CONFIGURAÇÃO FISCAL:\n\nO telefone precisa conter entre 10 e 11 dígitos numéricos válidos com o DDD."); // -> Avisa o operador.
       return; // -> Aborta a descida.
     }
-    if (contatoEmEdicaoId) { // -> Se o estado identificar uma ID ativa, processa a re-homologação por alteração de lote.
-      alert("👤 ALTERAÇÃO DE DADOS:\n\nOs elos cadastrais do representante técnico foram atualizados na esteira."); // -> Emite feedback reativo de sucesso.
-    } else { // -> Caso contrário, consolida e empacota uma nova ficha humana de raiz.
-      alert(`👤 CONTATO HOMOLOGADO:\n\n"${conNome.trim()}" foi associado com sucesso à sua Empresa correspondente.`); // -> Alerta o sucesso síncrono.
-    } // -> Encerra os blocos lógicos operacionais de desvio.
-    setModalContatoAberto(false); // -> Fecha a cortina del modal flutuante humano de forma reativa.
-    setContatoEmEdicaoId(null); // -> Limpa a ID da gaveta de edição liberando o canal para novos lançamentos.
-    setConNome(""); setConCpf(""); setConTelefone(""); setConEmail(""); setConTipo("responsavel"); setConEmpresaId(""); // -> Limpa as 6 caixas de rascunho de digitação.
+
+    const pacoteContatoNoSQL = { // -> Prepara o mapa limpo e higienizado para arremessar na nuvem do Firestore.
+      nome: conNome.trim(), // -> Nome do representante.
+      cpf: conCpf.trim(), // -> Documento CPF.
+      telefone: conTelefone.trim(), // -> Linha telefônica.
+      email: conEmail.trim() || "Não informado", // -> E-mail ou contingência.
+      tipoVinculo: conTipo, // -> Papel associativo (Ex: Sócio, Advogado).
+      empresaId: conEmpresaId // -> ID relacional da empresa-pai.
+    };
+
+    try {
+      if (contatoEmEdicaoId) { // -> Caso possua uma ID em rascunho de foco, dispara a modificação parcial do nó existente.
+        const docRef = doc(db, "cadastros_contatos", contatoEmEdicaoId); // -> Endereço fixo do registro.
+        await updateDoc(docRef, { ...pacoteContatoNoSQL }); // -> Executa o updateDoc cirúrgico na nuvem.
+        alert("👤 RE-HOMOLOGADO!\nOs dados do representante foram atualizados na nuvem."); // -> Feedback visual.
+      } else { // -> Caso contrário, processa o empilhamento de um novo documento inédito de raiz.
+        const colecaoRef = collection(db, "cadastros_contatos"); // -> Mira na coleção mestre.
+        await addDoc(colecaoRef, pacoteContatoNoSQL); // -> Cria a nova ID NoSQL e salva.
+        alert(`👤 CONTATO HOMOLOGADO!\n"${conNome.trim()}" foi associado com sucesso.`); // -> Alerta de sucesso.
+      }
+      setModalContatoAberto(false); // -> Encerra visualmente o modal de inserções.
+      setContatoEmEdicaoId(null); // -> Zera a memória de rascunhos.
+      setConNome(""); setConCpf(""); setConTelefone(""); setConEmail(""); setConTipo("responsavel"); setConEmpresaId(""); // -> Limpa as 6 gavetas de inputs locais.
+    } catch (err) {
+      alert("Falha crítica de barramento ao persistir contato no Firebase!"); // -> Escudo antiqueda.
+    }
   };
 
   // BARREIRAS DE FILTRAGEM EXPANDIDAS: Varrem e batem simultaneamente todas as colunas físicas dos cabeçalhos.
@@ -262,7 +288,7 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
   const contatosOrdenadosVisor = poolOrdenacaoArray(contatosFiltrados, campoOrdenado, direcaoOrdenacao); // -> Transpassa o lote de representantes humanos pelo classificador del cabeçalho.
 
   return (
-    <div style={{ maxWidth: "1400px", margin: "24px auto", padding: "0 20px", boxSizing: "border-box", display: "flex", display: "flex", flexDirection: "column", gap: "20px", textAlign: "left" }}>
+    <div style={{ maxWidth: "1400px", margin: "24px auto", padding: "0 20px", boxSizing: "border-box", display: "flex", flexDirection: "column", gap: "20px", textAlign: "left" }}>
       
       {/* 🧭 CABEÇALHO DO MÓDULO E CONTROLES DE RETORNO */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "15px", borderBottom: "1px solid #e2e8f0", paddingBottom: "16px" }}>
@@ -284,10 +310,10 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
       </div>
 
       {/* =========================================================================================
-          🏛️ LAYOUT LEVEL 1: HUB RECONFIGURADO - GRADE EXPANDIDA PARA 4 CARTÕES SIMÉTRICOS E ELEGANTES
+          🏛️ LAYOUT LEVEL 1: HUB RECONFIGURADO - GRADE EXPANDIDA PARA 5 CARTÕES SIMÉTRICOS E ELEGANTES
           ========================================================================================= */}
       {visaoPainel === "hub" && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "20px", marginTop: "8px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "20px", marginTop: "8px" }}>
           
           {/* CARD BONITO 1: Base de Assistidos */}
           <div onClick={() => setVisaoPainel("empresas")} style={{ background: "#ffffff", padding: "20px", borderRadius: "8px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.02)", cursor: "pointer", boxSizing: "border-box", transition: "transform 0.2s", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
@@ -324,9 +350,19 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
             <div>
               <div style={{ fontSize: "26px", marginBottom: "6px" }}>🔗</div>
               <h3 style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: "800", color: "#0f172a" }}>Tipos de Elos e Vínculos</h3>
-              <p style={{ margin: "0 0 12px 0", fontSize: "12px", color: "#64748b", lineHeight: "1.4" }}>Parametrice as categorias jurídicas de representação humana (Ex: Preposto, Sócio) em coleção separada.</p>
+              <p style={{ margin: "0 0 12px 0", fontSize: "12px", color: "#64748b", lineHeight: "1.4" }}>Parametrice as categorias jurídicas de representation humana (Ex: Preposto, Sócio) em coleção separada.</p>
             </div>
             <span style={{ background: "#f1f5f9", color: "#1e293b", fontSize: "11px", fontWeight: "700", padding: "3px 10px", borderRadius: "4px", border: "1px solid #e2e8f0", width: "fit-content" }}>Categorias: {vinculosBase.length}</span>
+          </div>
+
+          {/* CARD BONITO 5: Central de Gerenciamento do Funil NoSQL Parametrizável */}
+          <div onClick={() => setVisaoPainel("funil")} style={{ background: "#ffffff", padding: "20px", borderRadius: "8px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.02)", cursor: "pointer", boxSizing: "border-box", transition: "transform 0.2s", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+            <div>
+              <div style={{ fontSize: "26px", marginBottom: "6px" }}>⚙️</div>
+              <h3 style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: "800", color: "#0f172a" }}>Gerenciamento do Funil (CRM)</h3>
+              <p style={{ margin: "0 0 12px 0", fontSize: "12px", color: "#64748b", lineHeight: "1.4" }}>Adicione, renomeie ou remova colunas vivas do Kanban ligando-as à máquina de estados Core.</p>
+            </div>
+            <span style={{ background: "#f1f5f9", color: "#1e293b", fontSize: "11px", fontWeight: "700", padding: "3px 10px", borderRadius: "4px", border: "1px solid #e2e8f0", width: "fit-content" }}>Etapas do Banco: {etapasFunilBase.length}</span>
           </div>
 
         </div>
@@ -409,10 +445,17 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
       )}
 
       {/* =========================================================================================
+          🛠️ RENDERIZAÇÃO INTERNA DINÂMICA: INJETADA A TELA ESPECIALISTA DE CONFIGURAÇÃO DE RAIAS NO FLUXO DO HUB
+          ========================================================================================= */}
+      {visaoPainel === "funil" && (
+        <ModuloFunil /> // -> Desenha a planilha executiva de criação assíncrona de colunas do cofre da Google.
+      )}
+
+      {/* =========================================================================================
           ➕ LAYOUT LEVEL 3: CHAMADA CIRÚRGICA DOS MODAIS ISOLADOS E GAVETA DE FILTROS (TOTALMENTE SANADOS)
           ========================================================================================= */}
-      <ModalNovaEmpresa aberto={modalEmpresaAberto} aoFechar={() => { setModalEmpresaAberto(false); setEmpresaEmEdicaoId(null); }} tratarCadastroEmpresa={tratarCadastroEmpresa} empCodigo={empCodigo} setEmpCodigo={setEmpCodigo} empNome={empNome} setEmpNome={setEmpNome} empCnpj={empCnpj} setEmpCnpj={setEmpCnpj} empIsFilial={empIsFilial} setEmpIsFilial={setEmpIsFilial} empSegmento={empSegmento} setEmpSegmento={setEmpSegmento} empEndereco={empEndereco} setEmpEndereco={setEmpEndereco} empCep={empCep} setEmpCep={setEmpCep} /> 
-      <ModalNovoContato aberto={modalContatoAberto} aoFechar={() => { setModalContatoAberto(false); setContatoEmEdicaoId(null); }} tratarCadastroContato={tratarCadastroContato} empresas={empresas} conEmpresaId={conEmpresaId} setConEmpresaId={setConEmpresaId} conNome={conNome} setConNome={setConNome} conCpf={conCpf} setConCpf={setConCpf} conTelefone={conTelefone} setConTelefone={setConTelefone} conEmail={conEmail} setConEmail={setConEmail} conTipo={conTipo} setConTipo={setConTipo} /> 
+      <ModalNovaEmpresa aberto={modalEmpresaAberto} aoFechar={() => { setModalEmpresaAberto(false); setEmpresaEmEdicaoId(null); }} tratarCadastroEmpresa={tratarCadastroEmpresa} empCodigo={empCodigo} setEmpCodigo={setEmpCodigo} empNome={empNome} setEmpNome={setEmpNome} empCnpj={empCnpj} setEmpCnpj={setEmpCnpj} empIsFilial={empIsFilial} setEmpIsFilial={setEmpIsFilial} empSegmento={empSegmento} setEmpSegmento={setEmpSegmento} empEndereco={empEndereco} setEmpEndereco={setEmpEndereco} empCep={empCep} setEmpCep={setEmpCep} listaSegmentos={segmentosBase} /> 
+      <ModalNovoContato aberto={modalContatoAberto} aoFechar={() => { setModalContatoAberto(false); setContatoEmEdicaoId(null); }} tratarCadastroContato={tratarCadastroContato} empresas={empresas} conEmpresaId={conEmpresaId} setConEmpresaId={setConEmpresaId} conNome={conNome} setConNome={setConNome} conCpf={conCpf} setConCpf={setConCpf} conTelefone={conTelefone} setConTelefone={setConTelefone} conEmail={conEmail} setConEmail={setConEmail} conTipo={conTipo} setConTipo={setConTipo} listaVinculos={vinculosBase} /> 
       <GavetaFiltrosCadastro aberto={gavetaFiltrosAberta} aoFechar={() => setGavetaFiltrosAberta(false)} visaoPainel={visaoPainel} filtrosEmpresa={filtrosEmpresa} setFiltrosEmpresa={setFiltrosEmpresa} filtrosContato={filtrosContato} setFiltrosContato={setFiltrosContato} /> 
 
     </div>

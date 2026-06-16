@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // -> Importa o React e o gancho useState para monitorar as caixas de seleção locais do CRM de faturamento.
+import React, { useState } from "react"; // -> Importa a biblioteca mestre do React e o gancho useState para monitorar as caixas de seleção locais do CRM de faturamento.
 
 export default function FilterDrawer({ aberto, aoFechar, aoAplicarFiltros }) { // -> Define e exporta o componente da gaveta de buscas recebendo as ferramentas de controle do pai App.jsx.
   // -> GAVETA DE MEMÓRIA INTERNAS EXPANDIDA: Monitoram localmente todas as chaves do cabeçalho comercial antes do disparo do botão.
@@ -29,7 +29,8 @@ export default function FilterDrawer({ aberto, aoFechar, aoAplicarFiltros }) { /
 
   // -> MANIPULADOR DE LIMPEZA DE SELEÇÃO EM LOTE
   const limparFiltrosLocais = () => {
-    const [filtroCodigo, setFiltroCodigo] = useState(""); // -> Monitora localmente o Código Conta digitado para o refino.
+    // 🛠️ CORREÇÃO CIRÚRGICA DE ESTOURO DE MEMÓRIA: Removida a redeclaração ilegal do useState e substituída pelo reset comum de estado limpo.
+    setFiltroCodigo(""); // -> Reseta localmente o campo do Código Conta voltando para string vazia.
     setFiltroCliente(""); // -> Zera localmente o campo de Razão Social.
     setFiltroResponsavel(""); // -> Zera localmente o campo de Operador.
     setFiltroStatus("todos"); // -> Retorna o combo de fases do funil para o valor global de exibir tudo.
@@ -89,11 +90,11 @@ export default function FilterDrawer({ aberto, aoFechar, aoAplicarFiltros }) { /
             <button type="button" onClick={aoFechar} style={{ background: "none", border: "none", fontSize: "20px", cursor: "pointer", color: "#94a3b8", fontWeight: "bold", padding: 0 }}>&times;</button> {/* -> Ícone puro de fechamento em formato de X sem textos poluentes. */}
           </div> {/* -> Encerra o cabeçalho superior. */}
 
-          {/* FORMULÁRIO COM SELETORES OPERACIONAIS DE CABEÇALHO COMPLETO */}
-          <form onSubmit={tratarFiltroLocal} style={{ display: "flex", flexDirection: "column", gap: "12px" }}> {/* -> Gap enxugado para 12px para densidade profissional máxima. */}
+          {/* FORMULÁRIO COM SELETORES OPERACIONAIS DE CABEÇALHO COMPLE DO FUNIL */}
+          <form onSubmit={tratarFiltroLocal} style={{ display: "flex", gap: "12px", flexDirection: "column" }}> {/* -> Abre a esteira de formulários compactados em lote vertical. */}
             
             {/* NOVO CAMPO: BUSCA POR CÓDIGO CONTA */}
-            <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}> {/* -> Alinhador vertical do input de conta. */}
+            <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}> {/* 🛠️ DESIGN PRE-RECALIBRADO: Corrigido o alinhamento ortográfico para travar o layout simetricamente à esquerda. */}
               <label style={{ fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px", textTransform: "uppercase" }}>Código Conta</label> {/* -> Rótulo em caixa alta regulado para 11px. */}
               <input 
                 type="text" 
@@ -105,7 +106,7 @@ export default function FilterDrawer({ aberto, aoFechar, aoAplicarFiltros }) { /
             </div> {/* -> Fim do campo de busca por Código. */}
 
             {/* NOVO CAMPO: BUSCA POR EMPRESA / RAZÃO SOCIAL */}
-            <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}> {/* -> Alinhador vertical do input de razão social. */}
+            <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}> {/* 🛠️ DESIGN PRE-RECALIBRADO: Corrigido o alinhamento ortográfico para travar o layout simetricamente à esquerda. */}
               <label style={{ fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px", textTransform: "uppercase" }}>Empresa / Razão Social</label> {/* -> Rótulo em caixa alta regulado para 11px. */}
               <input 
                 type="text" 
@@ -117,7 +118,7 @@ export default function FilterDrawer({ aberto, aoFechar, aoAplicarFiltros }) { /
             </div> {/* -> Fim do campo de busca por Empresa. */}
 
             {/* CAMPO MANTER: BUSCA POR OPERADOR RESPONSÁVEL */}
-            <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}> {/* -> Alinhador vertical do input do operador. */}
+            <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}> {/* 🛠️ DESIGN PRE-RECALIBRADO: Corrigido o alinhamento ortográfico para travar o layout simetricamente à esquerda. */}
               <label style={{ fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px", textTransform: "uppercase" }}>Operador Responsável</label> {/* -> Rótulo em caixa alta regulado para 11px. */}
               <input 
                 type="text" 
@@ -176,7 +177,7 @@ export default function FilterDrawer({ aberto, aoFechar, aoAplicarFiltros }) { /
         </div> {/* -> Encerra o bloco superior de campos com rolagem. */}
 
         {/* BLOCO INFERIOR FIXO: BOTÕES DE LIMPAR E APLICAR COMBINAÇÕES */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px", borderTop: "1px solid #e2e8f0", paddingTop: "16px", marginTop: "12px" }}> {/* -> Contêiner fixado no rodapé com friso divisório e padding compacto. */}
+        <div style={{ display: "flex", gap: "8px", flexDirection: "column", borderTop: "1px solid #e2e8f0", paddingTop: "16px", marginTop: "12px" }}> {/* -> Contêiner fixado no rodapé com friso divisório e padding compacto. */}
           <button 
             onClick={tratarFiltroLocal} // -> Aciona o gatilho interceptador que injeta o bloco completo de chaves na esteira do cérebro.
             type="button" // -> Tipo botão para estabilidade de eventos.
