@@ -1,7 +1,7 @@
 import React, { useState } from "react"; // -> Traz a biblioteca mestre do React e o gancho useState para monitorar as caixas locais do CRM de faturamento.
-import { FileText, X, ArchiveRestore, Archive, ShieldAlert, Activity, User, Phone, Mail, Link, CheckCircle2, XCircle, ListTodo, History, BadgePercent, Coins, Plus, Calendar, Percent, FolderMinus, Info } from "lucide-react"; // -> CORREÇÃO CIRÚRGICA: Adicionado o ícone 'FolderMinus' na fiação de importações do topo para estancar o ReferenceError.
+import { FileText, X, ArchiveRestore, Archive, ShieldAlert, Activity, User, Phone, Mail, Link, CheckCircle2, XCircle, ListTodo, History, BadgePercent, Coins, Plus, Calendar, Percent, FolderMinus, Info, Trash2 } from "lucide-react"; // -> CORREÇÃO CIRÚRGICA: Adicionado 'FolderMinus' e 'Trash2' na fiação de importações do topo para estancar travamentos e permitir a deleção física.
 
-export default function ModalProntuario({ aberto, aoFechar, card, colunaId, contatosBase = [], aoSalvarProntuário, exibirArquivados = false, aoAlternarArquivamentoNoModal }) { // -> Declara o componente do Prontuário recebendo o card ativo, a calha do funil, os contatos e as novas propriedades do limbo vindas do App.jsx.
+export default function ModalProntuario({ aberto, aoFechar, card, colunaId, contatosBase = [], aoSalvarProntuário, exibirArquivados = false, aoAlternarArquivamentoNoModal, aoExcluirCardNoModal }) { // -> RECALIBRADA PREMIUM: Recebe a nova trigger assíncrona 'aoExcluirCardNoModal' vinda diretamente do barramento mestre do App.jsx.
   if (!aberto || !card) return null; // -> TRAVA DE SEGURANÇA: Se o maestro disser que o modal não deve aparecer, retorna nulo e não consome processamento.
 
   // -> CÁLCULO DE HIGIENIZAÇÃO MONETÁRIA DE ENTRADA
@@ -102,7 +102,7 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
     if (valorAbatido <= 0) return; // -> Evita lançamentos nulos ou negativos na esteira.
 
     const novoSaldo = Math.max(0, valorOriginalDívida - valorAbatido); // -> Aplica a subtração matemática direta impedindo saldo negativo.
-    card.valorVencido = novoSaldo; // -> Reconfigura reativamente o Saldo Devedor mestre na memória ativa.
+    card.valorVencido = novoSaldo; // -> Reconfigura reativamente o Saldo Devedor mestre na memória activa.
 
     // -> Injeta o rastro indelével de crédito na Linha do Tempo Analítica (Ata)
     const logAmortizacao = { // -> Cria o pacote descritivo de caixa.
@@ -160,30 +160,35 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
             )}
             <span style={{ fontSize: "11px", background: "#dbeafe", color: "#1e40af", padding: "4px 12px", borderRadius: "20px", fontWeight: "700", textTransform: "uppercase" }}>Raia CRM: {colunaId}</span>
             
-            {/* 🛠️ GATILHO COMPACTO PREMIUM: Ícone inteligente que herda as ações da Toolbar para permitir Arquivar ou Desarquivar de dentro do prontuário */}
-            {aoAlternarArquivamentoNoModal && (
-              <button
-                type="button" // -> Especifica o elemento como botão neutro nativo.
-                onClick={() => aoAlternarArquivamentoNoModal(card.id, card.cliente)} // -> Aciona a inversão da flag síncronamente no mestre App.jsx.
-                style={{
-                  background: "none", // -> Remove preenchimentos de fundo cinza de fábrica.
-                  border: "none", // -> Remove contornos estruturais.
-                  color: "#94a3b8",
-                  fontSize: "16px", // -> Tamanho ideal casado com a Toolbar superior.
-                  cursor: "pointer", // -> Transforma o cursor em mãozinha de clique.
-                  padding: "4px 8px", // -> Margem de segurança de clique.
-                  display: "flex", // -> Alinhador flexbox interno.
-                  alignItems: "center", // -> Alinhamento vertical absoluto.
-                  transition: "color 0.15s ease"
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.color = "#0f172a"}
-                onMouseLeave={(e) => e.currentTarget.style.color = "#94a3b8"}
-                title={exibirArquivados ? "Desarquivar este card e mandar de volta para o fluxo ativo" : "Arquivar este card e mandar para o Limbo"} // -> Tooltip explicativa dinâmica baseada na tela aberta.
-              >
-                {/* MUTAÇÃO VETORIAL SÊNIOR: Substitui as antigas setas e pastas textuais por componentes outline do Lucide */}
-                {exibirArquivados ? <ArchiveRestore size={16} strokeWidth={2.5} style={{ color: "#2563eb" }} /> : <Archive size={16} strokeWidth={2.5} />}
-              </button>
-            )}
+            {/* 🛠️ GRID DE BOTÕES DE COMANDO DO HEAD: Unifica os gatilhos de Excluir NoSQL e de Arquivar Limbo na ala superior */}
+            <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+              {/* 🗑️ NOVO BOTÃO DE EXCLUSÃO REAL SÔBRIO: Posicionado perfeitamente na ala interna do Prontuário para banir o registro da base */}
+              {aoExcluirCardNoModal && (
+                <button
+                  type="button" // -> Especifica o elemento como botão padrão comercial plano.
+                  onClick={() => aoExcluirCardNoModal(card.id, card.cliente)} // -> Dispara a trituração física NoSQL irreversível criada no App.jsx.
+                  style={{ background: "none", border: "none", color: "#94a3b8", fontSize: "16px", cursor: "pointer", padding: "4px 8px", display: "flex", alignItems: "center", transition: "color 0.15s ease" }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = "#ef4444"}
+                  onMouseLeave={(e) => e.currentTarget.style.color = "#94a3b8"}
+                  title="Excluir esta cobrança definitivamente do banco NoSQL" // -> Tooltip explicativa.
+                >
+                  <Trash2 size={16} strokeWidth={2.5} /> {/* -> Injeta o ícone da lixeira sutil do Lucide. */}
+                </button>
+              )}
+
+              {aoAlternarArquivamentoNoModal && (
+                <button
+                  type="button" // -> Especifica o elemento como botão neutro nativo.
+                  onClick={() => aoAlternarArquivamentoNoModal(card.id, card.cliente)} // -> Aciona a inversão da flag síncronamente no mestre App.jsx.
+                  style={{ background: "none", border: "none", color: "#94a3b8", fontSize: "16px", cursor: "pointer", padding: "4px 8px", display: "flex", alignItems: "center", transition: "color 0.15s ease" }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = "#0f172a"}
+                  onMouseLeave={(e) => e.currentTarget.style.color = "#94a3b8"}
+                  title={exibirArquivados ? "Desarquivar este card e mandar de volta para o fluxo ativo" : "Arquivar este card e mandar para o Limbo"} // -> Tooltip explicativa dinâmica baseada na tela aberta.
+                >
+                  {exibirArquivados ? <ArchiveRestore size={16} strokeWidth={2.5} style={{ color: "#2563eb" }} /> : <Archive size={16} strokeWidth={2.5} />}
+                </button>
+              )}
+            </div>
 
             <button 
               type="button" 
@@ -302,7 +307,7 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
                   <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                     {(card.tarefas || []).length === 0 ? (
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", fontSize: "11px", color: "#94a3b8", padding: "12px", background: "#f8fafc", borderRadius: "6px", fontStyle: "italic" }}>
-                        <FolderMinus size={13} strokeWidth={2} /> {/* -> FUNCIONANDO PERFEITAMENTE: O erro de referência foi sanado na RAM. */}
+                        <FolderMinus size={13} strokeWidth={2} /> {/* -> Sincronizado reativamente na RAM. */}
                         <span>Nenhuma ação pendente fixada na carcaça deste devedor.</span>
                       </div>
                     ) : (
