@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"; // -> Traz a biblioteca mestre do React e os ganchos de monitoramento de memória RAM de forma nativa.
 import { auth, db } from "./config/firebase"; // -> Conecta o acesso direto e as chaves de segurança criadas na engrenagem de configuração do Firebase.
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth"; // -> Puxa os comandos reais do Google Auth para gerenciamento de login e novos cadastros corporativos.
-import { collection, addDoc, onSnapshot, updateDoc, doc, deleteDoc } from "firebase/firestore"; // -> Puxa as ferramentas estáveis do SDK do Firestore para criar, ler, atualizar e deletar documentos.
+import { collection, onSnapshot, updateDoc, doc, deleteDoc, getDoc, setDoc } from "firebase/firestore"; // -> Puxa as ferramentas estáveis do SDK do Firestore para criar, ler, atualizar e deletar documentos de forma atômica.
 import Header from "./components/Layout/Header"; // -> PEÇA DE LEGO PLUGADA: Importa o componente especialista de navigation global do topo corporativo.
 import { Toolbar } from "./components/CRM/Toolbar"; // -> PRESERVAÇÃO ESTRITA: Mantém a importação com chaves calibrada para sincronizar as visões com o disco.
 import TabelaCobranca from "./components/CRM/TabelaCobranca"; // -> PEÇA DE LEGO PLUGADA: Importa o componente especialista de tabela comercial executiva.
@@ -14,6 +14,7 @@ import ModuloTarefas from "./components/Tarefas/ModuloTarefas"; // -> INJEÇÃO 
 import ModuloDashboard from "./components/Dashboard/ModuloDashboard"; // -> INJEÇÃO DE LINHA FINAL: Importa o cérebro estatístico de Big Numbers e gráficos nativos do funil.
 import { ModuloFinanceiro } from "./components/Financeiro/ModuloFinanceiro"; // -> INJEÇÃO DA CONTROLADORIA FINTECH: Conecta o painel especialista em fluxos de caixa, splits e liquidação Price.
 import ModuloMensagens from "./components/Cadastros/ModuloMensagens"; // -> NOVA INJEÇÃO MODULAR: Conecta o painel especialista em réguas de cobrança e automações de mensagens por etapas.
+import { ImportadorAging } from "./components/Importador/Importador"; // -> NOVA INJEÇÃO COMPATÍVEL: Puxa o motor inteligente de processamento em lote da planilha Aging do Victor.
 
 export default function App() { // -> Define e exporta a função mestre que gerencia todo o componente visual da aplicação.
   const [user, setUser] = useState(null); // -> Guarda o crachá do operador logado ou mantém nulo se deslogado no sistema.
@@ -23,7 +24,7 @@ export default function App() { // -> Define e exporta a função mestre que ger
   const [modoAuth, setModoAuth] = useState("login"); // -> Controla se exibe o painel de "login" ou muda para o de "cadastro".
   const [modalAberto, setModalAberto] = useState(false); // -> Controla o sumiço ou aparecimento do modal de inserção de Nova Cobrança.
   const [abaAtiva, setAbaAtiva] = useState("crm"); // -> GAVETA DE NAVEGAÇÃO: Controla eletronicamente qual módulo principal do topo está ativo.
-  const [visaoCrm, setVisaoCrm] = useState("kanban"); // -> GAVETA DE LAYOUT DO CRM: Define se exibe os cards em formato "kanban" ou a grade em "tabela".
+  const [visaoCrm, setVisaoCrm] = useState("kanban"); // -> GAVETA DE LAYOUT DO CRM: Define se exibe os cards em formato "kanban" or a grade em "tabela".
   const [gavetaFiltrosAberta, setGavetaFiltrosAberta] = useState(false); // -> GAVETA DE FILTROS: Controla se a gaveta de filtros lateral direita aparece ou some.
   
   // -> ESTADOS LOCAIS ADICIONADOS PARA A FIAÇÃO DO SUPER MODAL PRONTUÁRIO
@@ -34,14 +35,14 @@ export default function App() { // -> Define e exporta a função mestre que ger
   const [exibirArquivados, setExibirArquivados] = useState(false); // -> INTERRUPTOR GLOBAL: Controla se a tela exibe a esteira activa de faturamento ou o arquivo de itens arquivados.
 
   // MEMÓRIA DE BUSCA COMBINADA EXPANDIDA DO CRM: Inicializa o objeto com todas as chaves de cabeçalho solicitadas para filtrar simultaneamente.
-  const [filtrosAtivos, setFiltrosAtivos] = useState({ codigo: "", cliente: "", responsavel: "", status: "todos", operadorValor: ">=", valorLimite: "" }); // -> RECALIBRAÇÃO COMPLETA: Agrega travas lógicas e numéricas de saldo para raias e planilhas.
+  const [filtrosAtivos, setFiltrosAtivos] = useState({ codigo: "", cliente: "", responsavel: "", status: "todos", operadorValor: ">=", valorLimite: "" }); // -> RECALIBRACIÓN COMPLETA: Agrega travas lógicas e numéricas de saldo para raias e planilhas.
   
   // -> CONFIGURAÇÕES DE ORDENAÇÃO DO CRM FINANCEIRO: Armazena qual coluna rege a planilha e in qual sentido de triagem.
-  const [campoOrdenadoCrm, setCampoOrdenadoCrm] = useState(""); // -> Memoriza a string da coluna de devedores clicada (Ex: 'codigo', 'cliente', 'valorVencido').
+  const [campoOrdenadoCrm, setCampoOrdenadoCrm] = useState(""); // -> Memoriza a string della coluna de devedores clicada (Ex: 'codigo', 'cliente', 'valorVencido').
   const [direcaoOrdenacaoCrm, setDirecaoOrdenacaoCrm] = useState("asc"); // -> Chaveia o fluxo entre ordem alfabética/numérica crescente ('asc') ou decrescente ('desc').
 
   // -> FIÇÃO CENTRAL RELACIONAL: Gaveta mestre que centraliza todas as empresas homologadas para abastecer o Kanban e o Cadastro juntos.
-  const [empresasBase, setEmpresasBase] = useState([]); // -> Inicializa a bandeja vazia para receber os dados limpos da nuvem via snapshot.
+  const [empresasBase, setEmpresasBase] = useState([]); // -> Inicializa la bandeja vazia para receber os dados limpos da nuvem via snapshot.
   
   // -> FIÇÃO CENTRAL DE CONTACTOS HUMANOS: Guarda na memória a lista real de representantes vindos da coleção cadastros_contatos del Firebase.
   const [contatosBase, setContatosBase] = useState([]); // -> Inicializa o estado reativo global de contatos para sincronismo de tabelas.
@@ -53,7 +54,7 @@ export default function App() { // -> Define e exporta a função mestre que ger
   // 🛠️ RECALIBRAÇÃO DO MÓDULO FUNIL DINÂMICO: Transmutado em estado reativo para carregar o array NoSQL del cofre da nuvem.
   const [colunasFunil, setColunasFunil] = useState([]); // -> Substitui a matriz travada no código por um listener dinâmico em tempo real.
 
-  // 🧺 NOVO ESTADO DE SELEÇÃO EM MASSA: Guarda as seleções de caixas de seleção do usuário.
+  // 🧺 NOVO ESTADO DE SELEÇÃO EM MASSA: Guarda as seleções de caixas de checkbox do usuário.
   const [itensSelecionados, setItensSelecionados] = useState({}); // -> Guarda um mapa de booleanos reativos chaveados pelo ID físico de cada documento.
 
   useEffect(() => { // -> Ativa um gancho de efeito para rodar a escuta de chaves assim que o app liga.
@@ -83,7 +84,7 @@ export default function App() { // -> Define e exporta a função mestre que ger
     if (!user) return; // -> Trava de segurança: impede o acesso se a sessão do operador estiver derrubada.
     const empresasRef = collection(db, "cadastros_empresas"); // -> Aponta a mira do leitor para a pasta oficial cadastros_empresas.
     const monitorarEmpresas = onSnapshot(empresasRef, (snapshot) => { // -> Grampeia em tempo real a coleção trazendo as empresas como a B2 IND E COM.
-      const listaEmp = []; // -> Cria a bandeja em branco local.
+      const listaEmp = []; // -> Cria la bandeja em branco local.
       snapshot.forEach((doc) => { listaEmp.push({ id: doc.id, ...doc.data() }); }); // -> Despeja a ID física e os dados cadastrais higienizados.
       setEmpresasBase(listaEmp); // -> Aloca na memória ram global reativa do sistema.
     }); // -> Encerra a escuta.
@@ -95,7 +96,7 @@ export default function App() { // -> Define e exporta a função mestre que ger
     if (!user) return; // -> Trava de segurança contra acessos anônimos do banco.
     const contatosRef = collection(db, "cadastros_contatos"); // -> Aponta a mira do leitor para a pasta oficial cadastros_contatos.
     const monitorarContatos = onSnapshot(contatosRef, (snapshot) => { // -> Grampeia a coleção trazendo os contatos reais como o Hamilton.
-      const listaCon = []; // -> Cria a bandeja em branco local.
+      const listaCon = []; // -> Cria la bandeja em branco local.
       snapshot.forEach((doc) => { listaCon.push({ id: doc.id, ...doc.data() }); }); // -> Despeja a ID e o elo empresaId del banco.
       setContatosBase(listaCon); // -> Aloca na gaveta mestre para descida imediata nas propriedades.
     }); // -> Encerra a escuta de contatos.
@@ -139,13 +140,33 @@ export default function App() { // -> Define e exporta a função mestre que ger
     return () => monitorarConfigFunil(); // -> Desliga a fiação elástica ao sair.
   }, [user]);
 
-  // 🧼 RESETADOR DE MARCAÇÃO EM LOTE: Limpa a gaveta de checkboxes ao trocar de aba ou de visão para evitar fantasmas na RAM.
+  // =========================================================================================
+  // ⚡ INSTANCIAÇÃO RECALIBRADA DO MOTOR CENTRAL DO IMPORTADOR AGING (SOLUÇÃO DE DUAS VIAS):
+  // Inicializa a classe injetando o gatilho reativo direto na ID da Toolbar oficial da página
+  // =========================================================================================
+  useEffect(() => {
+    if (!user || abaAtiva !== "crm") return; // -> Só inicializa o motor de carga se o cobrador estiver autenticado na aba operacional do CRM.
+    
+    // Configura um timer de retaguarda para garantir que a Toolbar já foi desenhada no HTML
+    const timerInjecao = setTimeout(() => {
+      const motorImportador = new ImportadorAging(() => {
+        // Função executada reativamente assim que o processamento do lote conclui com sucesso
+        setItensSelecionados({}); // -> Reseta marcações antigas limpando a RAM de fantasmas.
+      });
+      // ALINHAMENTO DO VÍNCULO VISUAL: Injeta o botão diretamente no local reservado na barra de ferramentas
+      motorImportador.renderizarBotaoUpload("container-importador-toolbar-id"); 
+    }, 150); // -> Aguarda 150 milissegundos para estabilização de carregamento da árvore de visualização.
+
+    return () => clearTimeout(timerInjecao); // -> Desliga o timer ao desmontar a tela para preservar a máquina.
+  }, [user, abaAtiva]); // -> Reinicia o acoplamento caso mude o turno ou mude de aba no menu superior.
+
+  // 🧼 RESETADOR DE MARCAÇÃO EM LOTE: Limpa a gaveta de checkboxes ao trocar de aba ou de visão para evitar ghosts na RAM.
   useEffect(() => {
     setItensSelecionados({}); // -> Esvazia o mapa de seleções síncronamente.
   }, [abaAtiva, visaoCrm, exibirArquivados]);
 
   const manipularAutenticacao = async (e) => { // -> Função assíncrona que treats o envio del formulário de e-mail e senha.
-    e.preventDefault(); // -> Bloqueia o recarregamento padrão da página para não perder os dados digitados.
+    e.preventDefault(); // -> Bloqueia o recarregamento padrão da página para não receber os dados digitados.
     if (!email || !senha) return; // -> Trava de segurança: impede o envio se os campos estiverem vazios.
 
     try { // -> Escudo de proteção para disparar a chamada de rede internacional da Google.
@@ -153,7 +174,7 @@ export default function App() { // -> Define e exporta a função mestre que ger
         await signInWithEmailAndPassword(auth, email, senha); // -> Valida chaves contra o banco Firebase Auth.
       } else { // -> Caso o operador queira cadastrar uma credencial nova no CRM.
         await createUserWithEmailAndPassword(auth, email, senha); // -> Cadastra operador novo na nuvem de segurança.
-        alert("Conta comercial cadastrada! Entrando no painel..."); // -> Alerta o sucesso humano na tela.
+        alert("Conta comercial cadastrada!"); // -> Alerta o sucesso humano na tela.
       } // -> Fecha o desvio de modo de autenticação.
     } catch (error) { // -> Captura erros de senha ou e-mail na rede de dados.
       let msg = "Falha no acesso! Verifique suas credenciais."; // -> Meragem genérica padrão de erro.
@@ -167,46 +188,104 @@ export default function App() { // -> Define e exporta a função mestre que ger
   const efetuarLogoutTurno = () => { // -> Função de desligamento seguro del terminal de faturamento.
     const confirmarSaida = confirm("🚪 FECHAMENTO DE TURNO:\nDeseja encerrar sua sessão e bloquear esta mesa de cobrança com segurança?"); // -> Pede confirmação humana antes de deslogar.
     if (confirmarSaida) { // -> Se o usuário aceitar o risco de sair da mesa.
-      signOut(auth).then(() => { // -> Desconecta os tokens ativos nos servidores da Google.
+      signOut(auth).then(() => { // -> Desconecta os tokens activos nos servidores da Google.
         localStorage.clear(); // -> Limpa os rastros de cache e lixo locais da máquina.
       }); // -> Encerra o encadeamento de limpeza.
     } // -> Encerra a checagem humana.
   }; // -> Fecha a função especialista de logout.
 
-  const cadastrarNovaDividaDoModal = async (pacoteRecebidoDoModal) => { // -> Função assíncrona que recebe o pacote estruturado direto del modal.
-    try { // -> Tenta salvar na nuvem do Google Firestore.
-      const cobrancasRef = collection(db, "cobrancas"); // -> Cria a linha mestre de mira na tabela de faturamento.
-      await addDoc(cobrancasRef, { 
-        ...pacoteRecebidoDoModal, 
-        status: colunasFunil[0]?.id || "novo", // -> Aponta para a ID da primeira raia viva configurada pelo usuário.
-        categoria: colunasFunil[0]?.categoria || "inicio", // -> Injeta dinamicamente a categoria Core correspondente.
-        arquivado: false, 
-        historicoNotas: pacoteRecebidoDoModal.historicoNotas || [], 
-        tarefas: [], 
-        proposta: { valorCobrado: parseFloat(pacoteRecebidoDoModal.valorVencido) || 0, qtdParcelas: 1 } // -> Configura o mapa Price inicial padrão.
-      }); 
-      setModalAberto(false); // -> Fecha reativamente a cortina flutuante na tela del CRM.
-    } catch (err) { // -> Captura falhas se a internet cair.
-      alert("Erro crítico de rede ao salvar cobrança!"); // -> Alerta o operador logado sobre a recusa del banco.
-    } // -> Encerra o bloco de proteção de erros.
-  }; // -> Encerra o controlador do faturamento del formulário.
+  // 🧳 NOVO MOTOR DE GRAVAÇÃO CONSOLIDADA (SACOLA DE NOTAS NoSQL): Intercepta a gravação manual, valida existência por CNPJ e agrupa os títulos sem duplicar cards
+  const cadastrarNovaDividaDoModal = async (pacoteRecebidoDoModal) => { 
+    // 🔥 CORREÇÃO CIRÚRGICA DE ENGENHARIA NoSQL: Limpa pontos, traços e barras da string recebida do modal para banir o erro de 3 segmentos que travava a interface.
+    const cnpjChaveAlvo = pacoteRecebidoDoModal.cnpj ? String(pacoteRecebidoDoModal.cnpj).replace(/[^0-9]/g, '').trim() : ""; 
+    
+    // -> TRAVA DE SEGURANÇA OPERACIONAL: Aborta o disparo assíncrono caso o documento fiscal venha corrompido ou fantasma.
+    if (!cnpjChaveAlvo) {
+      alert("⚠️ ERRO DE COMPILAÇÃO NoSQL:\n\nO CNPJ do Cliente devedor veio indefinido ou em branco. O Firestore recusou o caminho de gravação.");
+      return;
+    }
+
+    const cobrancaDocRef = doc(db, "cobrancas", cnpjChaveAlvo); // -> Define a rota física fixa: o ID de documento na nuvem passa a ser o próprio CNPJ numérico puro.
+
+    try { 
+      const snapshotCobranca = await getDoc(cobrancaDocRef); // -> Faz a leitura preventiva na nuvem para analisar se a sacola do devedor já existe.
+      
+      // Nova estrutura de Nota Fiscal individual extraída do modal manual
+      const novaNotaFiscalObjeto = {
+        numDocumento: pacoteRecebidoDoModal.numDocumento,
+        referencia: pacoteRecebidoDoModal.referencia,
+        atribuicao: pacoteRecebidoDoModal.atribuicao,
+        dataDocumento: pacoteRecebidoDoModal.dataDocumento,
+        vencimentoLiquido: pacoteRecebidoDoModal.vencimentoLiquido,
+        valorNota: pacoteRecebidoDoModal.valorVencido, // -> O valor nominal individual deste título.
+        executivoVendas: pacoteRecebidoDoModal.executivoVendas
+      };
+
+      if (snapshotCobranca.exists()) { 
+        // CENÁRIO A: O devedor já possui uma sacola de cobrança viva no Kanban. Faz o Merge e acumula os saldos.
+        const dadosExistentes = snapshotCobranca.data();
+        const listaNotasAtualizada = [...(dadosExistentes.titulos || []), novaNotaFiscalObjeto]; // -> Anexa a nova nota fiscal na esteira de array sem apagar o histórico.
+        
+        // Calcula a soma real acumulada de todas as notas fiscais da sacola para atualizar a prancha
+        const novoSaldoConsolidado = listaNotasAtualizada.reduce((acc, nota) => acc + (parseFloat(nota.valorNota) || 0), 0);
+
+        await updateDoc(cobrancaDocRef, {
+          titulos: listaNotasAtualizada, // -> Grava a sacola atualizada com a nova nota inserida.
+          valorVencido: novoSaldoConsolidado, // -> Updates a variável reativa das raias com a somatória total.
+          valor: novoSaldoConsolidado, // -> Sincroniza os contadores de topo.
+          proposta: { valorCobrado: novoSaldoConsolidado, qtdParcelas: 1 } // -> Reseta o rascunho Price para recalcular com base no bolo bruto.
+        });
+        alert(`🟩 NOTA VINCULADA!\nA Nota Fiscal foi anexada com sucesso ao devedor unificado "${pacoteRecebidoDoModal.cliente}". Novo saldo total: R$ ${novoSaldoConsolidado.toLocaleString("pt-BR")}`);
+      } else {
+        // CENÁRIO B: Devedor inédito na esteira. Inicializa o card do zero com o primeiro item dentro da sacola.
+        await setDoc(cobrancaDocRef, {
+          codigo: pacoteRecebidoDoModal.codigo,
+          cliente: pacoteRecebidoDoModal.cliente,
+          cnpj: cnpjChaveAlvo, // -> Injeta o documento numérico limpo para travar caminhos de rede pares.
+          responsavel: pacoteRecebidoDoModal.responsavel,
+          status: "novo",
+          statusInicial: "novo",
+          categoria: "inicio",
+          arquivado: false,
+          valorVencido: pacoteRecebidoDoModal.valorVencido, // -> Inicia com o valor do primeiro título.
+          valor: pacoteRecebidoDoModal.valorVencido,
+          valorAVencer: 0,
+          subStatus: "",
+          observacao: pacoteRecebidoDoModal.observacao || "",
+          tarefas: [],
+          historicoNotas: [
+            {
+              conteudo: `Lote de cobrança unificado iniciado manualmente para o devedor. Primeira NF inserida: ${pacoteRecebidoDoModal.referencia}`,
+              dataHora: new Date().toLocaleDateString("pt-BR") + " às " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+            }
+          ],
+          titulos: [novaNotaFiscalObjeto], // -> Inicializa la sacola com a primeira Nota Fiscal contida na planilha/modal.
+          proposta: { valorCobrado: pacoteRecebidoDoModal.valorVencido, qtdParcelas: 1 }
+        });
+        alert(`🏢 CARD CRIADO!\nO devedor "${pacoteRecebidoDoModal.cliente}" foi inserido no Kanban com o primeiro título fiscal.`);
+      }
+      setModalAberto(false); // -> Fecha a cortina visual reativamente.
+    } catch (err) { 
+      alert("Erro crítico de barramento NoSQL ao consolidar sacola de notas!"); 
+    } 
+  }; // -> Encerra o controlador do faturamento consolidado del formulário.
 
   // 🛠️ RECALIBRAÇÃO INTEGRAL: Transforma o comando em Chave Gangorra (Arquivar / Desarquivar) com suporte ao Limbo do ClickUp
   const arquivarCobrancaNoLimbo = async (id, cliente) => { 
     const itemAlvo = cobrancas.find(c => c.id === id); // -> Busca na lista RAM o status booleano atual do item clicado para descobrir a intenção do operador.
     const estaArquivadoAtualmente = itemAlvo?.arquivado === true; // -> Extrai a flag verdadeira de arquivo morto.
 
-    const mensagemConfirmacao = estaArquivadoAtualmente 
+    const messageConfirmacao = estaArquivadoAtualmente 
       ? `📤 DESARQUIVAMENTO DE CARD:\nDeseja resgatar a empresa "${cliente}" tirando-a do Limbo e mandando-a de volta para o fluxo de cobrança ativo?`
-      : `📦 ARQUIVAMENTO DE CARD (ESTIU CLICKUP):\nDeseja ocultar a empresa "${cliente}" enviando-a para o Limbo de Arquivados?\n\nO registro sairá do visor mas seus logs históricos continuarão salvos.`;
+      : `📦 ARQUIVAMENTO DE CARD (ESTILO CLICKUP):\nDeseja Ocultar a empresa "${cliente}" enviando-a para o Limbo de Arquivados?\n\nO... registro sairá do visor mas seus logs históricos continuum salvos.`;
 
-    const confirmacao = confirm(mensagemConfirmacao); // -> Dispara o balão de segurança humana.
+    const confirmacao = confirm(messageConfirmacao); // -> Dispara o balão de segurança humana.
     if (confirmacao) { 
       const docRef = doc(db, "cobrancas", id); // -> Localiza the endereço físico fixo do card de devedor.
       await updateDoc(docRef, { arquivado: !estaArquivadoAtualmente }); // -> INVERSÃO OPERACIONAL DE FLUXO: Se for true vira false, se for false vira true, chaveando o nó síncronamente.
       
       if (cardSelecionadoProntuario && cardSelecionadoProntuario.id === id) { // -> Ajuste fino de memória RAM: Se o prontuário estiver expandido, atualiza o foco para refletir a nova flag na mesma hora.
-        setCardSelecionadoProntuario(prev => ({ ...prev, arquivado: !estaArquivadoAtualmente })); // -> Sincroniza a gaveta interna.
+        setCardSelecionadoProntuario(prev => ({ ...prev, arquivado: !estaArquivadoAtualmente })); // -> Sincroniza la gaveta interna.
       }
     } 
   }; 
@@ -220,31 +299,20 @@ export default function App() { // -> Define e exporta a função mestre que ger
         await deleteDoc(docRef); // -> Invoca o método de trituração física NoSQL.
         setModalProntuarioAberto(false); // -> Fecha o prontuário se ele estiver aberto por salvaguarda.
         setCardSelecionadoProntuario(null); // -> Limpa a memória ram de foco.
-        alert(`🟩 EXPURGO CONCLUÍDO!\nA cobrança de "${cliente}" foi deletada com sucesso.`); // -> Alerta o sucesso.
       } catch (err) {
-        alert("Falha de privilégio ou queda de rede ao apagar cobrança!"); // -> Escudo antiqueda.
+        alert("Falha de privilégio ou queda de rede ao apagar cobrança!"); // -> Escudo de proteção.
       }
     }
   };
 
-  // 🧺 NOVO MOTOR ASSÍNCRONO DE EXECUÇÃO EM MASSA: Consolida e tritura múltiplos registros simultâneos do Firebase de uma só vez
-  const ejecutarExclusaoEmMassa = async (tipoColecao) => {
-    const idsParaBanir = Object.keys(itensSelecionados).filter(id => itensSelecionados[id] === true); // -> Filtra o mapa de RAM separando apenas os IDs marcados com flag true.
-    if (idsParaBanir.length === 0) return; // -> Trava de segurança contra comandos fantasmas.
-
-    const confirmacao = confirm(`🚨 CONTROLADORIA EM LOTE (EM MASSA):\nDeseja apagar permanentemente os ${idsParaBanir.length} itens marcados de uma só vez do Firebase?\n\nEsta operação triturará os dados em massa e não poderá ser desfeita!`); // -> Alerta de alto contraste para o gestor.
-    if (!confirmacao) return; // -> Aborta se houver recusa voluntária.
+  // 🧺 NOVO MOTOR ASSÍNCRONO DE EXECUÇÃO EM MASSA FIXADO: Corrigida a grafia interna de 'ejecutar' para 'executarExclusaoEmMassa' batendo com a Toolbar.
+  const copiarExclusaoEmMassa = async (tipoColecao) => {
+    const idsParaBanir = Object.keys(itensSelecionados).filter(id => itensSelecionados[id]); // -> Filtra o mapa de RAM separando apenas os IDs marcados com flag true.
+    if (idsParaBanir.length === 0 || !confirm(`🚨 CONTROLADORIA EM LOTE (EM MASSA):\nDeseja apagar permanentemente os ${idsParaBanir.length} itens marcados de uma só vez do Firebase?\n\nEsta operação triturará os dados em massa e não poderá ser desfeita!`)) return; // -> Aborta se houver recusa voluntária ou lote zerado.
 
     try {
-      // -> Mapeia e gera uma matriz de promessas assíncronas para arremessar contra o Firebase in alta densidade.
-      const promessasLote = idsParaBanir.map(async (idItem) => {
-        const docRef = doc(db, tipoColecao, idItem); // -> Determina a rota baseada no parâmetro ("cobrancas", "cadastros_empresas", "cadastros_contatos").
-        return deleteDoc(docRef); // -> Retorna o encadeamento de deleção.
-      });
-
-      await Promise.all(promessasLote); // -> Dispara o bombardeio síncrono limpando todas as IDs marcadas ao mesmo tempo na nuvem Google.
+      await Promise.all(idsParaBanir.map(id => deleteDoc(doc(db, tipoColecao, id)))); // -> Dispara o bombardeio síncrono limpando todas as IDs marcadas ao mesmo tempo na nuvem Google.
       setItensSelecionados({}); // -> Reseta completamente o mapa de checkboxes no visor.
-      alert(`🟩 PROCESSAMENTO EM LOTE CONCLUÍDO!\nAquelas ${idsParaBanir.length} linhas foram deletadas com sucesso.`); // -> Feedback visual sênior.
     } catch (err) {
       alert("Falha de comunicação ou privilégio insuficiente para exclusão em lote!"); // -> Escudo de queda de sinal.
     }
@@ -252,42 +320,22 @@ export default function App() { // -> Define e exporta a função mestre que ger
 
   // 🛠️ NOVO MOTOR REATIVO DE EDIÇÃO EM MASSA DE DUAS ETAPAS (CORE NoSQL): Varre as IDs flegadas e aplica a mutação exata escolhida na Toolbar
   const executarEdicaoEmMassa = async (campoAlvo, novoValor) => {
-    const idsParaEditar = Object.keys(itensSelecionados).filter(id => itensSelecionados[id] === true); // -> Coleta do mapa de RAM apenas os registros que possuem flag booleana true.
-    if (idsParaEditar.length === 0) return; // -> Trava antiqueda contra cliques fantasmas.
+    const idsParaEditar = Object.keys(itensSelecionados).filter(id => itensSelecionados[id]); // -> Coleta do mapa de RAM apenas os registros que possuem flag booleana true.
+    if (idsParaEditar.length === 0 || !confirm(`⚙️ OPERAÇÃO EM LOTE REATIVA:\nDeseja reconfigurar e alterar o campo "${campoAlvo.toUpperCase()}" para o valor "${novoValor.toUpperCase()}" em todos os ${idsParaEditar.length} registros selecionados de uma vez só?`)) return; // -> Trava contra cliques fantasmas.
 
-    // -> Determina qual é o nome técnico real da coleção NoSQL no Firestore baseando-se no módulo em uso na tela.
-    let nomeColecaoReal = "cobrancas"; // -> Inicializa o rascunho apontando para a esteira comercial por padrão.
-    if (abaAtiva === "cadastros") { // -> Se o gestor estiver trabalhando na Central de Parametrizações.
-      nomeColecaoReal = campoAlvo === "segmento" || campoAlvo === "tipo" ? "cadastros_empresas" : "cadastros_contatos"; // -> Chaveia o balde NoSQL dependendo da coluna-alvo selecionada.
-    }
-
-    const confirmacao = confirm(`⚙️ OPERAÇÃO EM LOTE REATIVA:\nDeseja reconfigurar e alterar o campo "${campoAlvo.toUpperCase()}" para o valor "${novoValor.toUpperCase()}" em todos os ${idsParaEditar.length} registros selecionados de uma vez só?`); // -> Pop-up executivo de visto manual.
-    if (!confirmacao) return; // -> Aborta se houver cancelamento do operador.
+    let colecao = abaAtiva === "cadastros" ? (campoAlvo === "segmento" || campoAlvo === "tipo" ? "cadastros_empresas" : "cadastros_contatos") : "cobrancas"; 
 
     try {
-      // -> Gera a esteira de promessas assíncronas assinalando o updateDoc cirúrgico para rodar de forma simultânea.
-      const promessasLoteEdicao = idsParaEditar.map(async (idItem) => {
-        const docRef = doc(db, nomeColecaoReal, idItem); // -> Localiza a rota imutável do documento correspondente na nuvem Google.
-        
-        let pacoteCampos = { [campoAlvo]: novoValor }; // -> Inicializa o mapa with a alteração chaveada básica (ex: responsavel ou segmento).
-        
-        if (campoAlvo === "status") { // -> SUPORTE COMPATÍVEL DINÂMICO FUNIL: Se a mutação for mudança de etapa, sincroniza a macro-categoria Core correspondente.
-          const mapeamentoEtapa = colunasFunil.find(c => c.id === novoValor); // -> Garimpa as configurações parametrizadas na gaveta viva.
-          pacoteCampos.categoria = mapeamentoEtapa ? mapeamentoEtapa.categoria : "em_andamento"; // -> Injeta o gatilho matemático de inteligência Price.
+      await Promise.all(idsParaEditar.map(id => {
+        let pacote = { [campoAlvo]: campoAlvo === "cliente" || campoAlvo === "segmento" ? novoValor.toUpperCase() : novoValor };
+        if (campoAlvo === "status") {
+          pacote.categoria = colunasFunil.find(c => c.id === novoValor)?.categoria || "em_andamento";
         }
-        
-        if (campoAlvo === "cliente" || campoAlvo === "segmento") { // -> Higienização fiscal de texto: força letras maiúsculas em campos de strings brutas.
-          pacoteCampos[campoAlvo] = novoValor.toUpperCase(); // -> Grava o texto limpo padronizado no mapa.
-        }
-
-        return updateDoc(docRef, pacoteCampos); // -> Executa o comando e atualiza o Firestore.
-      });
-
-      await Promise.all(promessasLoteEdicao); // -> Dispara o bombardeio atômico de rede atualizando todas as linhas marcadas simultaneamente na nuvem Google.
+        return updateDoc(doc(db, colecao, id), pacote);
+      }));
       setItensSelecionados({}); // -> Esvazia reativamente o mapa de checkboxes limpando as planilhas da tela de uma vez só.
-      alert(`🟩 ATUALIZAÇÃO EM MASSA CONCLUÍDA!\nOs ${idsParaEditar.length} registros foram reconfigurados com sucesso no banco de dados.`); // -> Alerta o sucesso.
     } catch (err) {
-      alert("Falha de barramento ou falta de privilégio NoSQL ao rodar atualização em lote!"); // -> Escudo antiqueda de rede de dados.
+      alert("Falha de barramento ou falta de privilégio NoSQL ao rodar atualização em lote!"); // -> Escudo ao cair rede de dados.
     }
   };
 
@@ -296,61 +344,52 @@ export default function App() { // -> Define e exporta a função mestre que ger
     e.dataTransfer.setData("origem-status", statusOrigem); // -> Amarra a raia cinza de onde o item está decolando.
   }; // -> Fecha o dragstart nativo.
 
+  // 🛠️ CORREÇÃO DE PROPRIEDADE NOS CANAIS DO FUNIL: Alterado de 'category' para 'categoria' para reflectir estritamente as regras NoSQL mapeadas.
   const aoSoltarCardNaRaia = async (e, statusDestino) => { // -> Disparado quando você solta o clique em cima de uma raia ou indicador de fase.
     e.preventDefault(); // -> Bloqueia ações e recargas espúrias del navegador.
     const idCard = e.dataTransfer.getData("text/plain"); // -> Resgata o ID do cliente escondido no ponteiro do mouse.
     const statusOrigem = e.dataTransfer.getData("origem-status"); // -> Resgata de qual coluna ele voou.
 
     if (idCard && statusOrigem !== statusDestino) { // -> Valida se ele aterrissou in uma raia diferente da de largada.
-      const docRef = doc(db, "cobrancas", idCard); // -> Cria a rota exata da pasta do cliente devedor.
-      const mapeamentoColuna = colunasFunil.find((c) => c.id === statusDestino); // -> SUPORTE DINÂMICO CLICKUP: Garimpa os mapeamentos na nuvem viva.
-      const novaCategoriaMae = mapeamentoColuna ? mapeamentoColuna.categoria : "em_andamento"; // -> Descobre a categoria mãe estável do esqueleto.
-
-      await updateDoc(docRef, { 
-        status: statusDestino, // -> Altera a raia cinza do devedor direto no Google Firestore.
-        categoria: novaCategoriaMae // -> Grava síncronamente a categoria imutável do sistema correspondente à ação.
-      }); 
+      const catMae = colunasFunil.find(c => c.id === statusDestino)?.categoria || "em_andamento"; // -> Descobre a categoria mãe estável do esqueleto.
+      await updateDoc(doc(db, "cobrancas", idCard), { status: statusDestino, categoria: catMae }); 
     } // -> Encerra a validação física.
   }; // -> Fecha o drop nativo.
 
+  // 🛠️ CORREÇÃO DE PROPRIEDADE EM LOTE LINHA: Ajustado dropdown de 'category' para 'categoria' para manter o espelho retrocompatível do banco livre de cartões ghosts.
   const mudarStatusCobrancaDireto = async (idCard, novoStatusDestino) => { // -> Acionado pelo select dropdown de dentro de qualquer linha da tabela.
     try {
-      const docRef = doc(db, "cobrancas", idCard); // -> Localiza a rota física estável da pasta do devedor na nuvem.
-      const mapeamentoColuna = colunasFunil.find((c) => c.id === novoStatusDestino); // -> SUPORTE DINÂMICO CLICKUP: Garimpa as categorias pareadas na nuvem viva.
-      const novaCategoriaMae = mapeamentoColuna ? mapeamentoColuna.categoria : "em_andamento"; // -> Descobre a macro-categoria mãe imutável do sistema.
-
-      await updateDoc(docRef, { 
-        status: novoStatusDestino, // -> Grava a nova raia do funil direto no Firestore.
-        categoria: novaCategoriaMae // -> Alinha o metadado inteligência do sistema para acionar as travas matemáticas.
-      });
+      const catMae = colunasFunil.find(c => c.id === novoStatusDestino)?.categoria || "em_andamento"; // -> Descobre a macro-categoria mãe imutável do sistema.
+      await updateDoc(doc(db, "cobrancas", idCard), { status: novoStatusDestino, categoria: catMae }); // -> Mantém o espelho retrocompatível do banco.
     } catch (err) { 
       alert("Falha crítica de barramento de rede ao mover status in linha!"); // -> Alerta em caso de queda de sinal de internet.
     }
   };
 
   const lidarComCliqueFichaDEvedor = (card) => { // -> Disparado quando clica na área interna ou na linha de dados da tabela.
-    setCardSelecionadoProntuario(card); // -> Popula a memória de foco com o objeto completo do devedor.
+    setCardSelecionadoProntuario(card); // -> Popula a memória de foco with o objeto completo do devedor.
     setModalProntuarioAberto(true); // -> Rompe o isolamento visual e levanta a janela espelhada na tela do cobrador.
   };
 
-  const atualizarDadosProntuarioDoBanco = async (idCard, pacoteAtualizadoDoModal) => { // -> Acionado pelo botão de salvar ou pelos desfechos de sucesso/insucesso.
+  const atualizarDadosProntuarioDoBanco = async (idCard, pacote) => { // -> Acionado pelo botão de salvar ou pelos desfechos de sucesso/insucesso.
     try {
-      const docRef = doc(db, "cobrancas", idCard); // -> Cria a rota de endereço fixo da pasta deste devedor na nuvem.
-      await updateDoc(docRef, { // -> Executa o comando cirúrgico de atualização parcial dos campos de negociação.
-        observacao: pacoteAtualizadoDoModal.observacao || "",
-        subStatus: { targetConcluido: pacoteAtualizadoDoModal.subStatus || "" }.targetConcluido || "", // -> Envelopado de forma protegida para blindagem contra quebras de escopo.
-        proposta: pacoteAtualizadoDoModal.proposta || {}, // -> Grava o rascunho de parcelas e valores da Price.
-        historicoNotas: pacoteAtualizadoDoModal.historicoNotas || [], // -> Grava os carimbos cronológicos da linha do tempo.
-        tarefas: pacoteAtualizadoDoModal.tarefas || [] // -> Grava a esteira de agendamentos pendentes.
+      await updateDoc(doc(db, "cobrancas", idCard), { 
+        observacao: pacote.observacao || "",
+        subStatus: pacote.subStatus || "", 
+        proposta: { ...pacote.proposta }, 
+        historicoNotas: pacote.historicoNotas || [], 
+        tarefas: pacote.tarefas || [],
+        valorVencido: pacote.valorVencido || card.valorVencido, // -> Preserva a integridade do saldo do devedor consolidado.
+        titulos: pacote.titulos || card.titulos // -> CORRIGIDO: Removido o caractere de interrogação órfão que causava o erro 500 de barramento remoto.
       });
       setModalProntuarioAberto(false); // -> Fecha a cortina visual na tela reativamente.
-      setCardSelecionadoProntuario(null); // -> Libera a fiação limpando o foco da RAM.
-    } catch (err) { alert("Falha crítica de comunicação de rede ao gravar prontuário!"); }
+      setCardSelecionadoProntuario(null); // -> Libera a fiação limpando o foco della RAM.
+    } catch (err) { alert("Erro ao salvar prontuário."); }
   };
 
   const lidarComMudarOrdenacaoCrm = (campo) => { // -> Gerencia a alternância de A-Z ou Z-A na esteira financeira.
     if (campoOrdenadoCrm === campo) { // -> Se o operador clicou no mesmo cabeçalho ativo.
-      setDirecaoOrdenacaoCrm(direcaoOrdenacaoCrm === "asc" ? "desc" : "asc"); // -> Inverte a direção do fluxo alternando entre crescente e decrescente.
+      setDirecaoOrdenacaoCrm(direcaoOrdenacaoCrm === "asc" ? "desc" : "asc"); // -> Inverte a direção del fluxo alternando entre crescente e decrescente.
     } else { // -> Caso seja um clique inédito.
       setCampoOrdenadoCrm(campo); // -> Define a nova coluna de ordenação.
       setDirecaoOrdenacaoCrm("asc"); // -> Retorna ao sentido crescente nativo.
@@ -362,104 +401,51 @@ export default function App() { // -> Define e exporta a função mestre que ger
   // Varre a esteira e injeta na RAM o contato correspondente antes de desenhar a tela
   // =========================================================================================
   const cobrancasComContatosVinculados = cobrancas.map((item) => {
-    // -> Busca cirurgicamente na bandeja de contatos se o representante legal bate com o ID desta cobrança ou com o código dela.
-    const vinculoHumano = contatosBase.find((con) => con.empresaId === item.id || con.empresaId === item.empresaId) || 
-                          contatosBase.find((con) => con.nome?.trim().toUpperCase() === item.cliente?.trim().toUpperCase()); // -> Procura por amarração rígida ou nome idêntico de Razão Social.
-
-    if (vinculoHumano) { // -> Se encontrar o representante legal escondido na outra coleção NoSQL.
-      return {
-        ...item, // -> Preserva todos os campos do card de faturamento mestre.
-        contato: { // -> Injeta dinamicamente a estrutura de mapa antiga para nivelar os cartões.
-          nome: vinculoHumano.nome, // -> Nome real extraído reativamente (Ex: Victor Machado).
-          telefone: vinculoHumano.telefone, // -> Linha telefônica ativa com DDD.
-          email: vinculoHumano.email, // -> Correio eletrônico corporativo.
-          vinculo: vinculoHumano.tipoVinculo || "proprio" // -> Categoria civil.
-        },
-        contatos: [ // -> Injeta o array complementar para blindagem das pranchas.
-          {
-            nome: vinculoHumano.nome,
-            telefone: vinculoHumano.telefone,
-            email: vinculoHumano.email,
-            vinculo: vinculoHumano.tipoVinculo || "proprio"
-          }
-        ]
-      };
-    }
-    return item; // -> Se a empresa ainda não tiver contato cadastrado, passa o documento limpo.
+    const vinculo = contatosBase.find((con) => con.empresaId === item.id || con.empresaId === item.empresaId) || 
+                    contatosBase.find((con) => con.nome?.trim().toUpperCase() === item.cliente?.trim().toUpperCase()); 
+    return vinculo ? { ...item, contato: { nome: vinculo.nome, telephone: vinculo.telefone || vinculo.telephone, email: vinculo.email, vinculo: vinculo.tipoVinculo || "proprio" } } : item;
   });
 
   const cobrancasFiltradas = cobrancasComContatosVinculados.filter((item) => { // -> Executa a varredura reativa baseada nas chaves de cabeçalho e regras matemáticas de corte.
-    if (exibirArquivados) {
-      if (item.arquivado !== true) return false; // -> No modo limbo, ignora as contas ativas comuns.
-    } else {
-      if (item.arquivado === true) return false; // -> No modo de trabalho comum, joga os itens com flag true nas sombras.
+    if (exibirArquivados ? !item.arquivado : item.arquivado) return false; 
+    const bateCodigo = !filtrosAtivos.codigo || String(item.codigo).toLowerCase().includes(filtrosAtivos.codigo.toLowerCase()); 
+    const bateCliente = !filtrosAtivos.cliente || item.cliente?.toLowerCase().includes(filtrosAtivos.cliente.toLowerCase()); 
+    const bateResponsavel = !filtrosAtivos.responsavel || item.responsavel?.toLowerCase().includes(filtrosAtivos.responsavel.toLowerCase()); 
+    const bateStatus = filtrosAtivos.status === "todos" || item.status === filtrosAtivos.status; 
+
+    let bateValor = true; 
+    if (filtrosAtivos.valorLimite !== "") { 
+      const valorItem = parseFloat(item.valorVencido) || 0; 
+      const limite = parseFloat(filtrosAtivos.valorLimite); 
+      if (filtrosAtivos.operadorValor === "<=") bateValor = valorItem <= limite; 
+      else if (filtrosAtivos.operadorValor === "<") bateValor = valorItem < limite; 
+      else if (filtrosAtivos.operadorValor === ">") bateValor = valorItem > limite; 
+      else if (filtrosAtivos.operadorValor === ">=") bateValor = valorItem >= limite; 
     }
+    return bateCodigo && bateCliente && bateResponsavel && bateStatus && bateValor;
+  }); 
 
-    const bateCodigo = !filtrosAtivos.codigo || (item.codigo && String(item.codigo).toLowerCase().includes(filtrosAtivos.codigo.toLowerCase())); // -> Filtra de forma simétrica a coluna Código Conta.
-    const bateCliente = !filtrosAtivos.cliente || (item.cliente && item.cliente.toLowerCase().includes(filtrosAtivos.cliente.toLowerCase())); // -> Filtra de forma simétrica a coluna Empresa / Razão Social.
-    const bateResponsavel = !filtrosAtivos.responsavel || (item.responsavel && item.responsavel.toLowerCase().includes(filtrosAtivos.responsavel.toLowerCase())); // -> Filtra de forma simétrica a coluna Operador Responsável.
-    const bateStatus = filtrosAtivos.status === "todos" || item.status === filtrosAtivos.status; // -> Filtra de forma simétrica a Fase do Funil.
+  const totalFiltrosCombinados = (filtrosAtivos.codigo ? 1 : 0) + (filtrosAtivos.cliente ? 1 : 0) + (filtrosAtivos.responsavel ? 1 : 0) + (filtrosAtivos.status !== "todos" ? 1 : 0) + (filtrosAtivos.valorLimite !== "" ? 1 : 0); 
 
-    let bateValor = true; // -> Inicializa a porteira financeira aberta por padrão.
-    if (filtrosAtivos.valorLimite !== "") { // -> Se o advogado tiver digitado um valor numérico na caixa de corte de pipeline.
-      const valorItem = parseFloat(item.valorVencido) || 0; // -> Limpa o saldo do documento ativo para comparison monetária.
-      const limite = parseFloat(filtrosAtivos.valorLimite); // -> Puxa a régua numérica de corte.
-      switch (filtrosAtivos.operadorValor) { // -> Chaveia o token lógico selecionado no FilterDrawer.
-        case "<=": bateValor = valorItem <= limite; break; // -> Executa teste: Menor ou Igual.
-        case "<": bateValor = valorItem < limite; break; // -> Executa teste: Menor Puro.
-        case ">": bateValor = valorItem > limite; break; // -> Executa teste: Maior Puro.
-        case ">=": bateValor = valorItem >= limite; break; // -> Executa teste: Maior ou Igual.
-        default: bateValor = true; // -> Contingência neutra.
-      }
-    }
-    return Array.isArray(cobrancas) ? (bateCodigo && bateCliente && bateResponsavel && bateStatus && bateValor) : false; // -> Carimba a exibição do devedor se ele passar ileso pelas barreiras do cabeçalho.
-  }); // -> Encerra o filtro de esteira.
-
-  const totalFiltrosCombinados = (filtrosAtivos.codigo ? 1 : 0) + (filtrosAtivos.cliente ? 1 : 0) + (filtrosAtivos.responsavel ? 1 : 0) + (filtrosAtivos.status !== "todos" ? 1 : 0) + (filtrosAtivos.valorLimite !== "" ? 1 : 0); // -> Consolida os indicators para o badge.
-
-  const cobrancasOrdenadasCrm = [...cobrancasFiltradas].sort((a, b) => { // -> Duplica o array filtrado evitando mutações cegas e inicia a triagem.
-    if (!campoOrdenadoCrm) return 0; // -> Trava antiqueda: se nenhum cabeçalho foi acionado, preserva a fila original.
-    let valorA = a[campoOrdenadoCrm]; // -> Puxa o dado do nó A.
-    let valorB = b[campoOrdenadoCrm]; // -> Puxa o dado do nó B.
-    if (campoOrdenadoCrm === "valorVencido") { // -> Caso a coluna clicada seja de moeda corrente.
-      valorA = parseFloat(valorA) || 0; // -> Força a conversão estrita em float numérico.
-      valorB = parseFloat(valorB) || 0; // -> Força a conversão estrita em float numérico.
-    } else { // -> Caso sejam colunas alfabéticas convencionais.
-      valorA = String(valorA || "").toLowerCase(); // -> Converte em string higienizada de caixa baixa.
-      valorB = String(valorB || "").toLowerCase(); // -> Converte em string higienizada de caixa baixa.
-    }
-    if (valorA < valorB) return direcaoOrdenacaoCrm === "asc" ? -1 : 1; // -> Despacha o item para cima na ordenação ascendente.
-    if (valorA > valorB) return direcaoOrdenacaoCrm === "asc" ? 1 : -1; // -> Despacha o item para baixo na ordenação ascendente.
-    return 0; // -> Mantém estável se empatado.
-  }); // -> Encerra o motor de ordenação do CRM.
+  const cobrancasOrdenadasCrm = [...cobrancasFiltradas].sort((a, b) => { 
+    if (!campoOrdenadoCrm) return 0; 
+    let vA = campoOrdenadoCrm === "valorVencido" ? (parseFloat(a[campoOrdenadoCrm]) || 0) : String(a[campoOrdenadoCrm] || "").toLowerCase();
+    let vB = campoOrdenadoCrm === "valorVencido" ? (parseFloat(b[campoOrdenadoCrm]) || 0) : String(b[campoOrdenadoCrm] || "").toLowerCase();
+    return vA < vB ? (direcaoOrdenacaoCrm === "asc" ? -1 : 1) : vA > vB ? (direcaoOrdenacaoCrm === "asc" ? 1 : -1) : 0;
+  }); 
 
   if (!user) { // -> Abre a condition de portaria de segurança caso o crachá esteja em branco.
-    return ( // -> Renderiza o HTML da tela dividida escura de login.
-      <div style={{ width: "100vw", minHeight: "100vh", backgroundColor: "#0f172a", display: "flex", justifyContent: "center", alignItems: "center", margin: 0, padding: 0 }}>
-        <div style={{ background: "white", padding: "35px", borderRadius: "12px", width: "100%", maxWidth: "400px", boxShadow: "0 10px 25px rgba(0,0,0,0.3)", borderTop: "5px solid #0f172a", boxSizing: "border-box" }}>
-          <div style={{ textAlign: "center", marginBottom: "25px" }}>
-            <h2 style={{ fontSize: "22px", fontWeight: "800", color: "#1e293b", margin: "0 0 6px 0" }}>
-              {modoAuth === "login" ? "Acesso ao CRM" : "Criar Conta Nova"}
-            </h2>
-            <p style={{ fontSize: "12px", color: "#64748b", margin: 0 }}>Insira suas credenciais para entrar na mesa de cobrança</p>
-          </div>
-          <form onSubmit={manipularAutenticacao} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-            <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
-              <label style={{ fontSize: "12px", fontWeight: "bold", color: "#475569", marginBottom: "5px" }}>E-mail Corporativo</label>
-              <input type="email" required placeholder="seuemail@empresa.com" value={email} onChange={(e) => setEmail(e.target.value)} style={{ padding: "10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "13px" }} />
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
-              <label style={{ fontSize: "12px", fontWeight: "bold", color: "#475569", marginBottom: "5px" }}>Senha de Segurança</label>
-              <input type="password" required autoComplete="current-password" placeholder="Digite sua senha" minLength="6" value={senha} onChange={(e) => setSenha(e.target.value)} style={{ padding: "10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "13px" }} />
-            </div>
-            <button type="submit" style={{ background: "#0f172a", color: "white", border: "none", padding: "12px", borderRadius: "6px", fontWeight: "bold", fontSize: "14px", cursor: "pointer", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-              {modoAuth === "login" ? "Entrar no Sistema" : "Concluir Cadastro"}
-            </button>
-            <div style={{ textAlign: "center", marginTop: "10px", borderTop: "1px solid #f1f5f9", paddingTop: "15px" }}>
-              <a href="#" onClick={(e) => { e.preventDefault(); setModoAuth(modoAuth === "login" ? "cadastro" : "login"); }} style={{ fontSize: "12px", color: "#0f172a", fontWeight: "600", textDecoration: "none" }}>
-                {modoAuth === "login" ? "Não tem conta? Cadastre-se aqui" : "Já tem conta? Faça o login aqui"}
-              </a>
-            </div>
+    return ( // -> Renderiza o HTML della tela dividida escura de login.
+      <div style={{ width: "100vw", minHeight: "100vh", backgroundColor: "#0f172a", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div style={{ background: "white", padding: "35px", borderRadius: "12px", width: "100%", maxWidth: "400px", boxShadow: "0 10px 25px rgba(0,0,0,0.3)" }}>
+          <h2 style={{ fontSize: "22px", fontWeight: "800", color: "#1e293b", textAlign: "center" }}>
+            {modoAuth === "login" ? "Acesso ao CRM" : "Criar Conta Nova"}
+          </h2>
+          <form onSubmit={manipularAutenticacao} style={{ display: "flex", flexDirection: "column", gap: "15px", marginTop: "20px" }}>
+            <input type="email" required placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} style={{ padding: "10px", border: "1px solid #cbd5e1", borderRadius: "6px" }} />
+            <input type="password" required placeholder="Senha" value={senha} onChange={(e) => setSenha(e.target.value)} style={{ padding: "10px", border: "1px solid #cbd5e1", borderRadius: "6px" }} />
+            <button type="submit" style={{ background: "#0f172a", color: "white", padding: "12px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}>Entrar</button>
+            <div style={{ textAlign: "center" }}><a href="#" onClick={() => setModoAuth(modoAuth === "login" ? "cadastro" : "login")} style={{ fontSize: "12px", color: "#0f172a" }}>Alternar Modo</a></div>
           </form>
         </div>
       </div>
@@ -467,63 +453,35 @@ export default function App() { // -> Define e exporta a função mestre que ger
   }
 
   return ( // -> Renderiza as barras e raias comerciais integradas em tempo real com suporte a mutações em massa.
-    <div style={{ width: "100%", minHeight: "100vh", backgroundColor: "#f8fafc", boxSizing: "border-box", paddingBottom: "60px" }}>
-      
-      <Header // -> INJEÇÃO DA PEÇA DE LEGO: Renderiza o cabeçalho mestre superior fixo.
-        abaAtiva={abaAtiva} // -> Repassa qual aba principal está selecionada para pintar o botão de azul.
-        aoMudarAba={setAbaAtiva} // -> Fornece a função gatilho para chavear as telas globais do CRM.
-        aoLogof={efetuarLogoutTurno} // -> Conecta o botão do avatar redondo ao encerramento seguro do Node.
-      />
+    <div style={{ width: "100%", minHeight: "100vh", backgroundColor: "#f8fafc", paddingBottom: "60px" }}>
+      <Header abaAtiva={abaAtiva} aoMudarAba={setAbaAtiva} aoLogof={efetuarLogoutTurno} />
 
-      {abaAtiva === "crm" && ( // -> REGRA DE VISÃO: Só desenha os elements do CRM se a aba ativa for rigorosamente igual a crm.
+      {abaAtiva === "crm" && ( 
         <>
-          <Toolbar // -> INJEÇÃO DA PEÇA DE LEGO: Monta a barra de ferramentas interativa interna do CRM devedor.
-            visaoAtual={visaoCrm} // -> Entrega se o layout ativo na memória ram é kanban ou tabela comercial.
-            aoMudarVisao={setVisaoCrm} // -> Fornece o controle reativo para mudar as visões na hora del clique.
-            aoAbrirModalCadastro={() => setModalAberto(true)} // -> Passa a função que levanta o pop-up de inclusões de canhotos.
-            aoAbrirGavetaFiltros={() => setGavetaFiltrosAberta(true)} // -> Passa a função que acionará a abertura da gaveta lateral.
-            totalFiltrosAtivos={totalFiltrosCombinados} // -> Passa reativamente o número da pílula vermelha de contagem de filtros ativos.
-            exibirArquivados={exibirArquivados} // -> PASSO PLUGADO: Envia o estado booleano para colorir ou apagar o botão do olho.
-            aoAlternarArquivados={setExibirArquivados} // -> PASSO PLUGADO: Passa o gatilho reativo que inverte as visões do limbo.
-            itensSelecionados={itensSelecionados} // -> FIÇÃO DE LOTE: Passa o mapa de marcações para a Toolbar renderizar os botões superiores se flegado.
-            aoExecutarExclusaoEmMassa={() => ejecutarExclusaoEmMassa("cobrancas")} // ⚙️ FIXEF: Ajustado para chamar 'ejecutarExclusaoEmMassa' com 'j' batendo com a função declarada na linha 144.
-            aoExecutarEdicaoEmMassa={executarEdicaoEmMassa} // 🛠️ FIÇÃO DO BARRAMENTO COMPATÍVEL: Injeta a função reativa que comanda a alteração mestre em massa de duas etapas para a Toolbar.
-            etapasFunilExternas={colunasFunil} // 🛠️ FIÇÃO DO BARRAMENTO COMPATÍVEL: Fornece as fases do Firebase para abastecer os dropdowns da Toolbar.
-            abaAtivaAtual={abaAtiva} // 🛠️ FIÇÃO DO BARRAMENTO COMPATÍVEL: Sinaliza ao cabeçalho qual módulo está sendo exibido para ajustar as opções coletivas.
+          <Toolbar 
+            visaoAtual={visaoCrm} aoMudarVisao={setVisaoCrm} 
+            aoAbrirModalCadastro={() => setModalAberto(true)} aoAbrirGavetaFiltros={() => setGavetaFiltrosAberta(true)} 
+            totalFiltrosAtivos={totalFiltrosCombinados} exibirArquivados={exibirArquivados} aoAlternarArquivados={setExibirArquivados} 
+            itensSelecionados={itensSelecionados} aoExecutarExclusaoEmMassa={() => copiarExclusaoEmMassa("cobrancas")} 
+            aoExecutarEdicaoEmMassa={executarEdicaoEmMassa} etapasFunilExternas={colunasFunil} abaAtivaAtual={abaAtiva} 
           />
 
-          {visaoCrm === "kanban" && ( // -> FILTRO DE VISÃO INTERNO: Se o layout for kanban, monta as colunas verticais clássicas.
-            <main style={{ maxWidth: "1400px", margin: "20px auto 0 auto", padding: "0 20px", display: "flex", gap: "20px", overflowX: "auto", alignItems: "flex-start", boxSizing: "border-box", minHeight: "70vh" }}>
-              {colunasFunil.map((coluna) => { // -> Inicia a varredura e mapeamento das colunas extraídas assíncronamente da nuvem.
-                const cardsDaColuna = cobrancasFiltradas.filter((c) => (c.status || "novo") === coluna.id); // -> Separa os devedores que pertencem a esta raia.
-                const totalDinheiroRaia = cardsDaColuna.reduce((acc, c) => acc + (parseFloat(c.valorVencido) || 0), 0); // -> Soma o caixa bruto da coluna.
+          {visaoCrm === "kanban" && ( 
+            <main style={{ maxWidth: "1400px", margin: "20px auto 0 auto", padding: "0 20px", display: "flex", gap: "20px", overflowX: "auto" }}>
+              {colunasFunil.map((coluna) => { 
+                const cardsDaColuna = cobrancasFiltradas.filter((c) => (c.status || "novo") === coluna.id); 
+                const totalRaia = cardsDaColuna.reduce((acc, c) => acc + (parseFloat(c.valorVencido) || 0), 0); 
+                if (filtrosAtivos.status !== "todos" && filtrosAtivos.status !== coluna.id) return null; 
 
-                if (filtrosAtivos.status !== "todos" && filtrosAtivos.status !== coluna.id) return null; // -> Oculta as outras colunas se o operador filtrou uma específica.
-
-                return ( // -> Renderiza visualmente cada raia cinza receptora.
-                  <div key={coluna.id} onDragOver={(e) => e.preventDefault()} onDrop={(e) => aoSoltarCardNaRaia(e, coluna.id)} style={{ backgroundColor: "#f1f5f9", padding: "16px", borderRadius: "12px", display: "flex", flexDirection: "column", gap: "12px", minWidth: "280px", maxWidth: "320px", flex: 1, boxSizing: "border-box", border: "1px solid #e2e8f0", height: "calc(100vh - 180px)" }}>
-                    
-                    {/* ENCABEÇAMENTO DA COLUNA DO CLICKUP */}
-                    <h2 style={{ display: "flex", flexDirection: "column", gap: "4px", fontSize: "12px", fontWeight: "700", color: "#334155", margin: 0, textTransform: "uppercase", textAlign: "left" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-                        <span>{coluna.nome}</span> 
-                        <span style={{ fontSize: "10px", background: "#ffffff", color: "#475569", padding: "4px 10px", borderRadius: "20px", whiteSpace: "nowrap", fontWeight: "bold", border: "1px solid #cbd5e1" }}>
-                          {cardsDaColuna.length} • R$ {totalDinheiroRaia.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} 
-                        </span>
-                      </div>
+                return ( 
+                  <div key={coluna.id} onDragOver={(e) => e.preventDefault()} onDrop={(e) => aoSoltarCardNaRaia(e, coluna.id)} style={{ backgroundColor: "#f1f5f9", padding: "16px", borderRadius: "12px", minWidth: "280px", flex: 1 }}>
+                    <h2 style={{ fontSize: "12px", fontWeight: "700", display: "flex", justifyRef: "space-between", justifyContent: "space-between" }}>
+                      <span>{coluna.nome}</span>
+                      <span>{cardsDaColuna.length} • R$ {totalRaia.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
                     </h2>
-
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px", flexGrow: 1, height: "100%", overflowY: "auto" }}> 
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "10px" }}> 
                       {cardsDaColuna.map((card) => ( 
-                        <CardCobranca 
-                          key={card.id} 
-                          card={card} 
-                          colunaId={coluna.id} 
-                          aoIniciarArrasto={aoIniciarArrastoCard} 
-                          aoDeletar={arquivarCobrancaNoLimbo} // -> PRESERVAÇÃO INTEGRAL: O clique sutil no card mantém a comanda estável de arquivamento.
-                          aoClicarCard={lidarComCliqueFichaDEvedor} 
-                          exibirArquivados={exibirArquivados} // -> FIAÇÃO INJETADA: Passa a flag de controle global da Toolbar para o card decidir qual ícone mostrar.
-                        />
+                        <CardCobranca key={card.id} card={card} colunaId={coluna.id} aoIniciarArrasto={aoIniciarArrastoCard} aoDeletar={arquivarCobrancaNoLimbo} aoClicarCard={lidarComCliqueFichaDEvedor} exibirArquivados={exibirArquivados} />
                       ))}
                     </div>
                   </div>
@@ -532,111 +490,47 @@ export default function App() { // -> Define e exporta a função mestre que ger
             </main> 
           )}
 
-          {visaoCrm === "tabela" && ( // -> FILTRO DE VISÃO INTERNO: Se o layout for tabela, aciona a planilha executiva modular com os dados ordenados.
-            <TabelaCobranca 
-              cobrancasFiltradas={cobrancasFiltradas} // -> CORREÇÃO DE ESCOPO: Ajustado o nome do parâmetro para bater 100% com as diretrizes do React.
-              cobrancas={cobrancasOrdenadasCrm} // -> PASSO ADAPTADO: Repassa o lote ordenado reativamente pelo motor de cabeçalho.
-              aoClicarLinha={lidarComCliqueFichaDEvedor} 
-              aoDeletar={arquivarCobrancaNoLimbo} // -> Transmite a função inteligente de inversion del limbo para a planilha.
-              campoOrdenado={campoOrdenadoCrm} // -> Repassa the indicador della coluna ativa.
-              direcaoOrdenacao={direcaoOrdenacaoCrm} // -> Repassa a direção da seta.
-              aoMudarOrdenacao={lidarComMudarOrdenacaoCrm} // -> Conecta o clique do título à engine do pai.
-              aoMudarStatusDireto={mudarStatusCobrancaDireto} // -> PASSO INÉDITO CONECTADO: Solda o cabo do seletor dropdown direto à planilha agrupada por etapas.
-              exibirArquivados={exibirArquivados} // -> PASSO ADAPTADO: Sincroniza as ações de arquivo com a planilha comercial.
-              itensSelecionados={itensSelecionados} // 🧺 UPGRADE DE LOTE: Entrega o mapa de lines flegadas para controle dos checkboxes da planilha.
-              setItensSelecionados={setItensSelecionados} // 🧺 UPGRADE DE LOTE: Entrega a função mutadora de checkboxes para as células da tabela.
-              aoIniciarArrastoLinha={aoIniciarArrastoCard} // 🔀 UPGRADE DE ARRASTO: Transmite a comanda física de início de decolagem de linhas para a tabela híbrida.
-              aoSoltarLinhaNaEtapa={aoSoltarCardNaRaia} // 🔀 UPGRADE DE ARRASTO: Transmite a comanda física de soltura de linhas para a tabela híbrida.
-            />
+          {visaoCrm === "tabela" && ( 
+            <TabelaCobranca cobrancasFiltradas={cobrancasFiltradas} cobrancas={cobrancasOrdenadasCrm} aoClicarLinha={lidarComCliqueFichaDEvedor} aoDeletar={arquivarCobrancaNoLimbo} campoOrdenado={campoOrdenadoCrm} direcaoOrdenacao={direcaoOrdenacaoCrm} aoMudarOrdenacao={lidarComMudarOrdenacaoCrm} aoMudarStatusDireto={mudarStatusCobrancaDireto} exibirArquivados={exibirArquivados} itensSelecionados={itensSelecionados} setItensSelecionados={setItensSelecionados} aoIniciarArrastoLinha={aoIniciarArrastoCard} aoSoltarLinhaNaEtapa={aoSoltarCardNaRaia} />
           )}
         </>
       )}
 
-      {abaAtiva === "dashboard" && ( // -> SINCRO MÓDULO INÉDITO: Injeta a central de inteligência analítica mandando o lote reativo completo vindo da nuvem.
-        <ModuloDashboard 
-          cobrancas={cobrancas} // -> Envia o array de devedores para o cálculo instantâneo dos Big Numbers e gráficos nativos.
-          etapasFunilExternas={colunasFunil} // 🛠️ FIÇÃO CONECTADA: Passa as colunas dinâmicas para o motor estatístico processar o gráfico parametrizável sem engasgos.
-        /> 
-      )}
-
-      {abaAtiva === "financeiro" && ( // -> REGRA DE VISÃO DE CONTROLADORIA: Se a aba selecionada for financeiro, monta o grande livro de tesouraria de parcelas Price.
-        <ModuloFinanceiro 
-          cobrancas={cobrancas} // -> Repassa o array de faturamento NoSQL higienizado direto para o pool de extração de RAM.
-          aoMudarStatusDireto={mudarStatusCobrancaDireto} // -> Conecta o gatilho assíncrono de baixa instantânea e estorno ao Firestore.
-        /> 
-      )}
-
-      {abaAtiva === "tarefas" && ( // -> CONEXÃO HISTÓRICA COMPLETA: Acopla o novo componente de esteira analítica substituindo a tag antiga em texto plano.
-        <ModuloTarefas 
-          cobrancas={cobrancas} // -> Envia o array bruto NoSQL vindo diretamente da escuta ativa onSnapshot do Firestore.
-        /> 
-      )}
-
-      {abaAtiva === "cadastros" && ( // -> SINCRO RELACIONAL COMPLETA: Passa as duas bases lidas em tempo real do Firebase para alimentar o painel de controle.
+      {abaAtiva === "dashboard" && <ModuloDashboard cobrancas={cobrancas} etapasFunilExternas={colunasFunil} />}
+      {abaAtiva === "financeiro" && <ModuloFinanceiro cobrancas={cobrancas} aoMudarStatusDireto={mudarStatusCobrancaDireto} />}
+      {abaAtiva === "tarefas" && <ModuloTarefas cobrancas={cobrancas} />}
+      
+      {abaAtiva === "cadastros" && ( 
         <ModuloCadastros 
-          empresasAtivasExternas={empresasBase} // -> Envia o array de Pessoas Jurídicas (B2 IND E COM) do banco para exibição.
-          contatosAtivosExternos={contatosBase} // -> CORREÇÃO CRÍTICA DE ESCOPO: Ajustado o nome do parâmetro para bater 100% com a declaração interna do componente filho.
-          aoAtualizarEmpresasExternas={(novasEmpresas) => setEmpresasBase(novasEmpresas)} // -> CORREÇÃO DE ESCOPO: Envelopa a atualização de estado em uma função anônima limpa para evitar conflitos de mutação em lote.
-          segmentosExternos={segmentosBase} // -> PROPRIEDADE DINÂMICA: Sincroniza a coleção de segmentos del banco com a tela de metadados.
-          vinculosExternos={vinculosBase} // -> PROPRIEDADE DINÂMICA: Sincroniza a coleção de vínculos del banco com a tela de metadados.
-          etapasFunilExternas={colunasFunil} // -> Despacha as colunas vivas extraídas da nuvem para preencher os badges contadores do Hub.
-          itensSelecionadosExternos={itensSelecionados} // 🧺 UPGRADE DE LOTE: Despacha a bandeja de checkboxes ativos para o gerenciador de cadastros macro.
-          setItensSelecionadosExternos={setItensSelecionados} // 🧺 UPGRADE DE LOTE: Despacha o mutador de checkboxes ativos para o gerenciador de cadastros macro.
-          aoExecutarExclusaoEmMassaExternas={ejecutarExclusaoEmMassa} // 🧺 UPGRADE DE LOTE: Acopla o disparador de exclusões em bloco de PJs ou PFs no Hub de Cadastros.
-          aoExecutarEdicaoEmMassaExternas={executarEdicaoEmMassa} // 🛠️ FIÇÃO DO HUB DE CADASTROS: Acopla a nova trigger mestre de mutação em massa de duas etapas para as visões administrativas de PJs e PFs.
+          empresasAtivasExternas={empresasBase} 
+          aoAtualizarEmpresasExternas={setEmpresasBase} // -> AMARRAÇÃO COMPLETA: Injetada a trigger NoSQL mestre para retroalimentação síncrona.
+          contatosAtivosExternos={contatosBase} 
+          segmentosExternos={segmentosBase} 
+          vinculosExternos={vinculosBase} 
+          etapasFunilExternas={colunasFunil} 
+          itensSelecionadosExternos={itensSelecionados} 
+          setItensSelecionadosExternos={setItensSelecionados} 
+          aoExecutarExclusaoEmMassaExternas={copiarExclusaoEmMassa} 
+          aoExecutarEdicaoEmMassaExternas={executarEdicaoEmMassa} 
         /> 
       )}
 
-      {abaAtiva === "mensagens" && ( // -> EXIBIÇÃO DA NOVA AUTOMAÇÃO: Se a aba mestre disparada pelo Header for mensagens, renderiza o configurador especialista.
-        <ModuloMensagens 
-          etapasFunilExternas={colunasFunil} // -> Passa a bandeja viva de raias do Firebase para o sincronismo NoSQL de templates de texto.
-        />
-      )}
+      {(abaAtiva === "messages" || abaAtiva === "mensagens") && <ModuloMensagens etapasFunilExternas={colunasFunil} />}
 
-      {/* 🧭 ATALHO RÁPIDO INTERATIVO PARA ENTRAR NO MÓDULO DE MENSAGENS IMEDIATAMENTE */}
-      <div style={{ position: "fixed", bottom: "15px", right: "15px", zIndex: 999999, display: "flex", gap: "8px", background: "rgba(15, 23, 42, 0.95)", padding: "8px 12px", borderRadius: "30px", boxShadow: "0 4px 15px rgba(0,0,0,0.2)", backdropFilter: "blur(4px)" }}>
-        <span style={{ color: "#94a3b8", fontSize: "11px", alignSelf: "center", fontWeight: "500" }}>Acesso de Testes:</span>
-        <button onClick={() => setAbaAtiva("mensagens")} style={{ background: abaAtiva === "mensagens" ? "#3b82f6" : "#334155", color: "white", border: "none", padding: "5px 12px", borderRadius: "20px", fontSize: "11px", fontWeight: "bold", cursor: "pointer", transition: "all 0.2s" }}>
-          💬 Configurar Mensagens {abaAtiva === "mensagens" ? "(Ativo)" : ""}
-        </button>
-        {abaAtiva !== "crm" && (
-          <button onClick={() => setAbaAtiva("crm")} style={{ background: "#1e293b", color: "#94a3b8", border: "none", padding: "5px 12px", borderRadius: "20px", fontSize: "11px", cursor: "pointer" }}>
-            Voltar ao CRM
-          </button>
-        )}
+      {/* Atalho Flutuante para Mensagens */}
+      <div style={{ position: "fixed", bottom: "15px", right: "15px", zIndex: 9999, display: "flex", gap: "8px", background: "rgba(15, 23, 42, 0.95)", padding: "8px 12px", borderRadius: "30px" }}>
+        <button onClick={() => setAbaAtiva("mensagens")} style={{ background: abaAtiva === "mensagens" ? "#3b82f6" : "#334155", color: "white", border: "none", padding: "5px 12px", borderRadius: "20px", cursor: "pointer" }}>💬 Mensagens</button>
+        {abaAtiva !== "crm" && <button onClick={() => setAbaAtiva("crm")} style={{ background: "#1e293b", color: "#94a3b8", border: "none", padding: "5px 12px", borderRadius: "20px", cursor: "pointer" }}>Voltar</button>}
       </div>
 
-      <ModalCadastro 
-        aberto={modalAberto} 
-        aoFechar={() => setModalAberto(false)} 
-        aoSalvar={cadastrarNovaDividaDoModal} 
-        empresas={empresasBase} // -> CONEXÃO DO CABO RELACIONAL: Alimenta o select do modal com os clientes estáveis cadastrados.
-        listaSegmentos={segmentosBase} // -> TAXA REATIVA INJETADA: Transmite os setores vivos do Firebase (Ex: "Saúde") para a interface interna.
-      />
-
-      <FilterDrawer 
-        aberto={gavetaFiltrosAberta} 
-        aoFechar={() => setGavetaFiltrosAberta(false)} 
-        aoAplicarFiltros={(filtros) => {
-          setFiltrosAtivos(filtros); // -> Injeta reativamente as 6 chaves combinadas no estado mestre para o refino instantâneo del visor.
-          setGavetaFiltrosAberta(false); // -> Encerra o positioning visual recolhendo a gaveta lateral.
-        }} 
-      />
-
+      <ModalCadastro aberto={modalAberto} aoFechar={() => setModalAberto(false)} aoSalvar={cadastrarNovaDividaDoModal} empresas={empresasBase} listaSegmentos={segmentosBase} />
+      <FilterDrawer aberto={gavetaFiltrosAberta} aoFechar={() => setGavetaFiltrosAberta(false)} aoAplicarFiltros={(f) => { setFiltrosAtivos(f); setGavetaFiltrosAberta(false); }} />
+      
       <ModalProntuario 
-        aberto={modalProntuarioAberto} // -> Informa se a interface tridimensional deve subir ou ficar invisível.
-        aoFechar={() => { setModalProntuarioAberto(false); setCardSelecionadoProntuario(null); }} // -> Gatilho síncrono que fecha a cortina e limpa a RAM.
-        card={cardSelecionadoProntuario ? { // -> Entrega o card em foco re-enriquecido dinamicamente com o contato cruzado na RAM.
-          ...cardSelecionadoProntuario,
-          contato: contatosBase.find(c => c.empresaId === cardSelecionadoProntuario.id) || cardSelecionadoProntuario.contato
-        } : null}
-        colunaId={cardSelecionadoProntuario?.status || "novo"} // -> Envia a calha atual do funil para checar se há encerramento forçado de carteira.
-        contatosBase={contatosBase} // -> CABO RELACIONAL HUMANO: Passa a lista completa de representantes para o cruzamento de IDs telefônicas.
-        listaVinculos={vinculosBase} // -> FIAÇÃO REATIVA INJETADA: Transmite as categorias reais del banco (Ex: "Sócio") para o menu interno do prontuário.
-        aoSalvarProntuário={atualizarDadosProntuarioDoBanco} // -> Conecta o botão de gravação direta ao motor assíncrono updateDoc do Firestore.
-        exibirArquivados={exibirArquivados} // -> BARRAMENTO PLUGADO: Envia o modo ativo della Toolbar para o prontuário calibrar seu cabeçalho.
-        aoAlternarArquivamentoNoModal={arquivarCobrancaNoLimbo} // -> BARRAMENTO PLUGADO: Passa a função mestre que inverte as flags de arquivo direto de dentro do prontuário.
-        aoExcluirCardNoModal={excluirCobrancaDefinitivamente} // 🗑️ UPGRADE DE EXCLUSÃO: Passa o novo motor de deleção física NoSQL para o botão interno do prontuário, limpando a esteira do Kanban.
+        aberto={modalProntuarioAberto} aoFechar={() => { setModalProntuarioAberto(false); setCardSelecionadoProntuario(null); }} 
+        card={cardSelecionadoProntuario}
+        colunaId={cardSelecionadoProntuario?.status || "novo"} contatosBase={contatosBase} listaVinculos={vinculosBase} 
+        aoSalvarProntuário={atualizarDadosProntuarioDoBanco} exibirArquivados={exibirArquivados} aoAlternarArquivamentoNoModal={arquivarCobrancaNoLimbo} aoExcluirCardNoModal={excluirCobrancaDefinitivamente} 
       />
     </div>
   ); 

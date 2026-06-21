@@ -6,7 +6,7 @@ export default function Header({ abaAtiva, aoMudarAba, aoLogof }) { // -> Define
   const menusGlobais = [ // -> Configuração estável da matriz contendo os módulos de entrada do sistema.
     { id: "crm", nome: "CRM", IconeComponente: Columns3 }, // -> Módulo CRM: Vincula o painel comercial de raias ao componente geométrico de 3 colunas finas.
     { id: "dashboard", nome: "Dashboard", IconeComponente: LayoutDashboard }, // -> Módulo Dashboard: Vincula a central de BI ao ícone sóbrio de painel de indicadores.
-    { id: "financeiro", nome: "Financeiro", IconeComponente: CircleDollarSign }, // -> Módulo Financeiro: Vincula as tabelas Price ao ícone tecnológico de cifrão vazado.
+    { id: "financeiro", nome: "Cobranças", IconeComponente: CircleDollarSign }, // -> MUDANÇA ESTRATÉGICA: Ajustado o nome para Cobranças para alinhar perfeitamente com o fluxo do importador de planilhas de Aging.
     { id: "tarefas", nome: "Tarefas", IconeComponente: CalendarCheck2 }, // -> Módulo Tasks: Vincula o cronograma de ocorrências ao ícone fino de calendário de auditoria.
     { id: "cadastros", nome: "Cadastros", IconeComponente: Folder } // -> Módulo Cadastros: Vincula a central de PJs e elos ao ícone executivo de pasta em linhas finas.
   ]; // -> Encerra a matriz de menus globais estáveis atualizada com suporte a componentes Lucide.

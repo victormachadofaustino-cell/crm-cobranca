@@ -1,63 +1,72 @@
-import React, { useState } from "react"; // -> Traz a biblioteca mestre do React e o gancho useState para monitorar localmente as caixas de seleção e inputs dinâmicos de lote.
-import { Kanban, TableProperties, Archive, ArchiveX, Filter, PlusCircle, Trash2, SlidersHorizontal } from "lucide-react"; // -> Injeta as ferramentas de ícones finos, monocromáticos e ultra modernos da biblioteca Lucide.
+import React, { useState } from "react"; // -> Importa o coração do React e o gancho de estado (useState) para monitorar localmente as caixas de seleção e inputs dinâmicos de lote.
+import { Kanban, TableProperties, Archive, ArchiveX, Filter, PlusCircle, Trash2, SlidersHorizontal, UploadCloud } from "lucide-react"; // -> Injeta as engines de ícones finos, monocromáticos e ultra modernos da biblioteca Lucide, incluindo o UploadCloud para o CSV.
 
-export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbrirGavetaFiltros, totalFiltrosAtivos = 0, exibirArquivados = false, aoAlternarArquivados, itensSelecionados = {}, aoExecutarExclusaoEmMassa, aoExecutarEdicaoEmMassa, etapasFunilExternas = [], abaAtivaAtual = "crm" }) { // -> RECALIBRADA FINTECH: Herda os modificadores de mutação em lote, a aba operacional ativa e a listagem de fases NoSQL vindas do mestre App.jsx.
-  // -> MOTOR DE CONTAGEM EM MASSA: Varre a bandeja de checkboxes ativos e calcula quantos itens o operador flegou nas linhas.
-  const contagemSelecionados = Object.keys(itensSelecionados).filter((id) => itensSelecionados[id] === true).length; // -> Soma reativamente os booleanos de flag verdadeira em tempo real.
+// CORREÇÃO DE EMBALAGEM: Removido o 'default' para bater 100% com a importação por chaves { Toolbar } declarada na linha 6 do seu App.jsx.
+export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbrirGavetaFiltros, totalFiltrosAtivos = 0, exibirArquivados = false, aoAlternarArquivados, itensSelecionados = {}, aoExecutarExclusaoEmMassa, aoExecutarEdicaoEmMassa, etapasFunilExternas = [], abaAtivaAtual = "crm", aoImportarCSV }) { // -> Declara a função da barra de ferramentas recebendo os controles operacionais, filtros, estados de lotes e a nova função de importação de CSV do App.jsx.
+  // Motor de contagem em massa: Varre a bandeja de checkboxes ativos e calcula quantos itens o operador flegou nas linhas.
+  const contagemSelecionados = Object.keys(itensSelecionados).filter((id) => itensSelecionados[id] === true).length; // -> Filtra os IDs salvos na memória RAM para contar apenas quem está com o visto ativado.
 
-  // -> NOVOS ESTADOS LOCAIS OPERACIONAIS PARA A EDICAO EM DUAS ETAPAS DINÂMICAS:
-  const [campoSelecionadoLote, setCampoSelecionadoLote] = useState(""); // -> ETAPA 1: Armazena na memória qual metadado do cliente o gestor deseja alterar (status, responsavel, segmento).
-  const [valorEdicaoMassa, setValorEdicaoMassa] = useState(""); // -> ETAPA 2: Monitora a nova string ou opção que será carimbada em todos os registros marcados de uma vez.
+  // Novos estados locais operacionais para a edição em duas etapas dinâmicas:
+  // Etapa 1: Armazena na memória qual metadado do cliente o gestor deseja alterar (status, responsavel, segmento).
+  const [campoSelecionadoLote, setCampoSelecionadoLote] = useState(""); // -> Monitora o dropdown della primeira fase de edição coletiva.
+  // Etapa 2: Monitora a nova string ou opção que será carimbada em todos os registros marcados de uma vez.
+  const [valorEdicaoMassa, setValorEdicaoMassa] = useState(""); // -> Monitora o input de texto ou select de destino da segunda fase.
 
-  // -> DISPARADOR DO COMANDO COLETIVO DE ATUALIZAÇÃO
-  const lidarComAplicarEdicaoLote = () => { // -> Acionado ao clicar no botão "Aplicar Alteração".
-    if (!campoSelecionadoLote) { // -> Trava de barreira se o operador não escolheu qual coluna quer reajustar.
-      alert("⚠️ OPERAÇÃO EM LOTE:\nPor favor, escolha primeiro qual campo deseja alterar em massa."); // -> Emite o aviso.
-      return; // -> Interrompe a descida de barramento.
-    }
-    if (!valorEdicaoMassa.trim()) { // -> Trava de barreira se a caixinha de novo valor estiver vazia.
-      alert("⚠️ OPERAÇÃO EM LOTE:\nDigite ou escolha o novo valor que será carimbado em todos os itens."); // -> Emite o aviso.
-      return; // -> Interrompe a descida de barramento.
-    }
-    if (aoExecutarEdicaoEmMassa) { // -> Se o cabo de rede com o App.jsx estiver conectado.
-      aoExecutarEdicaoEmMassa(campoSelecionadoLote, valorEdicaoMassa.trim()); // 🛠️ FIÇÃO EM DUAS ETAPAS HOMOLOGADA: Transmite síncronamente o par alvo de atualização (Coluna + Novo Valor) para o laço NoSQL principal.
-      setCampoSelecionadoLote(""); // -> Reseta o dropdown da Etapa 1 na memória RAM.
-      setValorEdicaoMassa(""); // -> Reseta o input da Etapa 2 na memória RAM.
-    }
-  };
+  // Disparador do comando coletivo de atualização ao clicar no botão "Aplicar Alteração".
+  const lidarComAplicarEdicaoLote = () => { // -> Aciona a trigger coletiva empurrando as modificações em massa para a nuvem.
+    // Trava de barreira se o operador não escolheu qual coluna quer reajustar.
+    if (!campoSelecionadoLote) { // -> Verifica se o campo alvo da Etapa 1 está em branco.
+      alert("⚠️ OPERAÇÃO EM LOTE:\nPor favor, escolha primeiro qual campo deseja alterar em massa."); // -> Emite o aviso de alerta explicativo na tela para o usuário.
+      return; // -> Interrompe o processamento do código para evitar erros de gravação.
+    } // -> Fim da barreira de campo.
+    // Trava de barreira se a caixinha de novo valor estiver vazia.
+    if (!valorEdicaoMassa.trim()) { // -> Verifica se o texto digitado na Etapa 2 veio nulo ou cheio de espaços.
+      alert("⚠️ OPERAÇÃO EM LOTE:\nDigite ou escolha o novo valor que será carimbado em todos os itens."); // -> Emite o aviso de alerta cobrando o preenchimento da informação.
+      return; // -> Interrompe o processamento do código para evitar o envio de textos vazios.
+    } // -> Fim da barreira de valor.
+    // Se o cabo de rede com o App.jsx estiver conectado e a função existir no mestre.
+    if (aoExecutarEdicaoEmMassa) { // -> Testa se o maestro pai repassou a trigger de salvamento em massa.
+      aoExecutarEdicaoEmMassa(campoSelecionadoLote, valorEdicaoMassa.trim()); // -> Transmite síncronamente o par alvo de atualização (Coluna + Novo Valor) para o laço NoSQL principal do app.
+      setCampoSelecionadoLote(""); // -> Reseta o dropdown da Etapa 1 na memória RAM para a posição padrão limpa.
+      setValorEdicaoMassa(""); // -> Reseta o input ou select da Etapa 2 na memória RAM para limpar o campo visual.
+    } // -> Fim do disparo.
+  }; // -> Encerra o aplicador de lote.
 
-  // -> MONITOR DE MUDANÇA DE ESCOPO: Limpa a caixinha de valor caso o operador mude o campo alvo para não cruzar fantasmas textuais.
-  const lidarMudancaCampoMassa = (novoCampo) => { // -> Recebe a string de foco da caixa.
-    setCampoSelecionadoLote(novoCampo); // -> Salva a nova coluna alvo.
-    setValorEdicaoMassa(""); // -> Zera a Etapa 2 imediatamente para receber o novo componente adequado.
-  };
+  // Monitor de mudança de escopo: Limpa a caixinha de valor caso o operador mude o campo alvo para não cruzar fantasmas textuais de outras colunas.
+  const lidarMudancaCampoMassa = (novoCampo) => { // -> Gerencia o chaveamento de categorias de lote.
+    setCampoSelecionadoLote(novoCampo); // -> Salva a nova coluna alvo escolhida pelo operador no dropdown.
+    setValorEdicaoMassa(""); // -> Zera a Etapa 2 imediatamente para receber o novo componente adequado de inserção.
+  }; // -> Encerra o resetador de escopo.
 
-  return ( // -> Inicia o retorno do componente visual que desenha a barra de controle na tela.
-    <div style={{ width: "100%", maxWidth: "1400px", margin: "16px auto 0 auto", padding: "0 20px", display: "flex", justifyContent: "space-between", alignItems: "center", boxSizing: "border-box" }}> {/* -> Espaçamento compactado para 16px para otimizar espaço vertical e alinhar elementos nas extremidades laterais. */}
+  // Inicia o retorno do componente visual que desenha a barra de controle na tela com suas caixas flexíveis.
+  return ( 
+    // Contêiner mestre horizontal configurado com espaçamento compacto de 16px para alinhar perfeitamente os botões nas extremidades.
+    <div style={{ width: "100%", maxWidth: "1400px", margin: "16px auto 0 auto", padding: "0 20px", display: "flex", justifyContent: "space-between", alignItems: "center", boxSizing: "border-box" }}> 
       
-      {/* SEÇÃO DA ESQUERDA DINÂMICA: SE HOUVER ITENS MARCADOS, EXIBE O PAINEL DE AÇÕES COLETIVAS NO TOPO; CASO CONTRÁRIO, CARREGA OS ALTERNADORES DE VISÃO */}
-      <div style={{ display: "flex", gap: "6px", alignItems: "center" }}> {/* -> Agrupador flexbox compacto com distanciamento enxugado para 6px. */}
+      {/* Seção da esquerda dinâmica: Se houver itens marcados, exibe o painel de ações coletivas; caso contrário, carrega os botões de Kanban e Planilha */}
+      <div style={{ display: "flex", gap: "6px", alignItems: "center" }}> 
         {contagemSelecionados > 0 ? (
-          // 🧺 CIRCUITO DE LOTE ATIVO PREMIUM INTEGRADO EM DUAS ETAPAS: Caso o operador tenha flegado linhas, renderiza o cockpit vermelho de mutações em bloco.
+          // Circuito de lote active premium integrado em duas etapas: Caso o operador tenha flegado linhas, acende o cockpit vermelho de alterações.
           <div style={{ display: "flex", alignItems: "center", gap: "10px", backgroundColor: "#fff1f2", padding: "4px 12px", borderRadius: "6px", border: "1px solid #fecdd3", height: "34px", boxSizing: "border-box" }}>
+            {/* Exibe o contador em lote informando em tempo real o volume de registros marcados. */}
             <span style={{ fontSize: "11px", fontWeight: "800", color: "#991b1b", textTransform: "uppercase", letterSpacing: "0.5px", whiteSpace: "nowrap" }}>
               {contagemSelecionados} selecionados
-            </span> {/* -> Exibe o contador em lote informando o volume de checkboxes flegados de forma síncrona. */}
+            </span> 
             
-            {/* 🛠️ ETAPA 1: SELETOR DO CAMPO ALVO - Exibe metadados de acordo com a aba operacional ativa */}
+            {/* Etapa 1: Seletor do campo alvo - Exibe as colunas de metadados de acordo com a aba operacional em foco na tela */}
             <select
-              value={campoSelecionadoLote} // -> Vincula ao estado da Etapa 1.
-              onChange={(e) => lidarMudancaCampoMassa(e.target.value)} // -> Aciona o resetador de segurança e salva o alvo.
+              value={campoSelecionadoLote} // Vincula a caixa de seleção ao estado da Etapa 1.
+              onChange={(e) => lidarMudancaCampoMassa(e.target.value)} // Aciona o limpador de segurança e salva a coluna selecionada.
               style={{ padding: "2px 6px", border: "1px solid #cbd5e1", borderRadius: "4px", fontSize: "11px", fontWeight: "700", color: "#0f172a", backgroundColor: "#ffffff", cursor: "pointer", outline: "none" }}
             >
               <option value="">-- Campo para Editar --</option>
-              {abaAtivaAtual === "crm" && ( // -> Se o usuário estiver trabalhando na Planilha do CRM.
+              {abaAtivaAtual === "crm" && ( // Se o usuário estiver operando no ecossistema do CRM.
                 <>
-                  <option value="status">ETAPA DO FUNIL (ARRRASTAR)</option>
+                  <option value="status">ETAPA DO FUNIL (ARRASTAR)</option>
                   <option value="responsavel">OPERADOR GESTOR</option>
                 </>
               )}
-              {abaAtivaAtual === "cadastros" && ( // -> Se o usuário estiver trabalhando no Hub de Cadastros de Empresas/Contatos.
+              {abaAtivaAtual === "cadastros" && ( // Se o usuário estiver trabalhando no módulo de Cadastros de Empresas.
                 <>
                   <option value="segmento">SEGMENTO DE MERCADO</option>
                   <option value="tipo">TIPO (MATRIZ / FILIAL)</option>
@@ -65,8 +74,8 @@ export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbri
               )}
             </select>
 
-            {/* 🛠️ ETAPA 2: INPUT DINÂMICO INTELIGENTE - Modifica sua estrutura de acordo com o campo focado na Etapa 1 */}
-            {campoSelecionadoLote === "status" && ( // -> Cenário A: Se escolher status, renderiza o select alimentado pelas raias reais do Firebase NoSQL.
+            {/* Etapa 2: Input dinâmico inteligente - Modifica seu formato de acordo com o campo selecionado na caixa anterior */}
+            {campoSelecionadoLote === "status" && ( // Cenário A: Se escolher status, monta a caixa de seleção alimentada pelas raias ativas do Firebase.
               <select
                 value={valorEdicaoMassa}
                 onChange={(e) => setValorEdicaoMassa(e.target.value)}
@@ -79,7 +88,7 @@ export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbri
               </select>
             )}
 
-            {campoSelecionadoLote === "tipo" && ( // -> Cenário B: Se escolher tipo corporativo, trava as duas opções oficiais evitando erros de digitação.
+            {campoSelecionadoLote === "tipo" && ( // Cenário B: Se escolher tipo corporativo, trava o seletor entre Matriz ou Filial evitando erros de digitação.
               <select
                 value={valorEdicaoMassa}
                 onChange={(e) => setValorEdicaoMassa(e.target.value)}
@@ -91,7 +100,7 @@ export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbri
               </select>
             )}
 
-            {(campoSelecionadoLote === "responsavel" || campoSelecionadoLote === "segmento") && ( // -> Cenário C: Se for operador ou segmento livre, libera a caixinha de escrita limpa.
+            {(campoSelecionadoLote === "responsavel" || campoSelecionadoLote === "segmento") && ( // Cenário C: Se for operador ou segmento de texto livre, libera a caixinha de digitação limpa.
               <input
                 type="text"
                 value={valorEdicaoMassa}
@@ -101,11 +110,11 @@ export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbri
               />
             )}
 
-            {/* BOTÃO DE CONFIRMAÇÃO DO LOTE COM ADESÃO AO MOUSEOVER */}
+            {/* Botão de confirmação do lote que executa a alteração em massa e atualiza as linhas selecionadas */}
             {campoSelecionadoLote && (
               <button
-                type="button" // -> Tipo comanda estável.
-                onClick={lidarComAplicarEdicaoLote} // -> Arremessa os pacotes de alteração em massa coletivos para a nuvem.
+                type="button" 
+                onClick={lidarComAplicarEdicaoLote} // Arremessa os pacotes de alteração coletivos para o banco de dados.
                 style={{ background: "#0f172a", color: "#ffffff", border: "none", padding: "3px 10px", borderRadius: "4px", fontSize: "10px", fontWeight: "800", cursor: "pointer", textTransform: "uppercase", transition: "background 0.15s ease", height: "20px", display: "flex", alignItems: "center" }}
                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#1e293b"}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#0f172a"}
@@ -114,166 +123,178 @@ export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbri
               </button>
             )}
 
-            <div style={{ width: "1px", height: "16px", backgroundColor: "#fda4af" }}></div> {/* -> Traço divisor fino de altíssimo contraste visual. */}
+            {/* Traço divisor vertical fino para separar as funções de edição e exclusão dentro da barra. */}
+            <div style={{ width: "1px", height: "16px", backgroundColor: "#fda4af" }}></div> 
 
-            {/* GATILHO DE EXPURGO COLETIVO REATIVO */}
+            {/* Gatilho de exclusão em massa para apagar em lote todos os itens marcados de uma vez só */}
             <button
-              type="button" // -> Tipo botão comercial de segurança.
-              onClick={aoExecutarExclusaoEmMassa} // -> Aciona o bombardeio NoSQL que tritura em massa os canhotos no Firebase.
+              type="button" 
+              onClick={aoExecutarExclusaoEmMassa} // Aciona o comando do App.jsx que deleta fisicamente os itens marcados na nuvem.
               style={{ display: "flex", alignItems: "center", gap: "4px", backgroundColor: "#ef4444", border: "none", color: "white", padding: "3px 10px", borderRadius: "4px", fontSize: "11px", fontWeight: "700", cursor: "pointer", textTransform: "uppercase", transition: "background 0.15s ease" }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#dc2626"}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#ef4444"}
-              title="Excluir todos os itens marcados permanentemente da esteira" // -> Tooltip explicativa.
+              title="Excluir todos os itens marcados permanentemente da esteira" // Texto de dica que aparece ao passar o mouse.
             >
-              <Trash2 size={11} strokeWidth={2.5} /> {/* -> Injeta o vetor fino de lixeira outline no comando de destruição coletiva. */}
+              {/* Injeta o ícone geométrico de lixeira da biblioteca Lucide. */}
+              <Trash2 size={11} strokeWidth={2.5} /> 
               <span>Excluir</span>
             </button>
           </div>
         ) : (
-          // 🧭 CIRCUITO COMUM PADRÃO: Se não houver checkboxes flegados, renderiza os seletores de layout comuns estáveis.
+          // Circuito comum padrão: Se não houver checkboxes flegados, renderiza os seletores normais de Kanban e Planilha.
           <>
-            {/* BOTÃO: VISÃO KANBAN */}
+            {/* Botão para ativar a visualização em formato de Quadro Kanban */}
             <button 
-              type="button" // -> Define explicitamente o tipo do elemento como botão nativo para blindagem de formulários.
-              onClick={() => aoMudarVisao("kanban")} // -> Avisa o mestre App.jsx para carregar o quadro de raias cinzas.
+              type="button" 
+              onClick={() => aoMudarVisao("kanban")} // Avisa o mestre App.jsx para chavear a tela para o modo de raias.
               style={{ 
-                backgroundColor: visaoAtual === "kanban" ? "#0f172a" : "#f1f5f9", // -> MUDANÇA SÓBRIA: Azul Escuro Profundo se ativo, ou cinza plano se inativo. 
-                border: visaoAtual === "kanban" ? "1px solid #0f172a" : "1px solid #cbd5e1", // -> Ajusta o contorno de contorno combinando com a cor do estado ativo. 
-                padding: "6px 14px", // -> Espaçamento interno calibrado para compactação tridimensional do layout. 
-                borderRadius: "6px", // -> Cantos arredondados de 6px padrão executivo sério.
-                fontSize: "13px", // -> Fonte recalibrada para densidade ideal para rotinas fiscais.
-                fontWeight: "700", // -> Peso de fonte destacado para leitura imediata da aba.
-                color: visaoAtual === "kanban" ? "#ffffff" : "#475569", // -> Texto branco no fundo escuro, ou cinza ardósia corporativo no fundo claro. 
-                cursor: "pointer", // -> Transforma a seta do mouse em ponteiro de clique interativo.
-                display: "flex", // -> Ativa flexbox interno para centralização geométrica perfeita do ícone.
-                alignItems: "center", // -> Centraliza verticalmente o ícone interno do Lucide.
-                justifyContent: "center", // -> Centraliza horizontalmente o ícone interno do Lucide.
-                gap: "6px", // -> Cria um espaçamento técnico e elegante de 6px entre o componente gráfico e o texto.
-                transition: "all 0.2s ease" // -> Transição suave de cores ao chavear os cliques.
+                backgroundColor: visaoAtual === "kanban" ? "#0f172a" : "#f1f5f9", 
+                border: visaoAtual === "kanban" ? "1px solid #0f172a" : "1px solid #cbd5e1", 
+                padding: "6px 14px", 
+                borderRadius: "6px", 
+                fontSize: "13px", 
+                fontWeight: "700", 
+                color: visaoAtual === "kanban" ? "#ffffff" : "#475569", 
+                cursor: "pointer", 
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "center", 
+                gap: "6px", 
+                transition: "all 0.2s ease" 
               }}
             >
-              <Kanban size={14} strokeWidth={2} /> {/* -> Renderiza o ícone geométrico de raias do Lucide em tamanho enxuto 14 e traço fino de espessura 2. */}
-              <span>Kanban</span> {/* -> Texto limpo e institucional substituindo o emoji antigo por extenso. */}
-            </button> {/* -> Encerra o botão alternador do Kanban. */}
+              {/* Insere o ícone de colunas do Kanban. */}
+              <Kanban size={14} strokeWidth={2} /> 
+              <span>Kanban</span> 
+            </button> 
 
-            {/* BOTÃO: VISÃO TABELA EXECUTIVA */}
+            {/* Botão para ativar a visualização em formato de Tabela/Planilha Executiva */}
             <button 
-              type="button" // -> Define explicitamente o tipo do elemento como botão nativo para blindagem de formulários.
-              onClick={() => aoMudarVisao("tabela")} // -> Avisa o mestre App.jsx para ocultar o Kanban e renderizar a planilha.
+              type="button" 
+              onClick={() => aoMudarVisao("tabela")} // Avisa o mestre App.jsx para ocultar o Kanban e desenhar as linhas da planilha.
               style={{ 
-                backgroundColor: visaoAtual === "tabela" ? "#0f172a" : "#f1f5f9", // -> MUDANÇA SÓBRIA: Azul Escuro Profundo se ativo, ou cinza plano se inativo. 
-                border: visaoAtual === "tabela" ? "1px solid #0f172a" : "1px solid #cbd5e1", // -> Ajusta o contorno de contorno de acordo com o estado ativo. 
-                padding: "6px 14px", // -> Espaçamento interno calibrado para compactação tridimensional do layout. 
-                borderRadius: "6px", // -> Cantos arredondados de 6px padrão executivo sério.
-                fontSize: "13px", // -> Fonte recalibrada para densidade ideal para rotinas fiscais.
-                fontWeight: "700", // -> Peso de fonte destacado para leitura imediata da aba.
-                color: visaoAtual === "tabela" ? "#ffffff" : "#475569", // -> Texto branco no fundo escuro, ou cinza ardósia corporativo no fundo claro. 
-                cursor: "pointer", // -> Transforma a seta do mouse em ponteiro de clique interativo.
-                display: "flex", // -> Ativa flexbox interno para centralização geométrica perfeita do ícone.
-                alignItems: "center", // -> Centraliza verticalmente o ícone interno do Lucide.
-                justifyContent: "center", // -> Centraliza horizontalmente o ícone interno do Lucide.
-                gap: "6px", // -> Cria um espaçamento técnico de 6px entre o ícone do Lucide e o texto.
-                transition: "all 0.2s ease" // -> Transição suave de cores ao chavear os cliques.
+                backgroundColor: visaoAtual === "tabela" ? "#0f172a" : "#f1f5f9", 
+                border: visaoAtual === "tabela" ? "1px solid #0f172a" : "1px solid #cbd5e1", 
+                padding: "6px 14px", 
+                borderRadius: "6px", 
+                fontSize: "13px", 
+                fontWeight: "700", 
+                color: visaoAtual === "tabela" ? "#ffffff" : "#475569", 
+                cursor: "pointer", 
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "center", 
+                gap: "6px", 
+                transition: "all 0.2s ease" 
               }}
             >
-              <TableProperties size={14} strokeWidth={2} /> {/* -> Renderiza o ícone de propriedades de tabela em linhas finas vazadas. */}
-              <span>Planilha</span> {/* -> Texto executivo e sóbrio substituindo o emoji antigo por extenso. */}
-            </button> {/* -> Encerra o botão alternador da planilha executiva. */}
+              {/* Insere o ícone de estrutura de planilha. */}
+              <TableProperties size={14} strokeWidth={2} /> 
+              <span>Planilha</span> 
+            </button> 
           </>
         )}
-      </div> {/* -> Encerra o contêiner esquerdo de alternadores de visão. */}
+      </div> 
 
-      {/* SEÇÃO DA DIREITA: FILTROS AVANÇADOS, BOTÃO DE ALTERNÂNCIA DO LIMBO E NOVO PROTOCOLO */}
-      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}> {/* -> Alinhador horizontal com espaçamento otimizado para 8px. */}
+      {/* Seção da direita: Filtros avançados, Importação de Aging CSV, Limbo de arquivados e Nova Cobrança */}
+      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}> 
         
-        {/* BOTÃO TOGGLE PREMIUM: Transforma-se em Ícone-Puro (Icon-Only) de arquivo aberto/fechado conforme o estado do Limbo */}
+        {/* Botão Toggle Premium: Altera o ícone de caixa aberta ou fechada dependendo do estado do Limbo */}
         <button
-          type="button" // -> Define o tipo como botão padrão estável del sistema.
-          onClick={() => aoAlternarArquivados && aoAlternarArquivados(!exibirArquivados)} // -> Casado perfeitamente o gatilho reativo com a propriedade 'aoAlternarArquivados' para estancar quebras lógicas.
+          type="button" 
+          onClick={() => aoAlternarArquivados && aoAlternarArquivados(!exibirArquivados)} // Executa a inversão segura do estado booleano de exibição do arquivo morto.
           style={{
-            background: exibirArquivados ? "#0f172a" : "#ffffff", // -> Fica escuro se o limbo estiver à vista, ou branco se a esteira limpa estiver ativa.
-            color: exibirArquivados ? "#ffffff" : "#475569", // -> Elementos internos brancos ou cinza ardósia dependendo do estado do interruptor.
-            border: exibirArquivados ? "1px solid #0f172a" : "1px solid #cbd5e1", // -> Casamento simétrico de contorno de bordas corporativas.
-            padding: "6px 14px", // -> Altura padrão unificada de ferramentas do CRM.
-            borderRadius: "6px", // -> Arredondamento corporativo estável de 6px.
-            fontWeight: "700", // -> Força do texto em modo negrito sênior.
-            fontSize: "13px", // -> Uniformizado in 13px para manter consistência com o grid esquerdo.
-            cursor: "pointer", // -> Ponteiro indicador de clique ativo.
-            display: "flex", // -> Alinhador flexbox interno para centralização perfeita.
-            alignItems: "center", // -> Centralização vertical absoluta dos elementos.
-            justifyContent: "center", // -> Centralização horizontal estrita para botões baseados apenas in ícones.
-            gap: "6px", // -> Cria um espaçamento técnico de 6px entre o componente gráfico e la legenda do limbo.
-            boxShadow: "0 1px 2px rgba(0,0,0,0.02)", // -> Micro-sombra protetiva de profundidade de interface.
-            transition: "all 0.2s ease" // -> Transição suave de cor de preenchimento ao clicar.
+            background: exibirArquivados ? "#0f172a" : "#ffffff", 
+            color: exibirArquivados ? "#ffffff" : "#475569", 
+            border: exibirArquivados ? "1px solid #0f172a" : "1px solid #cbd5e1", 
+            padding: "6px 14px", 
+            borderRadius: "6px", 
+            fontWeight: "700", 
+            fontSize: "13px", 
+            cursor: "pointer", 
+            display: "flex", 
+            alignItems: "center", 
+            justifyContent: "center", 
+            gap: "6px", 
+            boxShadow: "0 1px 2px rgba(0,0,0,0.02)", 
+            transition: "all 0.2s ease" 
           }}
-          title={exibirArquivados ? "Exibindo Arquivos Mortos - Clique para voltar à esteira ativa" : "Exibindo Cards Ativos - Clique para visualizar o Limbo de Arquivados"} // -> Tooltip flutuante explicativa em português que aparece ao passar o mouse.
+          title={exibirArquivados ? "Exibindo Arquivos Mortos - Clique para voltar à esteira ativa" : "Exibindo Cards Ativos - Clique para visualizar o Limbo de Arquivados"} // Tooltip explicativa em português.
         >
           {exibirArquivados ? (
-            <ArchiveX size={14} strokeWidth={2} /> // -> Exibe la caixa organizadora com um friso fino indicando que o limbo está ativo e pode ser fechado.
+            // Desenha o ícone de caixa fechada com um "X" indicando que o limbo está ativo e pode ser fechado.
+            <ArchiveX size={14} strokeWidth={2} /> 
           ) : (
-            <Archive size={14} strokeWidth={2} /> // -> Exibe la caixa organizadora clássica vazada indicando acesso ao repositório do arquivo morto.
+            // Desenha a caixa de arquivos clássica vazada para dar acesso ao repositório morto.
+            <Archive size={14} strokeWidth={2} /> 
           )}
-          <span>Limbo</span> {/* -> Legenda corporativa enxuta e elegante. */}
+          <span>Limbo</span> 
         </button>
 
-        {/* GATILHO DA GAVETA DE FILTROS SIMULTÂNEOS */}
+        {/* Botão de acionamento reativo da gaveta lateral direita de Filtros Avançados */}
         <button 
-          type="button" // -> Define o tipo do elemento como botão para evitar disparos falsos de submit.
-          onClick={aoAbrirGavetaFiltros} // -> Aciona o aparecimento reativo da barra lateral direita de filtros.
+          type="button" 
+          onClick={aoAbrirGavetaFiltros} // Dispara a função que faz a barra lateral de filtros deslizar na tela.
           style={{ 
-            background: "#ffffff", // -> Fundo branco limpo.
-            color: "#475569", // -> Texto cinza corporativo estável.
-            border: "1px solid #cbd5e1", // -> Contorno suave de limitation.
-            padding: "6px 14px", // -> Altura reduzida alinhada simetricamente à ala esquerda.
-            borderRadius: "6px", // -> Cantos arredondados de 6px padrão executivo.
-            fontWeight: "700", // -> Força do texto em modo negrito denso.
-            fontSize: "12px", // -> Fonte calibrada em 12px.
-            cursor: "pointer", // -> Mouse em formato de mão de clique.
-            display: "flex", // -> Ativa flexbox para acoplar o texto e a pílula de contagem lado a lado.
-            alignItems: "center", // -> Centraliza verticalmente o texto e a pílula interna.
-            gap: "6px", // -> Espaço de 6px entre a legenda e o círculo de avisos.
-            boxShadow: "0 1px 2px rgba(0,0,0,0.02)" // -> Micro-sombra protetiva de profundidade.
+            background: "#ffffff", 
+            color: "#475569", 
+            border: "1px solid #cbd5e1", 
+            padding: "6px 14px", 
+            borderRadius: "6px", 
+            fontWeight: "700", 
+            fontSize: "12px", 
+            cursor: "pointer", 
+            display: "flex", 
+            alignItems: "center", 
+            gap: "6px", 
+            boxShadow: "0 1px 2px rgba(0,0,0,0.02)" 
           }}
-          title="Filtros Avançados de Busca" // -> Dica de tela informativa para o operador.
+          title="Filtros Avançados de Busca" 
         >
-          <Filter size={14} strokeWidth={2} /> {/* -> Funil geométrico do Lucide. */}
-          <span>Filtros</span> {/* -> Legenda totalmente higienizada. */}
+          {/* Insere o ícone de funil calibrado em tamanho 14. */}
+          <Filter size={14} strokeWidth={2} /> 
+          <span>Filtros</span> 
           {totalFiltrosAtivos > 0 && (
+            // Pílula indicadora vermelha que acende dinamicamente mostrando quantos filtros o operador está combinando.
             <span style={{ background: "#ef4444", color: "white", fontSize: "10px", padding: "1px 5px", borderRadius: "10px", fontWeight: "bold" }}>
               {totalFiltrosAtivos}
             </span>
           )}
         </button>
 
-        {/* GATILHO DO MODAL: + NOVA COBRANÇA */}
+        {/* 🎛️ CONECTOR VISUAL DO IMPORTADOR (MÓDULO DE AUTONOMIA AGING):
+            Contêiner de ID exclusivo fixado. O gancho useEffect do App.jsx vai ler essa ID na montagem 
+            e injetar o botão azul oficial calibrado para carregar a planilha Aging sem dar erros de módulo! */}
+        <div id="container-importador-toolbar-id" style={{ display: "inline-flex", height: "30px", alignItems: "center" }}></div>
+
+        {/* Botão de comando primário para abrir o modal de cadastro manual de novas cobranças */}
         <button 
-          type="button" // -> Define o tipo do elemento como botão para estabilidade de eventos.
-          onClick={aoAbrirModalCadastro} // -> Altera o estado para verdadeiro abrindo o pop-up flutuante de novas inserções. 
+          type="button" 
+          onClick={aoAbrirModalCadastro} // Abre o formulário limpo para inserção de um novo devedor.
           style={{ 
-            background: "#0f172a", // -> MUDANÇA SÓBRIA: Alterado do azul anterior para o Azul Escuro Profundo institucional da advocacia. 
-            color: "white", // -> Texto em alta nitidez na cor branca.
-            border: "none", // -> Remove contornos para manter o visual sólido plano.
-            padding: "6px 16px", // -> Altura milimetricamente adjusted para casar com a linha de botões horizontais. 
-            borderRadius: "6px", // -> Arredondamento corporativo estável de 6px.
-            fontWeight: "800", // -> Negrito de destaque operacional sênior.
-            fontSize: "12px", // -> Fonte em 12px mantendo a uniformidade densa da barra.
-            cursor: "pointer", // -> Ponteiro indicador de clique ativo.
-            display: "flex", // -> Flexbox para alinhar o ícone de adição e o texto interno.
-            alignItems: "center", // -> Centralização vertical absoluta dos textos.
-            gap: "6px", // -> Distanciamento interno do ícone de 6px.
-            height: "30px", // -> Fixada altura simétrica para travar o barramento visual.
-            boxShadow: "0 1px 3px rgba(0,0,0,0.05)", // -> Sombra sutil executiva.
+            background: "#0f172a", 
+            color: "white", 
+            border: "none", 
+            padding: "6px 16px", 
+            borderRadius: "6px", 
+            fontWeight: "800", 
+            fontSize: "12px", 
+            cursor: "pointer", 
+            display: "flex", 
+            alignItems: "center", 
+            gap: "6px", 
+            height: "30px", 
+            boxShadow: "0 1px 3px rgba(0,0,0,0.05)", 
             transition: "background 0.15s ease"
           }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#1e293b"}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#0f172a"}
-          title="Cadastrar Nova Cobrança no Funil" // -> Dica de tela para o acionador de inclusões de dívidas.
+          title="Cadastrar Nova Cobrança no Funil" 
         >
+          {/* Vetor de círculo com sinal de adição da biblioteca Lucide. */}
           <PlusCircle size={14} strokeWidth={2} />
           <span>Nova Cobrança</span>
         </button>
 
-      </div> {/* -> Encerra o agrupador flexbox da ala direita de ferramentas. */}
-    </div> // -> Encerra o contêiner mestre horizontal da Toolbar.
+      </div> 
+    </div> 
   );
 }

@@ -1,4 +1,4 @@
-import React from "react"; // -> Traz a biblioteca mestre do React para permitir a leitura e interpretação da sintaxe de componentes .jsx.
+import React from "react"; // -> Traz a biblioteca nativa do React para permitir a leitura e interpretação da sintaxe de componentes .jsx.
 import { UserPlus, X, Briefcase, User, Fingerprint, Phone, Mail, Link } from "lucide-react"; // -> Injeta as engines de ícones finos, monocromáticos e sóbrios da biblioteca Lucide sem quebras de layout.
 
 export default function ModalNovoContato({ aberto, aoFechar, tratarCadastroContato, empresas = [], conEmpresaId, setConEmpresaId, conNome, setConNome, conCpf, setConCpf, conTelefone, setConTelefone, conEmail, setConEmail, conTipo, setConTipo, listaVinculos = [] }) { // -> Declara a função mestre do componente recebendo os dados, modificadores de estado e a lista viva de vínculos do Firebase.
@@ -30,29 +30,29 @@ export default function ModalNovoContato({ aberto, aoFechar, tratarCadastroConta
         <form onSubmit={tratarCadastroContato} style={{ display: "flex", gap: "12px", flexDirection: "column" }}> {/* -> Abre o formulário organizando a fiação de inputs empilhados verticalmente de forma densa. */}
           
           {/* EL PLUGO DE REFORÇO RELACIONAL: Caixa seletora vinculante de Empresas-Pai */}
-          <div style={{ display: "flex", flexDirection: "column" }}> {/* -> Alinhador vertical em lote para o campo de seleção relacional da empresa credora. */}
+          <div style={{ display: "flex", flexDirection: "column" }}> {/* -> Alinhador vertical in lote para o campo de seleção relacional da empresa credora. */}
             <label style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px" }}>
               <Briefcase size={12} strokeWidth={2.5} style={{ color: "#475569" }} /> {/* -> Substitui a balança de texto pelo componente de maleta corporativa fina do Lucide. */}
               <span>SELECIONAR CLIENTE ASSOCIAÇÃO *</span>
             </label> {/* -> Rótulo em caixa alta indicando campo rigidamente obrigatório de vínculo empresarial. */}
-            <select required value={conEmpresaId} onChange={(e) => setConEmpresaId(e.target.value)} style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", background: "#ffffff", color: "#0f172a", fontWeight: "bold", cursor: "pointer" }}> {/* -> Menu dropdown com fonte de 12px que armazena a ID da empresa selecionada. */}
+            <select required value={conEmpresaId} onChange={(e) => setConEmpresaId(e.target.value)} style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", background: "#ffffff", color: "#0f172a", fontWeight: "bold", cursor: "pointer", width: "100%" }}> {/* -> Menu dropdown com fonte de 12px que armazena a ID da empresa selecionada. */}
               <option value="">-- Escolha uma empresa cadastrada na base --</option> {/* -> Opção neutra padrão inicial de instrução do seletor. */}
               {empresas.map((emp) => ( // -> Varre reativamente a listagem viva de empresas injetadas pelo mestre do sistema.
-                <option key={emp.id} value={emp.id}>{emp.cliente} (Conta: #{emp.codigo || "S/C"})</option> // -> Desenha a opção vinculando o ID físico para persistência estável no Firestore da Google, higienizado de emojis.
+                <option key={emp.id} value={emp.id}>{emp.cliente || emp.razaoSocial || "NOME NÃO INFORMADO"} (Conta: #{emp.codigo || "S/C"})</option> // -> RECALIBRADO VIA DE DUAS CHAVES: Desenha a opção buscando reativamente o nome mestre ou a razão social oriunda do Excel para evitar linhas fantasma, limpo de emojis.
               ))} {/* -> Encerra o laço mapeador de opções dinâmicas. */}
             </select> {/* -> Encerra o elemento estrutural select de empresas credoras. */}
           </div> {/* -> Fim do campo relacional de associação. */}
 
           {/* LINHA DUPLA: NOME E CPF */}
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}> {/* -> Alinhador flexbox responsivo lado a lado para otimização de espaço em tela. */}
-            <div style={{ display: "flex", flexDirection: "column", flex: 2 }}> {/* -> Ocupa dois terços da proporção horizontal para dar destaque ao nome completo civil do contato. */}
+            <div style={{ display: "flex", flexDirection: "column", flex: 2, minWidth: "180px" }}> {/* -> Ocupa dois terços da proporção horizontal para dar destaque ao nome completo civil do contato. */}
               <label style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px" }}>
                 <User size={12} strokeWidth={2.5} style={{ color: "#475569" }} /> {/* -> Adiciona o ícone de silhueta de perfil fino do Lucide no rótulo do nome completo. */}
                 <span>NOME COMPLETO *</span>
               </label> {/* -> Rótulo em caixa alta indicando campo rigidamente obrigatório de preenchimento. */}
               <input type="text" required placeholder="Ex: Roberto Alencar" value={conNome} onChange={(e) => setConNome(e.target.value)} style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", color: "#0f172a" }} /> {/* -> Entrada de texto livre para digitação do nome do representante. */}
             </div> {/* -> Fim da coluna do nome completo. */}
-            <div style={{ display: "flex", flexDirection: "column", flex: 1 }}> {/* -> Ocupa um terço da proporção horizontal focando o documento de identificação fiscal CPF. */}
+            <div style={{ display: "flex", flexDirection: "column", flex: 1, minWidth: "120px" }}> {/* -> Ocupa um terço da proporção horizontal focando o documento de identificação fiscal CPF. */}
               <label style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px" }}>
                 <Fingerprint size={12} strokeWidth={2.5} style={{ color: "#475569" }} /> {/* -> Adiciona o ícone de impressão digital outline representativo do documento cadastral. */}
                 <span>CPF DO CONTATO *</span>
@@ -63,14 +63,14 @@ export default function ModalNovoContato({ aberto, aoFechar, tratarCadastroConta
 
           {/* LINHA DUPLA: TELEFONE E EMAIL */}
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}> {/* -> Alinhador flexbox responsivo duplo para canais de acionamento e cobrança. */}
-            <div style={{ display: "flex", flexDirection: "column", flex: 1 }}> {/* -> Coluna flexível dedicada ao número telefônico que receberá as higienizações do sistema. */}
+            <div style={{ display: "flex", flexDirection: "column", flex: 1, minWidth: "140px" }}> {/* -> Coluna flexível dedicada ao número telefônico que receberá as higienizações do sistema. */}
               <label style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px" }}>
                 <Phone size={12} strokeWidth={2.5} style={{ color: "#475569" }} /> {/* -> Injeta o componente sutil de telefone em vetor do Lucide. */}
                 <span>TELEFONE (DDD) *</span>
               </label> {/* -> Rótulo em caixa alta indicando campo de telefone obrigatório. */}
               <input type="text" required placeholder="Números (Ex: 37999887119)" value={conTelefone} onChange={(e) => setConTelefone(e.target.value)} style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", color: "#0f172a" }} /> {/* -> Entrada de texto que enviará os dígitos para a máscara brasileira de celulares ou fixos. */}
             </div> {/* -> Fim da coluna de acionamento telefônico. */}
-            <div style={{ display: "flex", flexDirection: "column", flex: 1 }}> {/* -> Coluna flexível dedicada ao endereço eletrônico cadastral. */}
+            <div style={{ display: "flex", flexDirection: "column", flex: 1, minWidth: "140px" }}> {/* -> Coluna flexível dedicada ao endereço eletrônico cadastral. */}
               <label style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px" }}>
                 <Mail size={12} strokeWidth={2.5} style={{ color: "#475569" }} /> {/* -> Injeta o componente sutil de envelope de correspondência eletrônica. */}
                 <span>E-MAIL CONTATO</span>
@@ -80,7 +80,7 @@ export default function ModalNovoContato({ aberto, aoFechar, tratarCadastroConta
           </div> {/* -> Fim da linha dupla intermediária inferior. */}
 
           {/* CAMPO RECONFIGURADO: DROPDOWN DINÂMICO CONECTADO ÀS DIRETRIZES DA COLEÇÃO CADASTROS_VINCULOS */}
-          <div style={{ display: "flex", flexDirection: "column" }}> {/* -> Alinhador vertical em lote para classificação de dependência civil e papel do contato. */}
+          <div style={{ display: "flex", flexDirection: "column" }}> {/* -> Alinhador vertical in lote para classificação de dependência civil e papel do contato. */}
             <label style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px" }}>
               <Link size={12} strokeWidth={2.5} style={{ color: "#475569" }} /> {/* -> Injeta o componente de elo fino do Lucide representativo do papel relacional. */}
               <span>VÍNCULO JURÍDICO / PAPEL</span>
@@ -88,10 +88,10 @@ export default function ModalNovoContato({ aberto, aoFechar, tratarCadastroConta
             <select 
               value={conTipo} 
               onChange={(e) => setConTipo(e.target.value)} 
-              style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", background: "#ffffff", color: "#0f172a", fontWeight: "700", cursor: "pointer" }} // -> Menu dropdown corporativo denso configurado em 12px com peso em negrito para cliques do operador.
+              style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", background: "#ffffff", color: "#0f172a", fontWeight: "700", cursor: "pointer", width: "100%" }} // -> Menu dropdown corporativo denso configurado em 12px com peso em negrito para cliques do operador.
             >
               <option value="responsavel">-- Selecionar papel cadastrado --</option> {/* -> Opção neutra de instrução inicial padrão caso o usuário não clique em nada. */}
-              {listaVinculos.map((vin) => ( // -> INVERSÃO DE LÓGICA CONCLUÍDA: Realiza o laço reativo mapeando os documentos reais vindos em tempo real da nuvem do Firebase.
+              {listaVinculos.map((vin) => ( // -> Realiza o laço reativo mapeando os documentos reais vindos em tempo real da nuvem do Firebase.
                 <option key={vin.id} value={vin.label}>{vin.label}</option> // -> Renderiza o papel corporativo de forma viva (Ex: Sócio, Diretor) capturando as chaves textuais imutáveis, limpo de emojis.
               ))} {/* -> Encerra o laço mapeador de opções dinâmicas da coleção de vínculos. */}
             </select> {/* -> Encerra a caixa seletora de papéis civis e vínculos dinâmicos. */}

@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // -> Traz a biblioteca nativa do React e o gancho useState para gerenciar os estados de carregamento do barramento da BrasilAPI.
+import React, { useState } from "react"; // -> Traz a biblioteca mestre do React e o gancho useState para gerenciar os estados de carregamento do barramento da BrasilAPI.
 import { Building2, X, FileKey, Network, Fingerprint, Tag, MapPin, Map, Loader2 } from "lucide-react"; // -> Injeta as engines de ícones finos do Lucide, adicionando o Loader2 para animações de sincronização.
 
 export default function ModalNovaEmpresa({ aberto, aoFechar, tratarCadastroEmpresa, empCodigo, setEmpCodigo, empNome, setEmpNome, empCnpj, setEmpCnpj, empIsFilial, setEmpIsFilial, empSegmento, setEmpSegmento, empEndereco, setEmpEndereco, empCep, setEmpCep, listaSegmentos = [] }) { // -> Define e exporta o componente recebendo os estados de monitoração de digitação do maestro e a lista viva de segmentos do Firebase.
@@ -19,16 +19,16 @@ export default function ModalNovaEmpresa({ aberto, aoFechar, tratarCadastroEmpre
       
       const resposta = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${apenasNumeros}`); // -> Dispara o método nativo fetch visando o endpoint ultra-rápido de alta performance da BrasilAPI.
       
-      if (!resposta.ok) { // -> Captura se o servidor devolveu algum status de erro (Ex: 404 CNPJ não localizado).
+      if (!resposta.ok) { // -> Captura se o servidor devoUveu algum status de erro (Ex: 404 CNPJ não localizado).
         throw new Error("CNPJ não localizado na base de dados da Receita Federal."); // -> Atira a exceção para o bloco catch tratar.
-      }
+      } // -> Fim da checagem de integridade.
 
       const dadosEmpresa = await resposta.json(); // -> Traduz o pacote de rede codificado em formato JSON vivo para leitura na memória RAM de forma correta e síncrona.
 
       // 🧼 TRATAMENTO E HIGIENIZAÇÃO DE RETORNO DO BANCO DE DADOS
       if (dadosEmpresa.descricao_situacao_cadastral === "BAIXADA" || dadosEmpresa.situacao_cadastral === "BAIXADA" || dadosEmpresa.situacao_cadastral === 8) { // -> Valida o status fiscal operacional do assistido usando as chaves reais e numéricas entregues pela BrasilAPI.
         alert(`⚠️ ALERTA FISCAL CRÍTICO:\nA empresa vinculada a este CNPJ encontra-se [BAIXADA] na Receita Federal.\nMotivo: ${dadosEmpresa.descricao_motivo_situacao_cadastral || dadosEmpresa.motivo_baixa || "Não Informado"}.`); // -> Dispara aviso vermelho na tela para proteção jurídica da operação.
-      }
+      } // -> Fim da validação de alerta fiscal.
 
       // 🧠 RETROALIMENTAÇÃO REATIVA DOS ESTADOS DO MAESTRO
       setEmpNome((dadosEmpresa.razao_social || dadosEmpresa.nome_fantasia || "").toUpperCase()); // -> Preenche a Razão Social corporativa automaticamente em caixa alta por herança de estado e força letras maiúsculas.
@@ -41,22 +41,23 @@ export default function ModalNovaEmpresa({ aberto, aoFechar, tratarCadastroEmpre
       const bairro = dadosEmpresa.bairro ? ` - Bairro: ${dadosEmpresa.bairro}` : ""; // -> Captura o distrito territorial.
       const cidadeUf = dadosEmpresa.municipio ? ` (${dadosEmpresa.municipio}/${dadosEmpresa.uf})` : ""; // -> Concatena a praça de comarca de faturamento correspondente.
       
-      setEmpEndereco(`${tipoLogradouro}${logradouro}${numero}${complemento}${bairro}${cidadeUf}`.toUpperCase()); // -> Unifica todas as strings estruturadas em uma linha executiva única perfeita e limpa em caixa alta.
+      setEmpEndereco(`${tipoLogradouro}${logradouro}${numero}${complemento}${bairro}${cidadeUf}`.toUpperCase()); // -> Unifica todas as strings estruturadas in uma linha executiva única perfeita e limpa em caixa alta.
       setEmpCep(dadosEmpresa.cep || ""); // -> Injeta o código postal CEP correspondente de forma automatizada sem travas.
       
       // EQUALIZAÇÃO EXECUTIVA: Ajustado para validar tanto pelo número técnico (2) quanto pela string textual mestre ("FILIAL") enviada pelo servidor.
       if (dadosEmpresa.identificador_matriz_filial === 2 || dadosEmpresa.descricao_identificador_matriz_filial === "FILIAL") { // -> Regra da BrasilAPI: Se o identificador for idêntico a filial, significa que a unidade é um braço dependente.
         setEmpIsFilial(true); // -> Chaveia o checkbox para verdadeiro de forma autônoma.
       } else {
-        setEmpIsFilial(false); // -> Mantém o status mestre de Matriz ativo.
-      }
+        setEmpIsFilial(false); // -> Mantém o status mestre de Matriz active.
+      } // -> Fim da equalização.
 
     } catch (err) { // -> Captura falhas de timeout ou erros cadastrais de digitação humana.
       alert(`⚠️ FALHA DE INTEGRAÇÃO:\nNão foi possível auto-preencher os dados deste CNPJ.\nPor favor, preencha as informações manualmente.`); // -> Feedback amigável para contingência.
-    } finally {
+    } // -> Fim do catch.
+    finally {
       setCarregandoCnpj(false); // -> Desliga o loader de processamento liberando as caixas de texto para edição corretiva.
-    }
-  };
+    } // -> Fim do bloco final.
+  }; // -> Encerra a consulta de CNPJ.
 
   // 🧼 MÁSCARA DINÂMICA EM TEMPO REAL PARA CNPJ (UX PREMIUM)
   const lidarComMudancaCnpj = (e) => { // -> Captura cada clique ou caractere colado no campo de documento federal.
@@ -64,7 +65,7 @@ export default function ModalNovaEmpresa({ aberto, aoFechar, tratarCadastroEmpre
     const apenasNumeros = textoBruto.replace(/\D/g, ""); // -> Remove qualquer letra ou caractere especial preservando os dígitos.
     
     // 🎨 Aplicação da máscara clássica visual: 00.000.000/0000-00
-    let cnpjFormatado = apenasNumeros; // -> Inicializa o rascunho com os números limpos.
+    let cnpjFormatado = apenasNumeros; // -> Inicializa o rascunho with os números limpos.
     if (apenasNumeros.length > 2) cnpjFormatado = `${apenasNumeros.slice(0, 2)}.${apenasNumeros.slice(2)}`; // -> Injeta o primeiro ponto.
     if (apenasNumeros.length > 5) cnpjFormatado = `${cnpjFormatado.slice(0, 6)}.${cnpjFormatado.slice(6)}`; // -> Injeta o segundo ponto.
     if (apenasNumeros.length > 8) cnpjFormatado = `${cnpjFormatado.slice(0, 10)}/${cnpjFormatado.slice(10)}`; // -> Injeta a barra de subdivisão corporativa.
@@ -72,10 +73,10 @@ export default function ModalNovaEmpresa({ aberto, aoFechar, tratarCadastroEmpre
 
     setEmpCnpj(cnpjFormatado.slice(0, 18)); // -> Atualiza o estado mestre limitando ao teto estrito de 18 caracteres da máscara.
 
-    if (apenasNumeros.length === 14) { // -> GATILHO REATIVO INTEGRADO: No exato milissegundo em que os números limpos atingirem 14 dígitos, dispara a busca controlada.
+    if (apenasNumeros.length === 14) { // -> GATILHO REATIVO INTEGRADO: No exato milissegundo em que os números limpos atingirem 14 dígitos, dispara a busca controlled.
       consultarCnpjAutomatico(apenasNumeros); // -> Arremessa o pacote para processamento na nuvem da BrasilAPI de forma isolada.
-    }
-  };
+    } // -> Fim da trava de 14.
+  }; // -> Encerra o aplicador de máscara.
 
   return ( // -> Dispara o desenho da interface flutuante do modal na tela.
     <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(15, 23, 42, 0.4)", zIndex: 6000, display: "flex", justifyContent: "center", alignItems: "center" }}> {/* -> Cortina escura de fundo configurada com opacidade suave para isolar visualmente as planilhas de fundo. */}
@@ -119,8 +120,8 @@ export default function ModalNovaEmpresa({ aberto, aoFechar, tratarCadastroEmpre
             </div> {/* -> Fim da coluna de marcação. */}
           </div> {/* -> Fim da linha dupla superior. */}
 
-          {/* CAMPO RECONFIGURADO: CNPJ DO CLIENTE COM AUTO-BUSCA INTEGRADA BLINDADA */}
-          <div style={{ display: "flex", flexDirection: "column", position: "relative" }}> {/* -> Alinhador vertical com posicionamento relativo para acomodar o loader interno de rede. */}
+          {/* CAMPO RECONFIGURADO: CNPJ DO CLIENTE WITH AUTO-BUSCA INTEGRADA BLINDADA */}
+          <div style={{ display: "flex", flexDirection: "column", position: "relative" }}> {/* -> Alinhador vertical with posicionamento relativo para acomodar o loader interno de rede. */}
             <label style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", fontWeight: "700", color: "#475569", marginBottom: "4px" }}>
               <Fingerprint size={12} strokeWidth={2.5} style={{ color: "#475569" }} /> {/* -> Adiciona o ícone de impressão digital outline representativo do documento federal. */}
               <span>CNPJ DO CLIENTE *</span>
@@ -134,7 +135,7 @@ export default function ModalNovaEmpresa({ aberto, aoFechar, tratarCadastroEmpre
                 placeholder="00.000.000/0000-00" 
                 value={empCnpj} 
                 onChange={lidarComMudancaCnpj} // -> Aciona a engine especialista em máscaras numéricas e interceptação de 14 dígitos.
-                style={{ padding: "8px 35px 8px 10px", border: `1px solid ${carregandoCnpj ? "#2563eb" : "#cbd5e1"}`, borderRadius: "6px", fontSize: "12px", color: "#0f172a", width: "100%", background: carregandoCnpj ? "#f0f9ff" : "#ffffff", boxSizing: "border-box", outline: "none", transition: "all 0.15s ease" }} // -> REMOÇÃO DO ONBLUR DUPLICADO: O evento de desfoque foi extinto para expurgar a duplicação de pacotes de rede e afastar o erro 429.
+                style={{ padding: "8px 35px 8px 10px", border: `1px solid ${carregandoCnpj ? "#2563eb" : "#cbd5e1"}`, borderRadius: "6px", fontSize: "12px", color: "#0f172a", width: "100%", background: carregandoCnpj ? "#f0f9ff" : "#ffffff", boxSizing: "border-box", outline: "none", transition: "all 0.15s ease" }}
               />
               {carregandoCnpj && (
                 <div style={{ position: "absolute", right: "10px", display: "flex", alignItems: "center", color: "#2563eb" }}>
@@ -150,7 +151,7 @@ export default function ModalNovaEmpresa({ aberto, aoFechar, tratarCadastroEmpre
               <Building2 size={12} strokeWidth={2.5} style={{ color: "#475569" }} /> {/* -> Adiciona o ícone de prédio corporativo no rótulo da razão social. */}
               <span>RAZÃO SOCIAL *</span>
             </label> {/* -> Rótulo em caixa alta indicando campo rigidamente obrigatório. */}
-            <input type="text" required disabled={carregandoCnpj} placeholder="Ex: Alfa Transportes LTDA" value={empNome} onChange={(e) => setEmpNome(e.target.value)} style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", color: "#0f172a", background: carregandoCnpj ? "#f1f5f9" : "#ffffff", cursor: carregandoCnpj ? "not-allowed" : "text" }} /> {/* -> Preenchido via satélite de forma instantânea. */}
+            <input type="text" required disabled={carregandoCnpj} placeholder="Ex: ALFA TRANSPORTES LTDA" value={empNome} onChange={(e) => setEmpNome(e.target.value)} style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", color: "#0f172a", background: carregandoCnpj ? "#f1f5f9" : "#ffffff", cursor: carregandoCnpj ? "not-allowed" : "text" }} /> {/* -> Preenchido via satélite de forma instantânea ou digitado em letras maiúsculas. */}
           </div> {/* -> Fim do campo de razão social. */}
 
           {/* LINHA INDIVIDUAL: SELECT DINÂMICO DE SEGMENTOS */}
@@ -163,7 +164,7 @@ export default function ModalNovaEmpresa({ aberto, aoFechar, tratarCadastroEmpre
               value={empSegmento} 
               disabled={carregandoCnpj}
               onChange={(e) => setEmpSegmento(e.target.value)} 
-              style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", color: "#0f172a", background: carregandoCnpj ? "#f1f5f9" : "#ffffff", fontWeight: "700", cursor: carregandoCnpj ? "not-allowed" : "pointer", width: "100%" }} // -> Menu dropdown corporativo denso configurado em 12px.
+              style={{ padding: "8px 10px", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "12px", color: "#0f172a", background: carregandoCnpj ? "#f1f5f9" : "#ffffff", fontWeight: "700", cursor: carregandoCnpj ? "not-allowed" : "pointer", width: "100%" }} // -> CORREÇÃO: Variável 'clay' substituída por 'carregandoCnpj' eliminando o erro fatal de quebra de página do React.
             >
               <option value="">-- Setor Não Definido --</option> {/* -> Opção nula inicial padrão caso o assistido não tenha nicho específico. */}
               {listaSegmentos.map((seg) => ( // -> Realiza o laço reativo mapeando os documentos guardados na coleção cadastros_segmentos real.
@@ -191,8 +192,8 @@ export default function ModalNovaEmpresa({ aberto, aoFechar, tratarCadastroEmpre
           </div> {/* -> Fim da linha dupla de endereçamento. */}
 
           {/* RODAPÉ DO MODAL: CONTROLES DE SUBMISSÃO OU REJEIÇÃO */}
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "12px", borderTop: "1px solid #e2e8f0", paddingTop: "12px" }}> {/* -> Adicionado traço de divisão sutil e padding superior para otimização visual sóbria. */}
-            <button type="button" disabled={carregandoCnpj} onClick={aoFechar} style={{ background: "#ffffff", border: "1px solid #cbd5e1", padding: "6px 12px", borderRadius: "6px", cursor: carregandoCnpj ? "not-allowed" : "pointer", fontSize: "12px", fontWeight: "600", color: "#475569", transition: "background 0.15s ease" }} onMouseEnter={(e) => { if (!carregandoCnpj) e.currentTarget.style.backgroundColor = "#f8fafc"; }} onMouseLeave={(e) => { if (!carregandoCnpj) e.currentTarget.style.backgroundColor = "#ffffff"; }}>Cancelar</button> {/* -> Botão sóbrio de recusa voluntária da operação em andamento. */}
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "12px", borderTop: "1px solid #e2e8f0", paddingTop: "12px" }}> {/* -> Adicionado traço de division sutil e padding superior para optimização visual sóbria. */}
+            <button type="button" disabled={carregandoCnpj} onClick={aoFechar} style={{ background: "#ffffff", border: "1px solid #cbd5e1", padding: "6px 12px", borderRadius: "6px", cursor: carregandoCnpj ? "not-allowed" : "pointer", fontSize: "12px", fontWeight: "600", color: "#475569", transition: "background 0.15s ease" }} onMouseEnter={(e) => { if (!carregandoCnpj) e.currentTarget.style.backgroundColor = "#f8fafc"; }} onMouseLeave={(e) => { if (!carregandoCnpj) e.currentTarget.style.backgroundColor = "#ffffff"; }}>Cancelar</button> {/* -> Botão sóbrio de recusa voluntária da operation em andamento. */}
             <button type="submit" disabled={carregandoCnpj} style={{ background: carregandoCnpj ? "#64748b" : "#0f172a", color: "#ffffff", border: "none", padding: "6px 14px", borderRadius: "6px", fontWeight: "700", cursor: carregandoCnpj ? "not-allowed" : "pointer", fontSize: "12px", transition: "background 0.15s ease" }} onMouseEnter={(e) => { if (!carregandoCnpj) e.currentTarget.style.backgroundColor = "#1e293b"; }} onMouseLeave={(e) => { if (!carregandoCnpj) e.currentTarget.style.backgroundColor = "#0f172a"; }}>
               {carregandoCnpj ? "Processando..." : "Gravar Registro"}
             </button> {/* -> Botão mestre de salvaguarda sólido Azul Escuro Profundo. */}
