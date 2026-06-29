@@ -14,7 +14,7 @@ export function ModuloFinanceiro({ cobrancas = [], aoMudarStatusDireto }) { // -
 
   // -> CONFIGURAÇÕES TÉCNICAS DE COBRANÇA JURÍDICA (DIRETRIZES DE MERCADO B2B) -> Comentário orientativo do desenvolvedor.
   const RETENCAO_IMPOSTO_HONORARIOS = 0.15; // -> Define a constante fiscal de simulação contendo a taxa de 15% de retenção de notas de serviços do escritório.
-  const DATA_HOJE_SISTEMA = new Date("2026-06-11T00:00:00"); // -> ÂNCORA CRONOLÓGICA: Fixa a data de junho de 2026 como o dia atual para cálculo real de faturas em atraso.
+  const DATA_HOJE_SISTEMA = new Date("2026-06-11T00:00:00"); // -> ÂNCORA CRONOLÓGICA: Fixa a data de junho de 2026 como o dia atual para cálculo real de faturas in atraso.
 
   // =========================================================================================
   // ⚙️ SUPER MOTOR DE EXTRAÇÃO: Unifica todas as parcelas Price da carteira em um único Pool
@@ -39,7 +39,7 @@ export function ModuloFinanceiro({ cobrancas = [], aoMudarStatusDireto }) { // -
 
       // -> CÁCULO DE SPLIT FINANCEIRO EM REAIS (CÁLCULO DE REPASSE) -> Comentário orientativo do desenvolvedor.
       const valorBrutoParcela = parseFloat(parcela.valor) || 0; // -> Limpa o valor numérico da parcela convertendo em ponto flutuante real para afastar bugs centavais.
-      const honorariosEscritorio = valorBrutoParcela * aliquotaCalculo; // -> MUTAÇÃO DINÂMICA: Multiplica o valor da parcela pela taxa de juros herdada do acordo, individualizando o split de honorários.
+      const honorariosEscritorio = valorBrutoParcela * aliquotaCalculo; // -> Multiplica o valor da parcela pela taxa de juros herdada do acordo, individualizando o split de honorários.
       const impostoRetido = honorariosEscritorio * RETENCAO_IMPOSTO_HONORARIOS; // -> Calcula o desconto tributário de 15% em cima da fatura de honorários.
       const repasseLiquidoCliente = valorBrutoParcela - honorariosEscritorio; // -> Realiza a subtração definindo a quantia líquida que será repassada via Pix para o cliente credor-pai.
 
@@ -94,7 +94,7 @@ export function ModuloFinanceiro({ cobrancas = [], aoMudarStatusDireto }) { // -
   const faturamentoTotalEsteira = parcelasOrdenadasVisor.reduce((acc, p) => acc + (parseFloat(p.valor) || 0), 0); // -> Cria a variável síncrona que calcula o bolo financeiro exato exibido nas linhas ativas da prancha.
 
   // =========================================================================================
-  // 📈 TOTALIZADORES FISCAIS EM RAM: Alimentam os Big Numbers da Controladoria
+  // 📊 TOTALIZADORES FISCAIS EM RAM: Alimentam os Big Numbers da Controladoria
   // ========================================================================================= -> Divisora estrutural de cálculos estatísticos.
   const caixaVencidoInadimplente = todasAsParcelasDaCarteira.filter(p => p.situacaoReal === "vencido").reduce((acc, p) => acc + p.valor, 0); // -> Filtra e calcula a soma monetária de todas as parcelas em atraso da esteira (gargalo de inadimplência).
   const caixaAVencerFluxo = todasAsParcelasDaCarteira.filter(p => p.situacaoReal === "a_vencer").reduce((acc, p) => acc + p.valor, 0); // -> Filtra e calcula a soma monetária de faturas dentro do prazo (previsibilidade de caixa futura).
@@ -132,7 +132,7 @@ export function ModuloFinanceiro({ cobrancas = [], aoMudarStatusDireto }) { // -
       proposta: { // -> SINCRONISMO BI-DIRECIONAL NoSQL: Abre a pasta de propostas para espelhar a alteration.
         ...(clienteAlvo.proposta || {}), // -> Preserva os dados de parcelamento contratuais estáveis da Price (vendedor, total negociado).
         parcelasSimuladas: planoAtualizado // -> Grava as parcelas com a baixa também dentro do prontuário, blindando a visão do cobrador!
-      }, // -> Fecha o sub-objeto de propostas.
+      }, // -> Veja que o sub-objeto de propostas se fecha.
       historicoNotas: [notaAuditoria, ...(clienteAlvo.historicoNotas || [])] // -> Injeta o rastro de auditoria no topo do array histórico sem apagar os anteriores.
     }; // -> Encerra a montagem do payload NoSQL final.
 
@@ -234,7 +234,7 @@ export function ModuloFinanceiro({ cobrancas = [], aoMudarStatusDireto }) { // -
               onChange={(e) => setBuscaEmpresa(e.target.value)} // -> Monitora caractere por caractere refinando o caixa.
               style={{ width: "100%", border: "none", background: "none", fontSize: "12px", color: "#0f172a", outline: "none", paddingLeft: "4px" }} // -> Input limpo inline totalmente integrado à caixa flexbox com remoção de contornos ativos.
             /> {/* -> Fecha a tag input. */}
-          </div> {/* -> Fecha a caixa de contorno branca do buscador. */}
+          </div> {/* -> Embaixo, a moldura branca do input com bordas se fecha. */}
         </div> {/* -> Fecha a ala direita de ferramentas. */}
 
       </div> {/* -> Encerra aToolbar completa da controladoria. */}
@@ -289,13 +289,13 @@ export function ModuloFinanceiro({ cobrancas = [], aoMudarStatusDireto }) { // -
               </th>
               <th style={{ padding: "14px 20px", textAlign: "center", width: "120px" }}>CONCILIAR</th> {/* -> Título da coluna 8: centraliza os gatilhos manuais de dar baixa. */}
             </tr> {/* -> Encerra a fileira de cabeçalhos de títulos. */}
-          </thead> {/* -> Encerra a cabeceira. */}
+          </thead> {/* -> Encerra a cabeceira superior de títulos fixos. */}
 
           <tbody style={{ color: "#0f172a", fontWeight: "600" }}> {/* -> Abre o corpo dinâmico para preenchimento das fileiras de promessas ativas. */}
             {parcelasOrdenadasVisor.length === 0 ? ( // -> Condicional de UX: se a grade de faturamento estiver deserta.
               <tr>
                 <td colSpan="8" style={{ padding: "40px 20px", backgroundColor: "#ffffff" }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyRef: "center", justifyContent: "center", gap: "6px", color: "#64748b", fontSize: "12px", fontStyle: "italic" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", color: "#64748b", fontSize: "12px", fontStyle: "italic" }}>
                     <FolderMinus size={14} strokeWidth={2} /> {/* -> Troca a caixa vazada antiga pela pasta de exclusão sutil do Lucide. */}
                     <span>Nenhuma promessa de pagamento em aberto ou registrada na situação selecionada.</span>
                   </div>
@@ -393,7 +393,7 @@ export function ModuloFinanceiro({ cobrancas = [], aoMudarStatusDireto }) { // -
                 </tr> // -> Encerra a fileira individual da fatura.
               ))
             )}
-          </tbody>
+          </tbody> {/* -> O corpo dinâmico para preenchimento das fileiras se fecha. */}
 
         </table>
       </div>

@@ -11,6 +11,7 @@ import ModuloFunil from "./ModuloFunil.jsx"; // -> Importa o componente especial
 import CadastrosHub from "./CadastrosHub.jsx"; // -> PEÇA 1 ACOPLADA: Importa o novo menu de cartões simétricos desmembrado para aliviar o peso da tela.
 import GerenciadorSegmentos from "./GerenciadorSegmentos.jsx"; // -> PEÇA 2 ACOPLADA: Importa o gerenciador autônomo especialista em nichos de faturamento.
 import GerenciadorVinculos from "./GerenciadorVinculos.jsx"; // -> PEÇA 3 ACOPLADA: Importa o gerenciador autônomo especialista em papéis contratuais civis.
+import ModuloMensagens from "./ModuloMensagens.jsx"; // -> UNIÃO DE DUAS VIAS: Importa o componente reativo de réguas de mensagens para renderização embutida.
 
 export default function ModuloCadastros({ empresasAtivasExternas = [], contatosAtivosExternos = [], aoAtualizarEmpresasExternas, segmentosExternos = [], vinculosExternos = [], etapasFunilExternas = [], itensSelecionadosExternos = {}, setItensSelecionadosExternos, aoExecutarExclusaoEmMassaExternas, aoExecutarEdicaoEmMassaExternas }) { // -> Declara a função principal do módulo de retaguarda recebendo o barramento de dados e funções do App.jsx.
   const empresas = empresasAtivasExternas; // -> Cria um atalho de leitura local para monitorar a lista viva de empresas em tempo real.
@@ -26,12 +27,12 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
   const [gavetaFiltrosAberta, setGavetaFiltrosAberta] = useState(false); // -> Estado booleano que comanda o surgimento da cortina lateral de filtros avançados.
 
   // REGISTROS EM EDIÇÃO: Estados auxiliares técnicos para identificar se a operation atual é de alteração ou de inclusão nova.
-  const [empresaEmEdicaoId, setEmpresaEmEdicaoId] = useState(null); // -> Armazena a ID da empresa em edição; caso seja nulo, o sistema sabe que é uma inserção inédita.
-  const [contatoEmEdicaoId, setContatoEmEdicaoId] = useState(null); // -> Armazena a ID do contato em edição; caso seja nulo, o sistema sabe que é uma inserção inédita.
+  const [empresaEmEdicaoId, setEmpresaEmEdicaoId] = useState(null); // -> Armazena a ID da empresa em edição; caso seja nulo, o system sabe que é uma inserção inédita.
+  const [contatoEmEdicaoId, setContatoEmEdicaoId] = useState(null); // -> Armazena a ID do contato em edição; caso seja nulo, o system sabe que é uma inserção inédita.
 
   // MEMÓRIA DE BUSCA COMBINADA RECALIBRADA: Expandida com todos os campos de cabeçalho para permitir buscas simultâneas estritas.
   const [filtrosEmpresa, setFiltrosEmpresa] = useState({ codigo: "", cliente: "", cnpj: "", tipo: "todos", segmento: "", endereco: "" }); // -> Objeto contendo os 6 filtros cruzados da planilha de PJs.
-  const [filtrosContato, setFiltrosContato] = useState({ nome: "", cpf: "", telefone: "", email: "", tipoVinculo: "todos" }); // -> Objeto contendo os 5 filtros cruzados da planilha de PFs.
+  const [filtrosContato, setFiltrosContato] = useState({ nome: "", cpf: "", telephone: "", email: "", tipoVinculo: "todos" }); // -> Objeto contendo os 5 filtros cruzados da planilha de PFs.
 
   // ESTADOS DE ORDENAÇÃO DINÂMICA: Memorizam qual coluna do cabeçalho está governando a fila e em qual direção.
   const [campoOrdenado, setCampoOrdenado] = useState(""); // -> Guarda a propriedade da coluna clicada para ordenar a grade (Ex: 'cliente', 'codigo').
@@ -49,7 +50,7 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
   // GAVETAS DE MONITORAMENTO DO FORMULÁRIO DE CONTATOS (PESSOAS HUMANAS)
   const [conNome, setConNome] = useState(""); // -> Vincula a caixa de digitação do Nome Completo do representative humano.
   const [conCpf, setConCpf] = useState(""); // -> Vincula a caixa de digitação do documento de CPF obrigatório.
-  const [conTelefone, setConTelefone] = useState(""); // -> Vincula a caixa de digitação do telefone celular com DDD brasileiro.
+  const [conTelefone, setConTelefone] = useState(""); // -> Vincula a caixa de digitação do telephone celular com DDD brasileiro.
   const [conEmail, setConEmail] = useState(""); // -> Vincula a caixa de digitação do e-mail eletrônico de cobrança.
   const [conTipo, setConTipo] = useState("responsavel"); // -> Vincula o dropdown de papel de vínculo civil do contato (padrão: 'responsavel').
   const [conEmpresaId, setConEmpresaId] = useState(""); // -> Vincula o menu relacional associando a qual devedor PJ este contato pertence profissionalmente.
@@ -65,7 +66,7 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
   const lidarComMudarOrdenacao = (campo) => { // -> Gerencia a ordenação alfabética ao clicar nas strings de cabeçalho das planilhas.
     if (campoOrdenado === campo) { // -> Se o usuário clicou na mesma coluna que já estava comandando a ordenação da grade:
       setDirecaoOrdenacao(direcaoOrdenacao === "asc" ? "desc" : "asc"); // -> Inverte o sentido: se era crescente (A-Z) vira decrescente (Z-A).
-    } else { // -> Caso seja uma coluna nova selecionada:
+    } else { // -> Caso seja um coluna nova selecionada:
       setCampoOrdenado(campo); // -> Aloca essa nova coluna como a governante de fluxo.
       setDirecaoOrdenacao("asc"); // -> Inicializa o sentido no modo crescente padrão de fábrica.
     } // -> Fim da inversão.
@@ -99,7 +100,7 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
       nomeArquivo = "representantes_financeiros.csv"; // -> Sela o nome do arquivo de contatos.
     } else { return; } // -> Se não estiver in nenhuma dessas telas, sabota e aborta a exportação por segurança.
 
-    let corpoPlanilha = cabecalhoColunas; // -> Inicializa a montagem colando os cabeçalhos de colunas na primeira linha.
+    let corpoPlanilha = cabecalhoColunas; // -> Inicializa la montagem colando os cabeçalhos de colunas na primeira linha.
     dadosParaExportar.forEach((item) => { // -> Executa uma varredura limpando caracteres de quebra antes de concatenar.
       if (visaoPainel === "empresas") { // -> Se for montagem de dados de empresas.
         const codigo = String(item.codigo || "").replace(/;/g, " "); // -> Higieniza: substitui ponto e vírgulas textuais por espaço simples para não quebrar as colunas do Excel.
@@ -114,11 +115,11 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
         const nomeEmpresa = empresaPai ? empresaPai.cliente : "Não Encontrada"; // -> Descobre o nome da empresa credora ou emite texto padrão de erro.
         const nome = String(item.nome || "").replace(/;/g, " "); // -> Limpa caracteres do nome do representante.
         const cpf = String(item.cpf || "").replace(/;/g, " "); // -> Limpa caracteres do CPF.
-        const telefone = String(item.telefone || "").replace(/;/g, " "); // -> Limpa caracteres do celular.
+        const telephone = String(item.telephone || item.telefone || "").replace(/;/g, " "); // -> Limpa caracteres do celular.
         const email = String(item.email || "").replace(/;/g, " "); // -> Limpa caracteres do e-mail com @.
         const tipoVinculo = String(item.tipoVinculo || "").replace(/;/g, " "); // -> Limpa caracteres do papel de vínculo.
         const empresaLimpa = String(nomeEmpresa).replace(/;/g, " "); // -> Limpa caracteres do nome da empresa associada.
-        corpoPlanilha += `${nome};${cpf};${telefone};${email};${tipoVinculo};${empresaLimpa}\n`; // -> Empilha a linha humana formatada e pula a linha.
+        corpoPlanilha += `${nome};${cpf};${telephone};${email};${tipoVinculo};${empresaLimpa}\n`; // -> Empilha a linha humana formatada e pula a linha.
       } // -> Fim da bifurcação.
     }); // -> Encerra a varredura das colunas.
 
@@ -148,7 +149,7 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
     setContatoEmEdicaoId(contato.id); // -> Armazena a ID do representante humano para travar o motor no modo de atualização.
     setConNome(contato.nome || ""); // -> FLAG DE SEGURANÇA UX: Pré-preenche o Nome Completo do indivíduo na caixa de texto.
     setConCpf(contato.cpf || ""); // -> FLAG DE SEGURANÇA UX: Pré-preenche o documento de CPF correspondente no input.
-    setConTelefone(contato.telefone || ""); // -> FLAG DE SEGURANÇA UX: Pré-preenche o número telefônico celular no input.
+    setConTelefone(contato.telefone || contato.telephone || ""); // -> FLAG DE SEGURANÇA UX: Pré-preenche o número telefônico celular no input.
     setConEmail(contato.email || ""); // -> FLAG DE SEGURANÇA UX: Pré-preenche a caixa de e-mail com arroba.
     setConTipo(contato.tipoVinculo || "responsavel"); // -> Tranca o dropdown de papel jurídico na opção contrata do banco.
     setConEmpresaId(contato.empresaId || ""); // -> Conecta o dropdown relacional marcando a Empresa-Pai legítima a qual o contato responde.
@@ -333,7 +334,7 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
                   )}
                 </select> {/* -> Encerra o select da Etapa 1. */}
 
-                {/* 🛠️ ETAPA 2: INPUT REATIVO DINÂMICO CONTEXTUALIZADO COMPATÍVEL COM CADA COLUNA CHAVE */}
+                {/* 🛠️ ETAPA 2: INPUT REATIVO DINÂMICO CONTEXTUALIZED COMPATÍVEL COM CADA COLUNA CHAVE */}
                 {campoSelecionadoLote === "tipo" && ( // -> Caso tenha escolhido alterar o Tipo Societário, renderiza o dropdown fixo com Matriz e Filial.
                   <select
                     value={valorEdicaoMassa} // -> Vincula à gaveta de valor coletivo.
@@ -512,12 +513,16 @@ export default function ModuloCadastros({ empresasAtivasExternas = [], contatosA
         <ModuloFunil /> // -> Invoca o componente filho especialista sem necessidade de parâmetros complexos.
       )}
 
+      {visaoPainel === "mensagens" && ( // -> 🛠️ EMBUTIMENTO REATIVO DA CENTRAL: Acende o painel de templates na mesma tela ao clicar no Card 6.
+        <ModuloMensagens etapasFunilExternas={etapasFunilBase} /> // -> Acopla de forma embutida e corporativa com as raias síncronas de fábrica.
+      )}
+
       {/* =========================================================================================
             ➕ LAYOUT LEVEL 3: CHAMADA CIRÚRGICA DOS MODAIS ISOLADOS E GAVETA DE FILTROS (TOTALMENTE SANADOS)
          ========================================================================================= */}
       <ModalNovaEmpresa aberto={modalEmpresaAberto} aoFechar={() => { setModalEmpresaAberto(false); setEmpresaEmEdicaoId(null); setEmpCodigo(""); setEmpNome(""); setEmpCnpj(""); setEmpIsFilial(false); setEmpSegmento(""); setEmpEndereco(""); setEmpCep(""); }} tratarCadastroEmpresa={tratarCadastroEmpresa} empCodigo={empCodigo} setEmpCodigo={setEmpCodigo} empNome={empNome} setEmpNome={setEmpNome} empCnpj={empCnpj} setEmpCnpj={setEmpCnpj} empIsFilial={empIsFilial} setEmpIsFilial={setEmpIsFilial} empSegmento={empSegmento} setEmpSegmento={setEmpSegmento} empEndereco={empEndereco} setEmpEndereco={setEmpEndereco} empCep={empCep} setEmpCep={setEmpCep} listaSegmentos={segmentosBase} /> {/* -> Mantém conectado o formulário flutuante de empresas enviando os 7 estados de controle de input, a lista de nichos e resetando os campos ao fechar. */}
       <ModalNovoContato aberto={modalContatoAberto} aoFechar={() => { setModalContatoAberto(false); setContatoEmEdicaoId(null); setConNome(""); setConCpf(""); setConTelefone(""); setConEmail(""); setConTipo("responsavel"); setConEmpresaId(""); }} tratarCadastroContato={tratarCadastroContato} empresas={empresas} conEmpresaId={conEmpresaId} setConEmpresaId={setConEmpresaId} conNome={conNome} setConNome={setConNome} conCpf={conCpf} setConCpf={conCpf} conTelefone={conTelefone} setConTelefone={setConTelefone} conEmail={conEmail} setConEmail={conEmail} conTipo={conTipo} setConTipo={setConTipo} listaVinculos={vinculosBase} /> {/* -> Mantém conectado o formulário flutuante de contatos humanos ligando as 6 gavetas de monitoramento locais e limpando a memória ao fechar. */}
-      <GavetaFiltrosCadastro aberto={gavetaFiltrosAberta} aoFechar={() => setGavetaFiltrosAberta(false)} visaoPainel={visaoPainel} filtrosEmpresa={filtrosEmpresa} setFiltrosEmpresa={setFiltrosEmpresa} filtrosContato={filtrosContato} setFiltrosContato={setFiltrosContato} /> {/* -> Mantém conectada a cortina invisível lateral de buscas injetando os objetos combinados de refinamento de cabeçalhos. */}
+      <GavetaFiltrosCadastro aberto={gavetaFiltrosAberta} aoFechar={() => setGavetaFiltrosAberta(false)} visaoPainel={visaoPainel} filtrosEmpresa={filtrosEmpresa} setFiltrosEmpresa={setFiltrosEmpresa} filtrosContato={filtrosContato} setFiltrosContato={setFiltrosContato} listaVinculos={vinculosBase} /> {/* -> Mantém conectada a cortina invisível lateral de buscas injetando os objetos combinados de refinamento de cabeçalhos. */}
 
     </div>
   );

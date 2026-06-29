@@ -159,13 +159,13 @@ export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbri
                 display: "flex", 
                 alignItems: "center", 
                 justifyContent: "center", 
-                gap: "6px", 
+                gap: "1px", 
                 transition: "all 0.2s ease" 
               }}
             >
               {/* Insere o ícone de colunas do Kanban. */}
               <Kanban size={14} strokeWidth={2} /> 
-              <span>Kanban</span> 
+              <span></span> 
             </button> 
 
             {/* Botão para ativar a visualização em formato de Tabela/Planilha Executiva */}
@@ -184,13 +184,13 @@ export function Toolbar({ visaoAtual, aoMudarVisao, aoAbrirModalCadastro, aoAbri
                 display: "flex", 
                 alignItems: "center", 
                 justifyContent: "center", 
-                gap: "6px", 
+                gap: "1px", 
                 transition: "all 0.2s ease" 
               }}
             >
               {/* Insere o ícone de estrutura de planilha. */}
               <TableProperties size={14} strokeWidth={2} /> 
-              <span>Planilha</span> 
+              <span></span> 
             </button> 
           </>
         )}

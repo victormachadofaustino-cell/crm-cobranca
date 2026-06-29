@@ -44,7 +44,7 @@ export default function CardCobranca({ card, colunaId, aoIniciarArrasto, aoDelet
         </span> {/* Encerra a etiqueta do identificador. */}
         <span style={{ fontSize: "12px", fontWeight: "800", color: card.subStatus === "sucesso" ? "#10b981" : "#0f172a" }}> {/* Muda a cor do preço para verde se o caso for ganho. */}
           R$ {valorNum.toLocaleString("pt-BR", { minimumFractionDigits: 2 })} {/* Formata o preço em formato de moeda nacional de forma reativa. */}
-        </span> {/* Encerra o texto do saldo financeiro. */}
+        </span> {/* Encerra o text do saldo financeiro. */}
       </div> {/* Encerra o alinhador horizontal superior. */}
 
       {/* LINHA 2: RAZÃO SOCIAL DA EMPRESA DEVEDORA HIGIENIZADA */}

@@ -1,26 +1,35 @@
-import React, { useState } from "react"; // -> Importa a biblioteca mestre do React e o gancho useState para monitorar as abas ativas do painel da direita.
-import { X, ShieldAlert, Landmark, FileText, ListTodo, History, BadgePercent, CheckCircle2, XCircle } from "lucide-react"; // -> CORREÇÃO CIRÚRGICA DE DUAS VIAS: Soldado 'ListTodo', 'History' e 'BadgePercent' na fiação para corrigir o erro de referência nos desfechos de lote.
+import React, { useState, useEffect } from "react"; // -> Traz a biblioteca mestre do React e os ganchos de estado e efeito para monitorar o ciclo de vida e abas ativas do painel.
+import { X, ShieldAlert, Landmark, FileText, ListTodo, History, BadgePercent, CheckCircle2, XCircle } from "lucide-react"; // -> Mantém a coleção de ícones lineares corporativos da Lucide rigorosamente preservada no topo.
 
-// -> IMPORTAÇÃO DAS 4 PEÇAS DE LEGO INDEPENDENTES (OS COMPONENTES FILHOS QUE DESMEMBRAMOS)
+// -> IMPORTAÇÃO DOS FILHOS ESPECIALISTAS GARANTINDO O VÍNCULO DA EXTENSÃO DENTRO DA MESMA PASTA
 import FichaDevedorPainel from "./Prontuario/FichaDevedorPainel"; // -> Conecta o painel esquerdo dedicado que cuida do cadastro, contatos e da sacola de Notas Fiscais.
 import AbaOcorrencias from "./Prontuario/AbaOcorrencias"; // -> Conecta o componente especialista na fila de ações programadas e novas tarefas.
 import AbaHistorico from "./Prontuario/AbaHistorico"; // -> Conecta o componente especialista na linha do tempo analítica e logs indeléveis de auditoria.
 import AbaProposta from "./Prontuario/AbaProposta"; // -> Conecta o componente especialista na calculadora Price e abatimentos de Conta Corrente.
 
-export default function ModalProntuario({ aberto, aoFechar, card, colunaId, contatosBase = [], aoSalvarProntuário, exibirArquivados = false, aoAlternarArquivamentoNoModal, aoExcluirCardNoModal }) { // -> Declara o Hub recebendo as triggers e bases do maestro mestre App.jsx.
+export default function ModalProntuario({ aberto, aoFechar, card, colunaId, contatosBase = [], aoSalvarProntuário, exibirArquivados = false, aoAlternarArquivamentoNoModal, aoExcluirCardNoModal }) { // -> Declara a função do componente Maestro recebendo os ganchos e dados do pai.
   
-  // -> TRAVA DE SEGURANÇA IMEDIATA: Se o App dizer que o prontuário está fechado ou não houver devedor selecionado, anula a renderização na hora.
-  if (!aberto || !card) return null; // -> Retorna nulo para não injetar HTML desnecessário na árvore do navegador.
+  const [abaAtiva, setAbaAtiva] = useState("tarefas"); // -> CONTROLADOR DE NAVEGAÇÃO: Inicializa a visualização focada no painel imediato de Ocorrências e Tarefas.
 
-  // -> CONFIGURAÇÃO DE TRAVA DE SEGURANÇA CRÍTICA CONFORME DIRETRIZ DO VICTOR: Junção de [feito] e [finalizado] para blindar mutações.
-  const categoriaBloqueada = colunaId === "acordo" || colunaId === "finalizado" || card.categoria === "feito" || card.categoria === "finalizado"; // -> Se for verdadeiro, congela a possibilidade de adicionar ou remover títulos fiscais.
+  // 🛠️ INJEÇÃO DO HUB BUFFER REATIVO TOTALMENTE PROTEGIDO CONTRA SINAIS NULOS DO FIREBASE
+  const [cardModificado, setCardModificado] = useState(() => card || {}); // -> Cria o estado de buffer inicializando com o devedor ativo ou um objeto vazio de contingência.
 
-  // -> CONTROLADOR DE NAVEGAÇÃO INTERNA DA ALA DIREITA (ABAS OPERACIONAIS EXCLUSIVAS)
-  const [abaAtiva, setAbaAtiva] = useState("tarefas"); // -> NATIVA POR PADRÃO: Inicializa a visualização focada no painel imediato de Ocorrências e Tarefas.
+  // -> GATILHO REATIVO DE ANTICRASH: Força o buffer de RAM a recarregar e espelhar as informações do novo devedor assim que ele muda no CRM.
+  useEffect(() => { // -> Sincroniza o estado toda vez que o card mestre lá no App.jsx comuta.
+    if (card) { // -> Verifica se o objeto do devedor é válido e existente.
+      setCardModificado(card); // -> Sobrescreve o buffer com os dados atualizados e limpos vindos do banco de dados.
+    }
+  }, [card]); // -> Escuta rigorosamente o gatilho de transição do ID do card devedor.
 
-  // -> COMANDO INTEGRADOR EM RAM: Intercepta e centraliza as atualizações das sub-abas repassando-as direto para a nuvem do Firebase.
-  const salvarMutacaoProntuario = (pacoteModificado) => {
-    aoSalvarProntuário(card.id, pacoteModificado); // -> Despacha o documento reestruturado contendo a sacola de títulos ou desfechos para o Firestore.
+  // -> TRAVA DE SEGURANÇA IMEDIATA ANTI-ESTOURO DE MEMÓRIA DO NAVEGADOR
+  if (!aberto || !card) return null; // -> Se o modal estiver fechado, mata a renderização imediatamente para não poluir o navegador.
+
+  // -> CONFIGURAÇÃO DE TRAVA DE SEGURANÇA CRÍTICA CONFORME DIRETRIZ: Junção de [feito] e [finalizado] para blindar mutações fiscais.
+  const categoriaBloqueada = colunaId === "acordo" || colunaId === "finalizado" || card?.categoria === "feito" || card?.categoria === "finalizado"; // -> Se for verdadeiro, congela a possibilidade de adicionar ou remover títulos fiscais.
+
+  // -> INTERCEPTADOR DE SUB-ABAS (BUFFER REATIVO EM RAM): Escuta as alterações feitas dentro da calculadora Price e guarda no balde local.
+  const lidarMutacaoLocalDasSubAbas = (pacoteModificado) => { // -> Recebe a carga útil de faturamento e parcelas recalculadas.
+    setCardModificado(pacoteModificado); // -> Sincroniza a memória RAM do modal mestre com os cálculos novos do Excel.
   };
 
   return ( // -> Desenha a moldura tridimensional mestre do prontuário na tela do cobrador.
@@ -41,20 +50,21 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
                 <span>DEVEDOR HOMOLOGADO NoSQL INADIMPLÊNCIA</span>
               </span>
               <span style={{ fontSize: "10px", background: "#e0f2fe", color: "#0369a1", padding: "2px 6px", borderRadius: "4px", fontWeight: "800", border: "1px solid #bae6fd" }}>
-                Sacola Ativa: {card.titulos ? card.titulos.length : 1} NFs
+                {/* 🔒 PROTEÇÃO DE ENCADEAMENTO OPCIONAL APLICADA: Impede o erro 'Cannot read properties of null reading titulos' */}
+                Sacola Ativa: {cardModificado?.titulos ? cardModificado.titulos.length : 0} NFs
               </span>
-              {categoriaBloqueada && ( // -> Alerta visual de segurança: Avisa o operador em tempo real que o lote está em regime de imutabilidade.
+              {categoriaBloqueada && ( 
                 <span style={{ fontSize: "10px", background: "#ffedd5", color: "#c2410c", padding: "2px 6px", borderRadius: "4px", fontWeight: "800", border: "1px solid #fed7aa", display: "inline-flex", alignItems: "center", gap: "3px" }}>
                   <Landmark size={10} /> <span>🔒 LOTE DE ACORDO TRANCADO (IMUTÁVEL)</span>
                 </span>
               )}
             </div>
             <h2 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase" }}>
-              {card.cliente}
+              {/* 🔒 PROTEÇÃO CONTRA NULOS: Garante exibição de fallback textual caso o estado desmonte de forma abrupta */}
+              {cardModificado?.cliente || "Carregando..."}
             </h2>
           </div>
 
-          {/* CONTROLES DE FECHAMENTO E GATILHOS RÁPIDOS DA ACENÇÃO SUPERIOR */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <span style={{ fontSize: "11px", background: "#dbeafe", color: "#1e40af", padding: "4px 12px", borderRadius: "20px", fontWeight: "700", textTransform: "uppercase" }}>Raia CRM: {colunaId}</span>
             <button 
@@ -74,17 +84,21 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
             ========================================================================================= */}
         <div style={{ flex: 1, display: "grid", gridTemplateColumns: "500px 1fr", overflow: "hidden", boxSizing: "border-box" }}>
           
-          {/* ⬅️ 1. PAINEL ESQUERDO DEDICADO */}
-          <FichaDevedorPainel 
-            card={card} 
-            colunaId={colunaId} 
-            contatosBase={contatosBase} 
-            categoriaBloqueada={categoriaBloqueada} 
-            aoSalvarLocal={salvarMutacaoProntuario}
-            aoAlternarArquivamentoNoModal={aoAlternarArquivamentoNoModal}
-            aoExcluirCardNoModal={aoExcluirCardNoModal}
-            exibirArquivados={exibirArquivados}
-          />
+          {/* ⬅️ 1. PAINEL ESQUERDO DEDICADO COBERTO POR GATILHO COMPACTADO CONTRA OBJETOS NULOS */}
+          <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
+            {cardModificado && cardModificado.id && ( // -> Renderiza o bloco apenas se houver ID válido ativo na memória RAM.
+              <FichaDevedorPainel 
+                card={cardModificado} 
+                colunaId={colunaId} 
+                contatosBase={contatosBase} 
+                categoriaBloqueada={categoriaBloqueada} 
+                aoSalvarLocal={lidarMutacaoLocalDasSubAbas}
+                aoAlternarArquivamentoNoModal={aoAlternarArquivamentoNoModal}
+                aoExcluirCardNoModal={aoExcluirCardNoModal}
+                exibirArquivados={exibirArquivados}
+              />
+            )}
+          </div>
 
           {/* ➡️ 2. ALA DIREITA DINÂMICA */}
           <div style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
@@ -101,20 +115,20 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
               </button>
               <button type="button" onClick={() => setAbaAtiva("proposta")} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "12px 16px", border: "none", background: abaAtiva === "proposta" ? "#ffffff" : "none", borderBottom: abaAtiva === "proposta" ? "2px solid #0f172a" : "none", color: "#0f172a", fontWeight: "700", fontSize: "12px", cursor: "pointer", textTransform: "uppercase" }}>
                 <BadgePercent size={13} strokeWidth={2.5} />
-                <span>Estratégia de Quitação</span>
+                <span>Proposta de Acordo</span>
               </button>
             </div>
 
-            {/* AREA EXCLUSIVA DE CONTEÚDO DAS ABAS */}
+            {/* AREA EXCLUSIVA DE CONTEÚDO DAS ABAS INJETANDO O REDIRECIONADOR DE BUFFER LOCAL WITH TRAVAS VITAIS */}
             <div style={{ flex: 1, padding: "20px", overflowY: "auto", boxSizing: "border-box" }}>
-              {abaAtiva === "tarefas" && (
-                <AbaOcorrencias card={card} aoSalvarLocal={salvarMutacaoProntuario} categoriaBloqueada={categoriaBloqueada} />
+              {abaAtiva === "tarefas" && cardModificado && cardModificado.id && ( // -> Garante que o componente de ocorrências só monte com ID verificado.
+                <AbaOcorrencias card={cardModificado} aoSalvarLocal={lidarMutacaoLocalDasSubAbas} categoryBloqueada={categoriaBloqueada} />
               )}
-              {abaAtiva === "historico" && (
-                <AbaHistorico card={card} />
+              {abaAtiva === "historico" && cardModificado && cardModificado.id && ( // -> Garante que a linha do tempo só monte com ID verificado.
+                <AbaHistorico card={cardModificado} />
               )}
-              {abaAtiva === "proposta" && (
-                <AbaProposta card={card} aoSalvarLocal={salvarMutacaoProntuario} categoriaBloqueada={categoriaBloqueada} />
+              {abaAtiva === "proposta" && cardModificado && cardModificado.id && ( // -> Garante que a calculadora Price só monte com ID verificado.
+                <AbaProposta card={cardModificado} aoSalvarLocal={lidarMutacaoLocalDasSubAbas} categoriaBloqueada={categoriaBloqueada} />
               )}
             </div>
 
@@ -122,7 +136,7 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
         </div>
 
         {/* =========================================================================================
-            🚦 BASE DO MODAL MUTÁVEL (CORRIGIDO PARA EXECUTAR O BARRAMENTO CENTRAL DE DADOS)
+            🚦 BASE DO MODAL MUTÁVEL (CORRIGIDO CRITICAMENTE PARA EXECUTAR O BARRAMENTO COMPACTADO)
             ========================================================================================= */}
         <div style={{ padding: "14px 24px", background: "#f8fafc", borderTop: "1px solid #e2e8f0", display: "flex", justifyContent: "flex-end", gap: "10px", alignItems: "center" }}>
           {colunaId === "finalizado" ? (
@@ -132,12 +146,11 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
                 <span>CONCLUSÃO MANDATÓRIA DE CARTEIRA:</span>
               </div>
               <div style={{ display: "flex", gap: "8px" }}>
-                {/* RE-ALINHADO: Troca da chamada local antiga 'tratarSalvarDados' pelo barramento ativo 'salvarMutacaoProntuario' */}
-                <button type="button" onClick={() => salvarMutacaoProntuario({ ...card, subStatus: "sucesso" })} style={{ display: "flex", alignItems: "center", gap: "4px", background: "#10b981", color: "white", border: "none", padding: "8px 14px", borderRadius: "6px", fontWeight: "700", fontSize: "12px", cursor: "pointer", textTransform: "uppercase", transition: "background 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#0f9f67"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#10b981"}>
+                <button type="button" onClick={() => aoSalvarProntuário(card.id, { ...cardModificado, subStatus: "sucesso" })} style={{ display: "flex", alignItems: "center", gap: "4px", background: "#10b981", color: "white", border: "none", padding: "8px 14px", borderRadius: "6px", fontWeight: "700", fontSize: "12px", cursor: "pointer", textTransform: "uppercase", transition: "background 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#0f9f67"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#10b981"}>
                   <CheckCircle2 size={13} strokeWidth={2.5} />
                   <span>Sucesso (Acordo Quitado)</span>
                 </button>
-                <button type="button" onClick={() => salvarMutacaoProntuario({ ...card, subStatus: "insucesso" })} style={{ display: "flex", alignItems: "center", gap: "4px", background: "#ef4444", color: "white", border: "none", padding: "8px 14px", borderRadius: "6px", fontWeight: "700", fontSize: "12px", cursor: "pointer", textTransform: "uppercase", transition: "background 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#dc2626"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#ef4444"}>
+                <button type="button" onClick={() => aoSalvarProntuário(card.id, { ...cardModificado, subStatus: "insucesso" })} style={{ display: "flex", alignItems: "center", gap: "4px", background: "#ef4444", color: "white", border: "none", padding: "8px 14px", borderRadius: "6px", fontWeight: "700", fontSize: "12px", cursor: "pointer", textTransform: "uppercase", transition: "background 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#dc2626"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#ef4444"}>
                   <XCircle size={13} strokeWidth={2.5} />
                   <span>Insucesso (Contencioso)</span>
                 </button>
@@ -145,8 +158,29 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
             </div>
           ) : (
             <>
-              <button type="button" onClick={aoFechar} style={{ background: "#ffffff", border: "1px solid #cbd5e1", padding: "6px 14px", borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontWeight: "600", color: "#475569", transition: "background 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f8fafc"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#ffffff"}>Sair Sem Salvar</button>
-              <button type="button" onClick={() => salvarMutacaoProntuario(card)} style={{ background: "#0f172a", color: "#ffffff", border: "none", padding: "6px 18px", borderRadius: "6px", fontWeight: "700", fontSize: "12px", cursor: "pointer", transition: "background 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#1e293b"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#0f172a"}>Salvar Prontuário</button>
+              <button type="button" onClick={aoFechar} style={{ background: "#ffffff", border: "1px solid #cbd5e1", padding: "6px 14px", borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontWeight: "600", color: "#475569", transition: "background 0.15s" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f8fafc"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}>
+                Anular Modificações
+              </button>
+              
+              {/* 🛠️ FIÇÃO CORRIGIDA CONTRA O B.O. DE RESET: Se a proposta em RAM for nula/vazia (sinal de reset completo), força o status a voltar para "atendimento" de forma limpa, quebrando o loop fantasma. */}
+              <button 
+                type="button" 
+                onClick={() => { 
+                  const statusFinalCalculado = cardModificado?.proposta ? "acordo" : "atendimento"; // -> 🛠️ SELETOR DE CONFORMIDADE: Se a proposta em RAM foi limpa no reset, força o status a voltar para atendimento síncronamente.
+                  const pacoteFinalParaGravar = { // -> Constrói a carga útil unificada de dados.
+                    ...cardModificado, // -> Puxa todas as notas fiscais e parcelamentos computados do shadow state local.
+                    status: cardModificado?.proposta ? "acordo" : (cardModificado?.status === "acordo" ? "atendimento" : (cardModificado?.status || "atendimento")) // -> 🛠️ TRITURADOR DE BOLETOS FANTASMA: Se o status era acordo mas a proposta sumiu na calculadora, redefine para atendimento quebrando a trava de persistence.
+                  };
+                  aoSalvarProntuário(card.id, pacoteFinalParaGravar); // -> Despacha o pacote estruturado diretamente para o Firebase.
+                  alert("🚀 PROPOSTA PERSISTIDA COM SUCESSO!\n\nAs amarrações fiscais foram consolidadas e trancadas no Firebase."); // -> Notifica o advogado operador.
+                  aoFechar(); // -> Encerra a exibição da viewport do modal de atendimento.
+                }} 
+                style={{ background: "#0f172a", color: "#ffffff", border: "none", padding: "6px 18px", borderRadius: "6px", fontWeight: "700", fontSize: "12px", cursor: "pointer", transition: "background 0.15s" }} 
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#1e293b"} 
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#0f172a"}
+              >
+                Salvar Prontuário
+              </button>
             </>
           )}
         </div>

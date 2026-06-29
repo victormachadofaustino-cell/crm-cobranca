@@ -29,7 +29,11 @@ export default function TabelaCobranca({ cobrancas, aoClicarLinha, aoDeletar, ca
 
   // -> MOTOR AUXILIAR DE SOMA PARCIAL DE CAIXA POR ETAPA REAL
   const somarDinheiroDaEtapa = (idEtapa) => { // -> Varre a esteira isolando apenas os clientes daquela coluna específica.
-    const filtrados = cobrancas.filter((item) => (item.status || "novo") === idEtapa); // -> Agrupa pelo status real do documento.
+    const filtrados = cobrancas.filter((item) => { // -> Executa o filtro de soma tratando a redundância ortográfica de segurança.
+      const statusLimpo = item.status || "novo"; // -> Carrega o status do item ou joga para a coluna inicial se estiver em branco.
+      if (idEtapa === "cobranca") return statusLimpo === "cobranca" || statusLimpo === "cobrança"; // -> Se for a aba de cobrança, soma os cartões salvos com ou sem cedilha.
+      return statusLimpo === idEtapa; // -> Caso contrário, executa a comparação padrão de ID.
+    }); // -> Encerra o filtro do somador de caixa parcial.
     return filtrados.reduce((acc, item) => acc + (parseFloat(item.valorVencido) || 0), 0); // -> Soma e retorna o saldo bruto em reais.
   };
 
@@ -99,7 +103,12 @@ export default function TabelaCobranca({ cobrancas, aoClicarLinha, aoDeletar, ca
               🗂️ LOOP DE CORPOS DE TABELA: MAPEIA AS ETAPAS DO USUÁRIO VERTICALMENTE
               ========================================================================================= */}
           {colunasFunil.map((coluna) => {
-            const linhasDestaEtapa = cobrancas.filter((item) => (item.status || "novo") === coluna.id); // -> Isola os devedores que pertencem rigorosamente a este bloco de status.
+            const linhasDestaEtapa = cobrancas.filter((item) => { // -> Executa o filtro de renderização inteligente nas raias da tabela.
+              const statusLimpo = item.status || "novo"; // -> Captura o status real do banco NoSQL ou assume "novo" por segurança se estiver vazio.
+              if (coluna.id === "cobranca") return statusLimpo === "cobranca" || statusLimpo === "cobrança"; // -> CORREÇÃO CIRÚRGICA: Se a linha for da sanfona cobrança, aceita o status com ou sem cedilha salvando a visualização.
+              return statusLimpo === coluna.id; // -> Caso contrário, executa a filtragem normal por ID idêntico.
+            }); // -> Encerra a esteira de filtragem protetiva.
+            
             const estaAberto = abasAbertas[coluna.id]; // -> Resgata da memória RAM se a sanfona deste ID está maximizada ou encolhida.
             const dinheiroEtapa = somarDinheiroDaEtapa(coluna.id); // -> Executa a somatória financeira parcial da raia.
 
@@ -165,7 +174,7 @@ export default function TabelaCobranca({ cobrancas, aoClicarLinha, aoDeletar, ca
                                 draggable // -> Ativa a física de movimento HTML5.
                                 onDragStart={(e) => aoIniciarArrastoLinha && aoIniciarArrastoLinha(e, item.id, item.status || "novo")} // -> Amarra as chaves NoSQL de decolagem.
                                 style={{ cursor: "grab", display: "flex", alignItems: "center", color: "#94a3b8", padding: "2px" }}
-                                title="Clique e segure para arrastar este registro e soltar em outra Sanfona de Etapa acima"
+                                title="Clique e segure para arrastar este registro e soltar in outra Sanfona de Etapa acima"
                               >
                                 <GripVertical size={14} strokeWidth={2} /> {/* -> Ícone sutil de pinça lateral executiva. */}
                               </div>
