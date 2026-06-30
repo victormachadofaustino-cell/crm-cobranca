@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"; // -> Traz a biblioteca mestre do React e os ganchos de estado e efeito para monitorar o ciclo de vida e abas ativas do painel.
-import { X, ShieldAlert, Landmark, FileText, ListTodo, History, BadgePercent, CheckCircle2, XCircle } from "lucide-react"; // -> Mantém a coleção de ícones lineares corporativos da Lucide rigorosamente preservada no topo.
+import { X, ShieldAlert, Landmark, FileText, ListTodo, History, BadgePercent, CheckCircle2, XCircle, Archive, ArchiveRestore, Trash2 } from "lucide-react"; // -> Mantém a coleção de ícones lineares corporativos da Lucide rigorosamente preservada no topo, agora incluindo os ícones de arquivar e lixeira.
 
 // -> IMPORTAÇÃO DOS FILHOS ESPECIALISTAS GARANTINDO O VÍNCULO DA EXTENSÃO DENTRO DA MESMA PASTA
 import FichaDevedorPainel from "./Prontuario/FichaDevedorPainel"; // -> Conecta o painel esquerdo dedicado que cuida do cadastro, contatos e da sacola de Notas Fiscais.
@@ -17,7 +17,7 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
   // -> GATILHO REATIVO DE ANTICRASH: Força o buffer de RAM a recarregar e espelhar as informações do novo devedor assim que ele muda no CRM.
   useEffect(() => { // -> Sincroniza o estado toda vez que o card mestre lá no App.jsx comuta.
     if (card) { // -> Verifica se o objeto do devedor é válido e existente.
-      setCardModificado(card); // -> Sobrescreve o buffer com os dados atualizados e limpos vindos do banco de dados.
+      setCardModificado(card); // -> Sobrescreve o buffer com os dados updated e limpos vindos do banco de dados.
     }
   }, [card]); // -> Escuta rigorosamente o gatilho de transição do ID do card devedor.
 
@@ -27,7 +27,7 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
   // -> CONFIGURAÇÃO DE TRAVA DE SEGURANÇA CRÍTICA CONFORME DIRETRIZ: Junção de [feito] e [finalizado] para blindar mutações fiscais.
   const categoriaBloqueada = colunaId === "acordo" || colunaId === "finalizado" || card?.categoria === "feito" || card?.categoria === "finalizado"; // -> Se for verdadeiro, congela a possibilidade de adicionar ou remover títulos fiscais.
 
-  // -> INTERCEPTADOR DE SUB-ABAS (BUFFER REATIVO EM RAM): Escuta as alterações feitas dentro da calculadora Price e guarda no balde local.
+  // -> INTERCEPTADOR DE SUB-ABAS (BUFFER REATIVO IN RAM): Escuta as alterações feitas dentro da calculadora Price e guarda no balde local.
   const lidarMutacaoLocalDasSubAbas = (pacoteModificado) => { // -> Recebe a carga útil de faturamento e parcelas recalculadas.
     setCardModificado(pacoteModificado); // -> Sincroniza a memória RAM do modal mestre com os cálculos novos do Excel.
   };
@@ -67,6 +67,39 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
 
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <span style={{ fontSize: "11px", background: "#dbeafe", color: "#1e40af", padding: "4px 12px", borderRadius: "20px", fontWeight: "700", textTransform: "uppercase" }}>Raia CRM: {colunaId}</span>
+            
+            {/* 🛠️ BOTÃO DE ARQUIVAMENTO REATIVO DO MODAL (PONTO VERMELHO SUPERIOR) */}
+            <button
+              type="button"
+              onClick={() => {
+                aoAlternarArquivamentoNoModal(card.id, card.cliente); // -> Dispara a rota do limbo trocando a flag booleana.
+                aoFechar(); // -> Fecha o prontuário imediatamente após a ação preventiva para atualizar a grade do CRM.
+              }}
+              style={{ background: "none", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#64748b", padding: "4px", transition: "color 0.15s" }}
+              onMouseEnter={(e) => e.currentTarget.style.color = exibirArquivados ? "#2563eb" : "#eab308"} // -> Muda para azul se estiver desarquivando ou amarelo se for arquivar ao passar o mouse.
+              onMouseLeave={(e) => e.currentTarget.style.color = "#64748b"} // -> Retorna à cor cinza neutra original quando o mouse sai.
+              title={exibirArquivados ? "Desarquivar este card" : "Arquivar este card"} // -> Mostra o texto explicativo contextual flutuando ao passar o mouse.
+            >
+              {exibirArquivados ? <ArchiveRestore size={18} strokeWidth={2.5} /> : <Archive size={18} strokeWidth={2.5} />} {/* -> Alterna o ícone de caixa aberta ou fechada conforme o fluxo ativo. */}
+            </button>
+
+            {/* 🛠️ BOTÃO DE EXCLUSÃO DEFINITIVA DO MODAL (PONTO VERMELHO SUPERIOR) */}
+            <button
+              type="button"
+              onClick={() => {
+                if (confirm(`⚠️ ALERTA DE DESTRUIÇÃO NO FIREBASE:\n\nTem certeza absoluta de que deseja triturar permanentemente o prontuário de "${card.cliente}"?\n\nEsta ação apagará todos os dados NoSQL para sempre e não pode ser desfeita.`)) { // -> Exibe o aviso clássico de barreira jurídica de segurança.
+                  aoExcluirCardNoModal(card.id, card.cliente); // -> Executa o triturador do Firestore apagando o nó permanentemente.
+                  aoFechar(); // -> Encerra o modal ativo após sumir com o registro das coleções.
+                }
+              }}
+              style={{ background: "none", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#64748b", padding: "4px", transition: "color 0.15s" }}
+              onMouseEnter={(e) => e.currentTarget.style.color = "#ef4444"} // -> Acende em vermelho vivo de perigo ao posicionar o cursor.
+              onMouseLeave={(e) => e.currentTarget.style.color = "#64748b"} // -> Retorna à cor padrão de segurança cinza.
+              title="Excluir cobrança definitivamente" // -> Rótulo explicativo para o advogado operador.
+            >
+              <Trash2 size={18} strokeWidth={2.5} /> {/* -> Desenha o ícone linear da lixeira de eliminação absoluta. */}
+            </button>
+
             <button 
               type="button" 
               onClick={aoFechar} 
@@ -172,7 +205,7 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
                     status: cardModificado?.proposta ? "acordo" : (cardModificado?.status === "acordo" ? "atendimento" : (cardModificado?.status || "atendimento")) // -> 🛠️ TRITURADOR DE BOLETOS FANTASMA: Se o status era acordo mas a proposta sumiu na calculadora, redefine para atendimento quebrando a trava de persistence.
                   };
                   aoSalvarProntuário(card.id, pacoteFinalParaGravar); // -> Despacha o pacote estruturado diretamente para o Firebase.
-                  alert("🚀 PROPOSTA PERSISTIDA COM SUCESSO!\n\nAs amarrações fiscais foram consolidadas e trancadas no Firebase."); // -> Notifica o advogado operador.
+                  alert("🚀 PROPOSTA PERSISTIDA WITH SUCESSO!\n\nAs amarrações fiscais foram consolidadas e trancadas no Firebase."); // -> Notifica o advogado operador.
                   aoFechar(); // -> Encerra a exibição da viewport do modal de atendimento.
                 }} 
                 style={{ background: "#0f172a", color: "#ffffff", border: "none", padding: "6px 18px", borderRadius: "6px", fontWeight: "700", fontSize: "12px", cursor: "pointer", transition: "background 0.15s" }} 

@@ -5477,7 +5477,7 @@ import ModuloDashboard from "./components/Dashboard/ModuloDashboard"; // -> INJE
 import { ModuloFinanceiro } from "./components/Financeiro/ModuloFinanceiro"; // -> INJEÇÃO DA CONTROLADORIA FINTECH: Conecta o painel especialista in fluxos de caixa, splits e liquidação Price.
 import ModuloMensagens from "./components/Cadastros/ModuloMensagens"; // -> NOVA INJEÇÃO MODULAR: Conecta o painel especialista em réguas de cobrança e automações de mensagens por etapas.
 import { ImportadorAging } from "./components/Importador/Importador"; // -> NOVA INJEÇÃO COMPATÍVEL: Puxa o motor inteligente de processamento em lote della planilha Aging do Victor.
- // -> Espaço de resguardo estrutural.
+ 
 export default function App() { // -> Define e exporta a função mestre que gerencia todo o componente visual da aplicação.
   const [user, setUser] = useState(null); // -> Guarda o crachá do operador logado ou mantém nulo se deslogado no sistema.
   const [cobrancas, setCobrancas] = useState([]); // -> Armazena a lista viva de empresas devedoras vinda em tempo real do Firebase.
@@ -5488,47 +5488,46 @@ export default function App() { // -> Define e exporta a função mestre que ger
   const [abaAtiva, setAbaAtiva] = useState("crm"); // -> GAVETA DE NAVEGAÇÃO: Controla eletronicamente qual módulo principal do topo está ativo.
   const [visaoCrm, setVisaoCrm] = useState("kanban"); // -> GAVETA DE LAYOUT DO CRM: Define se exibe os cards em formato "kanban" or a grade em "tabela".
   const [gavetaFiltrosAberta, setGavetaFiltrosAberta] = useState(false); // -> GAVETA DE FILTROS: Controla se a gaveta de filtros lateral direita aparece ou some.
-    // -> Espaço de resguardo de estados.
+  
   // -> ESTADOS LOCAIS ADICIONADOS PARA A FIAÇÃO DO SUPER MODAL PRONTUÁRIO
   const [modalProntuarioAberto, setModalProntuarioAberto] = useState(false); // -> GAVETA DE VISÃO DO PRONTUÁRIO: Abre ou fecha a cortina do super-painel tridimensional.
-  const [cardSelecionadoProntuario, setCardSelecionadoProntuario] = useState(null); // -> DEVEDOR EM FOCO: Memoriza na RAM o objeto completo do devedor clicado para expandir seus dados.
- // -> Espaço de resguardo de prontuário.
+  const [cardSelecionadoProntuario, setCardSelecionadoProntuario] = useState(null); // -> DEVEDOR EM FOCO: Memoriza na RAM O objeto completo do devedor clicado para expandir seus dados.
+  
   // -> NOVO ESTADO ADICIONADO PARA O LIMBO DE ARQUIVADOS DO CLICKUP
   const [exibirArquivados, setExibirArquivados] = useState(false); // -> INTERRUPTOR GLOBAL: Controla se a tela exibe a esteira activa de faturamento ou o arquivo de itens arquivados.
- // -> Espaço de resguardo do arquivo morto.
+  
   // MEMÓRIA DE BUSCA COMBINADA EXPANDIDA DO CRM: Inicializa o objeto com todas as chaves de cabeçalho solicitadas para filtrar simultaneamente.
   const [filtrosAtivos, setFiltrosAtivos] = useState({ codigo: "", cliente: "", responsavel: "", status: "todos", operadorValor: ">=", valorLimite: "" }); // -> RECALIBRACIÓN COMPLETA: Agrega travas lógicas e numéricas de saldo para raias e planilhas.
-   // -> Espaço de resguardo de filtragem.
+  
   // -> CONFIGURAÇÕES DE ORDENAÇÃO DO CRM FINANCEIRO: Armazena qual coluna rege a planilha e in qual sentido de triagem.
   const [campoOrdenadoCrm, setCampoOrdenadoCrm] = useState(""); // -> Memoriza a string della coluna de devedores clicada (Ex: 'codigo', 'cliente', 'valorVencido').
   const [direcaoOrdenacaoCrm, setDirecaoOrdenacaoCrm] = useState("asc"); // -> Chaveia o fluxo entre ordem alfabética/numérica crescente ('asc') ou decrescente ('desc').
- // -> Espaço de resguardo de triagem.
+  
   // -> FIÇÃO CENTRAL RELACIONAL: Gaveta mestre que centraliza todas as empresas homologadas para abastecer o Kanban e o Cadastro juntos.
   const [empresasBase, setEmpresasBase] = useState([]); // -> Inicializa la bandeja vazia para receber os dados limpos da nuvem via snapshot.
-   // -> Espaço de resguardo de empresas.
+  
   // -> FIÇÃO CENTRAL DE CONTACTOS HUMANOS: Guarda na memória a lista real de representantes vindos da coleção cadastros_contatos del Firebase.
   const [contatosBase, setContatosBase] = useState([]); // -> Inicializa o estado reativo global de contatos para sincronismo de tabelas.
- // -> Espaço de resguardo de contatos humanos.
+  
   // -> NOVAS FIÇÕES DE BANCO: Bandejas de memória ram destinadas a receber e reter os dados das coleções independentes da nuvem.
   const [segmentosBase, setSegmentosBase] = useState([]); // -> MONITORIA DE BANCO: Escuta os nichos de mercado vindos do banco de dados de forma assíncrona.
   const [vinculosBase, setVinculosBase] = useState([]); // -> MONITORIA DE BANCO: Escuta as categorias de elo humano vindas do banco de dados de forma assíncrona.
- // -> Espaço de resguardo secundário.
+  
   // 🛠️ RECALIBRAÇÃO DO MÓDULO FUNIL DINÂMICO: Transmutado em estado reativo para carregar o array NoSQL del cofre da nuvem.
   const [colunasFunil, setColunasFunil] = useState([]); // -> Substitui a matriz travada no código por um listener dinâmico em tempo real.
- // -> Espaço de resguardo de etapas NoSQL.
+  
   // 🧺 NOVO ESTADO DE SELEÇÃO EM MASSA: Guarda as selections de caixas de checkbox do usuário.
   const [itensSelecionados, setItensSelecionados] = useState({}); // -> Guarda um mapa de booleanos reativos chaveados pelo ID físico de cada documento.
- // -> Espaço de resguardo de lotes.
+  
   useEffect(() => { // -> Ativa um gancho de efeito para rodar a escuta de chaves assim que o app liga.
     const monitorarAuth = onAuthStateChanged(auth, (usuarioLogado) => { // -> Vigia silenciosamente se o operador está com o login salvo no navegador.
       setUser(usuarioLogado); // -> Updates o crachá do operador com a sessão de credenciais encontrada.
     }); // -> Encerra o monitoring de estado de login.
     return () => monitorarAuth(); // -> Desliga a escuta quando o componente fecha para poupar memória RAM activa della máquina.
   }, []); // -> Indica que o efeito só roda uma vez na inicialização primária.
- // -> Espaço de resguardo técnico de efeito.
+  
   useEffect(() => { // -> Ativa o gancho de efeito para leer a tabela de devedores no banco.
     if (!user) return; // -> Trava de segurança: Só puxa dados do Firebase si o operador estiver logado de verdade.
- // -> Espaço de verificação de sessão de usuário.
     const cobrancasRef = collection(db, "cobrancas"); // -> Mira os cabos de rede na tabela mestre de cobranças del Firestore.
     const monitorarBanco = onSnapshot(cobrancasRef, (snapshot) => { // -> Grampeia a tabela na nuvem trazendo modificações in tempo real.
       const listaTemporaria = []; // -> Cria uma bandeja limpa de rascunho na memória ram para organize os dados.
@@ -5536,7 +5535,7 @@ export default function App() { // -> Define e exporta a função mestre que ger
         listaTemporaria.push({ id: doc.id, ...doc.data() }); // -> Joga o ID exclusivo e as informações na bandeja organizada.
       }); // -> Termina a leitura do bloco de documentos del banco.
       setCobrancas(listaTemporaria); // -> Guarda na gaveta reativa e updates os cartões brancos no visor da tela.
-       // -> Espaço interno do lote snapshot.
+      
       // 🔄 SINCRONIZAÇÃO EM BACKGROUND DO PRONTUÁRIO ATIVO: Mantém o prontuário reativo com as Notas Fiscais novas sem derrubar a tela
       if (modalProntuarioAberto && cardSelecionadoProntuario) { // -> Se a janela tridimensional do devedor estiver aberta no visor:
         const devedorAtualizado = listaTemporaria.find(c => c.id === cardSelecionadoProntuario.id); // -> Localiza no novo lote síncrono do banco a ficha fresca deste mesmo cliente.
@@ -5545,10 +5544,9 @@ export default function App() { // -> Define e exporta a função mestre que ger
         } // -> Fim da verificação de devedor síncrono.
       } // -> Fim da trava de prontuário ativo.
     }); // -> Encerra o onSnapshot viva do banco.
- // -> Espaço de retorno de desligamento do listener.
     return () => monitorarBanco(); // -> Desliga o grampo do banco de dados ao fechar o CRM para evitar consumo de dados.
   }, [user, modalProntuarioAberto, cardSelecionadoProntuario?.id]); // -> Recalibra os canais de rádio caso o status da tela mude.
- // -> Espaço de resguardo de efeito central.
+  
   // -> CORDÃO DE REDE 1: Escuta ativa della nova coleção de empresas gerada pelo seu script de migração direta.
   useEffect(() => { // -> Ativa o gancho para ler a tabela estável de pessoas jurídicas na nuvem.
     if (!user) return; // -> Trava de segurança: impede o acesso se a sessão do operador estiver derrubada.
@@ -5560,7 +5558,7 @@ export default function App() { // -> Define e exporta a função mestre que ger
     }); // -> Encerra a escuta.
     return () => monitorarEmpresas(); // -> Desliga o grampo ao sair do sistema para preservar a conexão.
   }, [user]); // -> Reinicia se o usuário de login for modificado.
- // -> Espaço de resguardo relacional 1.
+  
   // -> CORDÃO DE REDE 2: Escuta ativa della nova coleção de contatos vinculados gerada pelo seu script de migração direta.
   useEffect(() => { // -> Ativa o gancho para ler a tabela estável de representantes humanos na nuvem.
     if (!user) return; // -> Trava de segurança contra acessos anônimos do banco.
@@ -5572,7 +5570,7 @@ export default function App() { // -> Define e exporta a função mestre que ger
     }); // -> Encerra a escuta de contatos.
     return () => monitorarContatos(); // -> Desliga a escuta de proteção de porta.
   }, [user]); // -> Reinicia se o usuário logado mudar o turno.
- // -> Espaço de resguardo relacional 2.
+  
   // -> NOVO CORDÃO DE REDE 3: Escuta em tempo real della coleção inédita de Segmentos independentes na nuvem do Firestore.
   useEffect(() => { // -> Ativa o gancho de escuta técnica paralela para sincronismo imediato.
     if (!user) return; // -> Trava de barreira contra conexões fantasma.
@@ -5584,7 +5582,7 @@ export default function App() { // -> Define e exporta a função mestre que ger
     }); // -> Termina o monitoramento síncrono.
     return () => monitorarSegmentos(); // -> Remove o canal de rede ao desligar o CRM para poupar tráfego de dados.
   }, [user]); // -> Recarrega se o operador de turno mudar o acesso.
- // -> Espaço de resguardo relacional 3.
+  
   // -> NOVO CORDÃO DE REDE 4: Escuta em tempo real della coleção inédita de Vínculos civis na nuvem do Firestore.
   useEffect(() => { // -> Ativa o gancho de escuta técnica paralela para sincronismo imediato.
     if (!user) return; // -> Trava de barreira contra conexões fantasma.
@@ -5596,7 +5594,7 @@ export default function App() { // -> Define e exporta a função mestre que ger
     }); // -> Termina o monitoramento síncrono.
     return () => monitorarVinculos(); // -> Remove o canal de rede ao desligar o CRM para poupar tráfego de dados.
   }, [user]); // -> Recarrega se o operador de turno mudar o acesso.
- // -> Espaço de resguardo relacional 4.
+  
   // 🛠️ NOVO CORDÃO DE REDE 5 (NÓ DO FUNIL PAREADO): Conecta a escuta viva do esqueleto dinâmico de raias parametrizadas no Firebase
   useEffect(() => { // -> Sincroniza em tempo real as cabeceiras e selects do CRM.
     if (!user) return; // -> Barreira protetora contra leituras deslogadas.
@@ -5609,14 +5607,13 @@ export default function App() { // -> Define e exporta a função mestre que ger
     }); // -> Fim da escuta de configuração.
     return () => monitorarConfigFunil(); // -> Desliga a fiação elástica ao sair.
   }, [user]); // -> Reinicia o efeito se o operador mudar de turno.
- // -> Espaço de resguardo de infraestrutura.
+  
   // =========================================================================================
   // ⚡ INSTANCIAÇÃO RECALIBRADA DO MOTOR CENTRAL DO IMPORTADOR AGING (SOLUÇÃO DE DUAS VIAS):
   // Inicializa a classe injetando o gatilho reativo direto na ID da Toolbar oficial da página
   // =========================================================================================
   useEffect(() => {
     if (!user || abaAtiva !== "crm") return; // -> Só inicializa o motor de carga se o cobrador estiver autenticado na aba operacional do CRM.
-     // -> Proteção contra abas inativas.
     // Configura um timer de retaguarda para garantir que a Toolbar já foi desenhada no HTML
     const timerInjecao = setTimeout(() => {
       const motorImportador = new ImportadorAging(() => {
@@ -5625,20 +5622,18 @@ export default function App() { // -> Define e exporta a função mestre que ger
       }); // -> Fim da instanciação do importador.
       // ALINHAMENTO DO VÍNCULO VISUAL: Injeta o botão diretamente no local reservado na barra de ferramentas
       motorImportador.renderizarBotaoUpload("container-importador-toolbar-id"); 
-    }, 150); // -> Aguarda 150 milissegundos para estabilização de carregamento da árvore de visualização.
- // -> Retorno de limpeza do temporizador.
+    }, 150); // -> Aguarda 150 milissegundos para estabilização de carregamento della árvore de visualização.
     return () => clearTimeout(timerInjecao); // -> Desliga o timer ao desmontar a tela para preservar a máquina.
   }, [user, abaAtiva]); // -> Reinicia o acoplamento caso mude o turno ou mude de aba no menu superior.
- // -> Espaço de resguardo do importador.
+  
   // 🧼 RESETADOR DE MARCAÇÃO EM LOTE: Limpa a gaveta de checkboxes ao trocar de aba ou de visão para evitar ghosts na RAM.
   useEffect(() => {
     setItensSelecionados({}); // -> Esvazia o mapa de seleções síncronamente.
   }, [abaAtiva, visaoCrm, exibirArquivados]); // -> Monitora as alternâncias de escopo visuais.
- // -> Espaço de resguardo do resetador de vistos.
+  
   const manipularAutenticacao = async (e) => { // -> Função assíncrona que treats o envio del formulário de e-mail e senha.
     e.preventDefault(); // -> Bloqueia o recarregamento padrão da página para não receber os dados digitados.
     if (!email || !senha) return; // -> Trava de segurança: impede o envio se os campos estiverem vazios.
- // -> Início do bloco de testes contra falhas de portaria.
     try { // -> Escudo de proteção para disparar a chamada de rede internacional da Google.
       if (modoAuth === "login") { // -> Verifica se o operador selecionou o modo para apenas entrar no sistema.
         await signInWithEmailAndPassword(auth, email, senha); // -> Valida chaves contra o banco Firebase Auth.
@@ -5654,7 +5649,7 @@ export default function App() { // -> Define e exporta a função mestre que ger
       alert(msg); // -> Dispara o balão na tela com a mensagem amigável traduzida para o operador.
     } // -> Fecha o bloco de erro de portaria.
   }; // -> Fecha o manipulador mestre de acessos.
- // -> Espaço de resguardo de autenticação.
+  
   const efetuarLogoutTurno = () => { // -> CORREÇÃO CIRÚRGICA: Grafia unificada removendo a letra "c" antiga para espelhar perfeitamente o gatilho de chamada.
     const confirmarSaida = confirm("🚪 FECHAMENTO DE TURNO:\nDeseja encerrar sua sessão e bloquear esta mesa de cobrança com segurança?"); // -> Pede confirmação humana antes de deslogar.
     if (confirmarSaida) { // -> Se o usuário aceitar o risco de sair da mesa.
@@ -5663,23 +5658,19 @@ export default function App() { // -> Define e exporta a função mestre que ger
       }); // -> Encerra o encadeamento de limpeza.
     } // -> Encerra a checagem humana.
   }; // -> Fecha a função especialista de logout.
- // -> Espaço de resguardo de desconexão.
+  
   // 🧳 NOVO MOTOR DE GRAVAÇÃO CONSOLIDADA (SACOLA DE NOTAS NoSQL): Intercepta a gravação manual, valida existência por CNPJ e agrupa os títulos sem duplicar cards
   const cadastrarNovaDividaDoModal = async (pacoteRecebidoDoModal) => { 
     // 🔥 CORREÇÃO CIRÚRGICA DE ENGENHARIA NoSQL: Limpa pontos, traços e barras da string recebida do modal para banir o erro de 3 segmentos que travava a interface.
     const cnpjChaveAlvo = pacoteRecebidoDoModal.cnpj ? String(pacoteRecebidoDoModal.cnpj).replace(/[^0-9]/g, '').trim() : ""; 
-     // -> Validação física de barramento.
     // -> TRAVA DE SEGURANÇA OPERACIONAL: Aborta o disparo assíncrono caso o documento fiscal venha corrompido ou fantasma.
     if (!cnpjChaveAlvo) {
       alert("⚠️ ERRO DE COMPILAÇÃO NoSQL:\n\nO CNPJ do Cliente devedor veio indefinido ou em branco. O Firestore recusou o caminho de gravação.");
       return;
     } // -> Fim da barreira protetora.
- // -> Rota física NoSQL.
     const cobrancaDocRef = doc(db, "cobrancas", cnpjChaveAlvo); // -> Define a rota física fixa: o ID de documento na nuvem passa a ser o próprio CNPJ numérico puro.
- // -> Início da tentativa de rede.
     try { 
       const snapshotCobranca = await getDoc(cobrancaDocRef); // -> Faz a leitura preventiva na nuvem para analisar se a sacola do devedor já existe.
-       // -> Mapa estruturado da fatura.
       // Nova estrutura de Nota Fiscal individual extraída do modal manual
       const novaNotaFiscalObjeto = {
         numDocumento: pacoteRecebidoDoModal.numDocumento,
@@ -5690,15 +5681,12 @@ export default function App() { // -> Define e exporta a função mestre que ger
         valorNota: pacoteRecebidoDoModal.valorVencido, // -> O valor nominal individual deste título.
         executivoVendas: pacoteRecebidoDoModal.executivoVendas
       }; // -> Fim da montagem do sub-objeto.
- // -> Bifurcação condicional.
       if (snapshotCobranca.exists()) { 
         // CENÁRIO A: O devedor já possui uma sacola de cobrança viva no Kanban. Faz o Merge e acumula os saldos.
         const dadosExistentes = snapshotCobranca.data();
         const listaNotasAtualizada = [...(dadosExistentes.titulos || []), novaNotaFiscalObjeto]; // -> Anexa a nova nota fiscal na esteira de array sem apagar o histórico.
-         // -> Somador de caixa acumulado.
         // Calcula a soma real acumulada de todas as notas fiscais da sacola para atualizar a prancha
         const novoSaldoConsolidado = listaNotasAtualizada.reduce((acc, nota) => acc + (parseFloat(nota.valorNota) || 0), 0);
- // -> Atualização parcial remota.
         await updateDoc(cobrancaDocRef, {
           titulos: listaNotasAtualizada, // -> Grava a sacola atualizada with a nova nota inserida.
           valorVencido: novoSaldoConsolidado, // -> Updates a variável reativa das raias com a somatória total.
@@ -5741,27 +5729,24 @@ export default function App() { // -> Define e exporta a função mestre que ger
       alert("Erro crítico de barramento NoSQL ao consolidar sacola de notas!"); 
     } // -> Fim do bloco de contingência.
   }; // -> Encerra o controlador do faturamento consolidado del formulário.
- // -> Espaço de resguardo do motor de faturamento consolidado.
+  
   // 🛠️ RECALIBRAÇÃO INTEGRAL: Transforma o comando em Chave Gangorra (Arquivar / Desarquivar) com suporte ao Limbo do ClickUp
   const arquivarCobrancaNoLimbo = async (id, cliente) => { 
     const itemAlvo = cobrancas.find(c => c.id === id); // -> Busca na lista RAM o status booleano atual do item clicado para descobrir a intenção do operador.
     const estaArquivadoAtualmente = itemAlvo?.arquivado === true; // -> Extrai a flag verdadeira de arquivo morto.
- // -> Buffer de mensagens.
     const messageConfirmacao = estaArquivadoAtualmente 
       ? `📤 DESARQUIVAMENTO DE CARD:\nDeseja resgatar a empresa "${cliente}" tirando-a do Limbo e mandando-a de volta para o fluxo de cobrança ativo?`
       : `📦 ARQUIVAMENTO DE CARD (ESTILO CLICKUP):\nDeseja Ocultar a empresa "${cliente}" enviando-a para o Limbo de Arquivados?\n\nO... registro sairá do visor mas seus logs históricos continuum salvos.`;
- // -> Confirmação humana.
     const confirmacao = confirm(messageConfirmacao); // -> Dispara o balão de segurança humana.
     if (confirmacao) { 
       const docRef = doc(db, "cobrancas", id); // -> Localiza the endereço físico fixo do card de devedor.
       await updateDoc(docRef, { arquivado: !estaArquivadoAtualmente }); // -> INVERSÃO OPERACIONAL DE FLUXO: Se for true vira false, se for false vira true, chaveando o nó síncronamente.
-       // -> Sincronismo RAM parcial.
       if (cardSelecionadoProntuario && cardSelecionadoProntuario.id === id) { // -> Ajuste fino de memória RAM: Se o prontuário estiver expandido, atualiza o foco para refletir a nova flag na mesma hora.
         setCardSelecionadoProntuario(prev => ({ ...prev, arquivado: !estaArquivadoAtualmente })); // -> Sincroniza la gaveta interna.
       } // -> Fim da sincronia em background do prontuário.
     } // -> Fim da validação de confirmação humana.
   }; // -> Encerra o mecanismo de arquivo morto.
- // -> Espaço de resguardo do arquivador ClickUp.
+  
   // 🗑️ NOVO COMANDO NoSQL MANDATÓRIO: Executa o expurgo e deleção física irreversível do nó de cobrança direta no cofre do Firestore
   const excluirCobrancaDefinitivamente = async (id, cliente) => {
     const confirmacao = confirm(`🚨 EXCLUSÃO DEFINITIVA NoSQL:\nDeseja triturar e apagar permanentemente o registro de cobrança da empresa "${cliente}" do banco de dados?\n\nEsta ação é irreversível e apagará todas as parcelas Price vinculadas.`); // -> Pop-up nativo de barreira contra desastres.
@@ -5776,12 +5761,11 @@ export default function App() { // -> Define e exporta a função mestre que ger
       } // -> Fim do catch de erro.
     } // -> Fim da validação humana.
   }; // -> Encerra o triturador físico.
- // -> Espaço de resguardo do deletador físico.
+  
   // 🧺 NOVO MOTOR ASSÍNCRONO DE EXECUÇÃO EM MASSA FIXADO: Corrigida a grafia interna de 'ejecutar' para 'executarExclusaoEmMassa' batendo com a Toolbar.
   const copiarExclusaoEmMassa = async (tipoColecao) => {
     const idsParaBanir = Object.keys(itensSelecionados).filter(id => itensSelecionados[id]); // -> Filtra o mapa de RAM separando apenas os IDs marcados com flag true.
     if (idsParaBanir.length === 0 || !confirm(`🚨 CONTROLADORIA EM LOTE (EM MASSA):\nDeseja apagar permanentemente os ${idsParaBanir.length} itens marcados de uma só vez do Firebase?\n\nEsta operação triturará os dados em massa e não poderá ser desfeita!`)) return; // -> Aborta se houver recusa voluntária ou lote zerado.
- // -> Início do lote assíncrono.
     try {
       await Promise.all(idsParaBanir.map(id => deleteDoc(doc(db, tipoColecao, id)))); // -> Dispara o bombardeio síncrono limpando todas as IDs marcadas ao mesmo tempo na nuvem Google.
       setItensSelecionados({}); // -> Reseta completamente o mapa de checkboxes no visor.
@@ -5789,14 +5773,12 @@ export default function App() { // -> Define e exporta a função mestre que ger
       alert("Falha de comunicação ou privilégio insuficiente para exclusão in lote!"); // -> Escudo de queda de sinal.
     } // -> Fim do catch de segurança.
   }; // -> Encerra a exclusão em massa.
- // -> Espaço de resguardo do expurgador coletivo.
+  
   // 🛠️ NOVO MOTOR REATIVO DE EDIÇÃO EM MASSA DE DUAS ETAPAS (CORE NoSQL): Varre as IDs flegadas e aplica a mutação exata escolhida na Toolbar
   const GridEdicaoEmMassa = async (campoAlvo, novoValor) => { // -> Mantém o nome interno sem colisões.
     const idsParaEditar = Object.keys(itensSelecionados).filter(id => itensSelecionados[id]); // -> Coleta do mapa de RAM apenas os registros que possuem flag booleana true.
     if (idsParaEditar.length === 0 || !confirm(`⚙️ OPERAÇÃO EM LOTE REATIVA:\nDeseja reconfigurar e alterar o campo "${campoAlvo.toUpperCase()}" para o valor "${novoValor.toUpperCase()}" em todos os ${idsParaEditar.length} registros selecionados de uma vez só?`)) return; // -> Trava contra cliques fantasmas.
- // -> Mapeamento dinâmico de rotas de coleções NoSQL.
     let colecao = abaAtiva === "cadastros" ? (campoAlvo === "segmento" || campoAlvo === "tipo" ? "cadastros_empresas" : "cadastros_contatos") : "cobrancas"; 
- // -> Início da mutação paralela em lote.
     try {
       await Promise.all(idsParaEditar.map(id => {
         let pacote = { [campoAlvo]: campoAlvo === "cliente" || campoAlvo === "segmento" ? novoValor.toUpperCase() : novoValor };
@@ -5810,24 +5792,23 @@ export default function App() { // -> Define e exporta a função mestre que ger
       alert("Falha de barramento ou falta de privilégio NoSQL ao rodar atualização em lote!"); // -> Escudo ao cair rede de dados.
     } // -> Fim do catch de segurança tributária.
   }; // -> Encerra o editor em bloco.
- // -> Espaço de resguardo do mutador coletivo.
+  
   const aoIniciarArrastoCard = (e, idCard, statusOrigem) => { // -> Disparado no instante em que você pinça o card ou a linha da tabela com o mouse.
     e.dataTransfer.setData("text/plain", idCard); // -> Amarra o ID della cobrança na memória invisível do ponteiro.
     e.dataTransfer.setData("origem-status", statusOrigem); // -> Amarra a raia cinza de onde o item está decolando.
   }; // -> Fecha o dragstart nativo.
- // -> Espaço de resguardo do Drag Start.
+  
   // 🛠️ CORREÇÃO DE PROPRIEDADE NOS CANAIS DO FUNIL: Alterado de 'category' para 'categoria' para reflectir estritamente as regras NoSQL mapeadas.
   const aoSoltarCardNaRaia = async (e, statusDestino) => { // -> Disparado quando você solta o clique em cima de uma raia ou indicador de fase.
     e.preventDefault(); // -> Bloqueia ações e recargas espúrias del navegador.
     const idCard = e.dataTransfer.getData("text/plain"); // -> Resgata o ID do cliente escondido no ponteiro do mouse.
     const statusOrigem = e.dataTransfer.getData("origem-status"); // -> Resgata de qual coluna ele voou.
- // -> Validação física de pouso do card.
     if (idCard && statusOrigem !== statusDestino) { // -> Valida se ele aterrissou in uma raia diferente da de largada.
       const catMae = colunasFunil.find(c => c.id === statusDestino)?.categoria || "em_andamento"; // -> Descobre a categoria mãe estável do esqueleto.
       await updateDoc(doc(db, "cobrancas", idCard), { status: statusDestino, categoria: catMae }); 
     } // -> Encerra a validação física.
   }; // -> Fecha o drop nativo.
- // -> Espaço de resguardo do Drop Card.
+  
   // 🛠️ CORREÇÃO DE PROPRIEDADE EM LOTE LINHA: Ajustado dropdown de 'category' para 'categoria' para manter o espelho retrocompatível do banco livre de cartões ghosts.
   const mudarStatusCobrancaDireto = async (idCard, novoStatusDestino) => { // -> Acionado pelo select dropdown de dentro de qualquer linha da tabela.
     try {
@@ -5837,12 +5818,12 @@ export default function App() { // -> Define e exporta a função mestre que ger
       alert("Falha crítica de barramento de rede ao mover status in linha!"); // -> Alerta em caso de queda de sinal de internet.
     } // -> Fim da contingência de sinal.
   }; // -> Encerra a reconfiguração manual in linha.
- // -> Espaço de resguardo do mutador inline.
+  
   const lidarComCliqueFichaDEvedor = (card) => { // -> Disparado quando clica na área interna ou na linha de dados da tabela.
     setCardSelecionadoProntuario(card); // -> Popula a memória de foco with o objeto completo do devedor.
     setModalProntuarioAberto(true); // -> Rompe o isolamento visual e levanta a janela espelhada na tela do cobrador.
   }; // -> Encerra o gatilho de abertura do painel 360.
- // -> Espaço de resguardo do clique 360.
+  
   // =========================================================================================
   // ⚡ CONDICIONAL INTELIGENTE ANTI-FECHAMENTO: Atualiza a RAM mas retém o Prontuário ativo
   // =========================================================================================
@@ -5852,7 +5833,6 @@ export default function App() { // -> Define e exporta a função mestre que ger
       const propuestaLimpaNoSQL = !pacote.proposta || !pacote.proposta.parcelasSimuladas || pacote.proposta.parcelasSimuladas.length === 0 ? null : { ...pacote.proposta };
       // 🛠️ FORÇADOR DE EXPURGO FINANCEIRO EM LOTE: Se a proposta vier nula (reset ativado), força o array de faturas a ir 100% vazio, triturando o erro antigo.
       const planoParcelasLimpoNoSQL = propuestaLimpaNoSQL === null ? [] : (pacote.planoParcelas || card.planoParcelas || []); // -> Garante que o Firebase limpe as parcelas antigas na hora.
- // -> Gravação assíncrona parcial.
       await updateDoc(doc(db, "cobrancas", idCard), { // -> Executa a mutação de atualização parcial no cofre do Firestore.
         observacao: pacote.observacao || "", // -> Persiste as novas notas extrajudiciais.
         subStatus: !pacote.subStatus ? "" : pacote.subStatus, // -> Persiste os marcadores de sucesso ou contencioso cuidando de nulos.
@@ -5863,8 +5843,6 @@ export default function App() { // -> Define e exporta a função mestre que ger
         valorVencido: pacote.valorVencido || card.valorVencido, // -> Preserva o saldo total acumulado.
         titulos: pacote.titulos || card.titulos // -> Preserva a sacola consolidada de faturas.
       }); // -> Fim da chamada física updateDoc.
- // -> Controle de view pós-operação.
-      // 🛠️ FILTRO DE REGIME DE FECHAMENTO AUTOMÁTICO: Checa se a chamada foi disparada para fechar ou apenas re-alimentar background
       if (pacote.subStatus === "sucesso" || pacote.subStatus === "insucesso" || !pacote.titulos) { // -> Se o operador encerrou a carteira ou clicou em "Sair Sem Salvar":
         setModalProntuarioAberto(false); // -> Fecha a cortina visual na tela jogando o usuário de volta no CRM.
         setCardSelecionadoProntuario(null); // -> Libera a fiação limpando o foco della RAM.
@@ -5875,7 +5853,7 @@ export default function App() { // -> Define e exporta a função mestre que ger
       alert("Erro ao salvar prontuário."); // -> Escudo protetor de internet.
     } // -> Fim do catch.
   }; // -> Encerra o atualizador do prontuário síncrono.
- // -> Espaço de resguardo do motor de prontuário.
+  
   const lidarComMudarOrdenacaoCrm = (campo) => { // -> Gerencia a alternância de A-Z ou Z-A na esteira financeira.
     if (campoOrdenadoCrm === campo) { // -> Se o operador clicou no mesmo cabeçalho ativo.
       setDirecaoOrdenacaoCrm(direcaoOrdenacaoCrm === "asc" ? "desc" : "asc"); // -> Inverte a direção del fluxo alternando entre crescente e decrescente.
@@ -5884,7 +5862,7 @@ export default function App() { // -> Define e exporta a função mestre que ger
       setDirecaoOrdenacaoCrm("asc"); // -> Retorna ao sentido crescente nativo.
     } // -> Fim do chaveamento de colunas.
   }; // -> Encerra o chaveamento de ordenação.
- // -> Espaço de resguardo do alternador de cabeçalhos.
+  
   // =========================================================================================
   // ⚡ SUPER MOTOR DE CRUZAMENTO RELACIONAL (ESTRATÉGIA A):
   // Varre a esteira e injeta na RAM o contato correspondente antes de desenhar a tela
@@ -5894,13 +5872,12 @@ export default function App() { // -> Define e exporta a função mestre que ger
                     contatosBase.find((con) => con.nome?.trim().toUpperCase() === item.cliente?.trim().toUpperCase()); 
     return vinculo ? { ...item, contato: { nome: vinculo.nome, telephone: vinculo.telefone || vinculo.telephone, email: vinculo.email, vinculo: vinculo.tipoVinculo || "proprio" } } : item;
   }); // -> Fim da engrenagem map do motor relacional.
- // -> Início da engrenagem reativa de filtros cruzados.
+  
   const cobrancasFiltradas = cobrancasComContatosVinculados.filter((item) => { // -> Executa a varredura reativa baseada nas chaves de cabeçalho e regras matemáticas de corte.
     if (exibirArquivados ? !item.arquivado : item.arquivado) return false; 
     const bateCodigo = !filtrosAtivos.codigo || String(item.codigo).toLowerCase().includes(filtrosAtivos.codigo.toLowerCase()); 
     const bateCliente = !filtrosAtivos.cliente || item.cliente?.toLowerCase().includes(filtrosAtivos.cliente.toLowerCase()); 
     const bateResponsavel = !filtrosAtivos.responsavel || item.responsavel?.toLowerCase().includes(filtrosAtivos.responsavel.toLowerCase()); 
-     // -> Início da normalização ortográfica de fases.
     // 🛠️ TRATAMENTO UNIFICADO ORTOGRÁFICO: Normaliza o filtro de status aceitando "cobranca" ou "cobrança" para blindar as visões.
     const statusItemLimpo = item.status || "novo"; // -> Assume "novo" se o status vier em branco do Firestore.
     let bateStatus = filtrosAtivos.status === "todos"; // -> Inicializa o verificador.
@@ -5911,7 +5888,6 @@ export default function App() { // -> Define e exporta a função mestre que ger
         bateStatus = statusItemLimpo === filtrosAtivos.status; // -> Roda a comparação estrita original de string.
       } // -> Fim da checagem de cedilha.
     } // -> Fim da verificação de filtros ativos de fases.
- // -> Início da verificação matemática de corte monetário.
     let bateValor = true; 
     if (filtrosAtivos.valorLimite !== "") { 
       const valorItem = parseFloat(item.valorVencido) || 0; 
@@ -5923,16 +5899,16 @@ export default function App() { // -> Define e exporta a função mestre que ger
     } // -> Fim do bloco matemático de valores de saldo.
     return bateCodigo && bateCliente && bateResponsavel && bateStatus && bateValor;
   }); // -> Encerra a esteira de filtragem de cobranças.
- // -> Somador de pílulas ativas da gaveta.
+  
   const totalFiltrosCombinados = (filtrosAtivos.codigo ? 1 : 0) + (filtrosAtivos.cliente ? 1 : 0) + (filtrosAtivos.responsavel ? 1 : 0) + (filtrosAtivos.status !== "todos" ? 1 : 0) + (filtrosAtivos.valorLimite !== "" ? 1 : 0); 
- // -> Triagem final por sort.
+  
   const cobrancasOrdenadasCrm = [...cobrancasFiltradas].sort((a, b) => { 
     if (!campoOrdenadoCrm) return 0; 
     let vA = campoOrdenadoCrm === "valorVencido" ? (parseFloat(a[campoOrdenadoCrm]) || 0) : String(a[campoOrdenadoCrm] || "").toLowerCase();
     let vB = campoOrdenadoCrm === "valorVencido" ? (parseFloat(b[campoOrdenadoCrm]) || 0) : String(b[campoOrdenadoCrm] || "").toLowerCase();
     return vA < vB ? (direcaoOrdenacaoCrm === "asc" ? -1 : 1) : vA > vB ? (direcaoOrdenacaoCrm === "asc" ? 1 : -1) : 0;
   }); // -> Fim da ordenação.
- // -> Bloco condicional de barreira anônima.
+  
   if (!user) { // -> Abre a condition de portaria de segurança caso o crachá esteja em branco.
     return ( // -> Renderiza o HTML della tela dividida escura de login.
       <div style={{ width: "100vw", minHeight: "100vh", backgroundColor: "#0f172a", display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -5950,9 +5926,9 @@ export default function App() { // -> Define e exporta a função mestre que ger
       </div>
     ); // -> Fim do desenho da portaria de login.
   } // -> Encerra a trava da portaria de segurança.
- // -> Retorno de desenho mestre do ecossistema autenticado.
+  
   return ( // -> Renderiza as barras e raias comerciais integradas em tempo real com suporte a mutações em massa.
-    <div style={{ width: "100%", minHeight: "100vh", backgroundColor: "#f8fafc", paddingBottom: "60px" }}>
+    <div style={{ width: "100%", height: "100vh", backgroundColor: "#f8fafc", paddingBottom: "60px", display: "flex", flexDirection: "column" }}> {/* 🛠️ SELEÇÃO DE VIEWPORT RÍGIDA: Alterado de 'minHeight: "100vh"' para 'height: "100vh"', ativando layout flexbox vertical para congelar o topo e fixar as barras na base da janela visível. */}
       <Header abaAtiva={abaAtiva} aoMudarAba={setAbaAtiva} aoLogof={efetuarLogoutTurno} />
 
       {abaAtiva === "crm" && ( // -> Condição que acende as ferramentas exclusivas da esteira operacional de dívidas.
@@ -5966,7 +5942,7 @@ export default function App() { // -> Define e exporta a função mestre que ger
           />
 
           {visaoCrm === "kanban" && ( // -> Condição que desenha as raias verticais de cartões arrastáveis.
-            <main style={{ maxWidth: "1400px", margin: "20px auto 0 auto", padding: "0 20px", display: "flex", gap: "20px", overflowX: "auto" }}>
+            <main style={{ width: "100%", margin: "20px auto 0 auto", padding: "0 20px", display: "flex", gap: "20px", overflowX: "auto", overflowY: "auto" }}> {/* 🛠️ ACOPLAMENTO DE ROLAGEM INDEPENDENTE: Reativadas as chaves 'overflowX: "auto"' e 'overflowY: "auto"' para que a prancha herde o limite de tamanho do pai, trazendo a barra horizontal nativa para a base do seu monitor. */}
               {colunasFunil.map((coluna) => { // -> Mapeia reativamente as raias cadastradas na nuvem.
                 const cardsDaColuna = cobrancasFiltradas.filter((c) => (c.status || "novo") === coluna.id); // -> Filtra os devedores da raia da vez.
                 const totalRaia = cardsDaColuna.reduce((acc, c) => acc + (parseFloat(c.valorVencido) || 0), 0); // -> Soma o saldo da raia.
@@ -8994,7 +8970,7 @@ export default function ModalCadastro({ aberto, aoFechar, aoSalvar, empresas = [
 
 --- FILE:  ---
 
-import React, { useState, useEffect } from "react"; // -> Importa a biblioteca mestre do React e os ganchos de estado e efeito para monitorar o ciclo de vida e abas ativas do painel.
+import React, { useState, useEffect } from "react"; // -> Traz a biblioteca mestre do React e os ganchos de estado e efeito para monitorar o ciclo de vida e abas ativas do painel.
 import { X, ShieldAlert, Landmark, FileText, ListTodo, History, BadgePercent, CheckCircle2, XCircle } from "lucide-react"; // -> Mantém a coleção de ícones lineares corporativos da Lucide rigorosamente preservada no topo.
 
 // -> IMPORTAÇÃO DOS FILHOS ESPECIALISTAS GARANTINDO O VÍNCULO DA EXTENSÃO DENTRO DA MESMA PASTA
@@ -9165,7 +9141,7 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
                   const statusFinalCalculado = cardModificado?.proposta ? "acordo" : "atendimento"; // -> 🛠️ SELETOR DE CONFORMIDADE: Se a proposta em RAM foi limpa no reset, força o status a voltar para atendimento síncronamente.
                   const pacoteFinalParaGravar = { // -> Constrói a carga útil unificada de dados.
                     ...cardModificado, // -> Puxa todas as notas fiscais e parcelamentos computados do shadow state local.
-                    status: cardModificado?.proposta ? "acordo" : (cardModificado?.status === "acordo" ? "atendimento" : (cardModificado?.status || "atendimento")) // -> 🛠️ TRITURADOR DE BOLETO FANTASMA: Se o status era acordo mas a proposta sumiu na calculadora, redefine para atendimento quebrando a trava de persistência.
+                    status: cardModificado?.proposta ? "acordo" : (cardModificado?.status === "acordo" ? "atendimento" : (cardModificado?.status || "atendimento")) // -> 🛠️ TRITURADOR DE BOLETOS FANTASMA: Se o status era acordo mas a proposta sumiu na calculadora, redefine para atendimento quebrando a trava de persistence.
                   };
                   aoSalvarProntuário(card.id, pacoteFinalParaGravar); // -> Despacha o pacote estruturado diretamente para o Firebase.
                   alert("🚀 PROPOSTA PERSISTIDA COM SUCESSO!\n\nAs amarrações fiscais foram consolidadas e trancadas no Firebase."); // -> Notifica o advogado operador.
