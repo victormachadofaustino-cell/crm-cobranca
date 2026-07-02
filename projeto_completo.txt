@@ -8971,7 +8971,7 @@ export default function ModalCadastro({ aberto, aoFechar, aoSalvar, empresas = [
 --- FILE:  ---
 
 import React, { useState, useEffect } from "react"; // -> Traz a biblioteca mestre do React e os ganchos de estado e efeito para monitorar o ciclo de vida e abas ativas do painel.
-import { X, ShieldAlert, Landmark, FileText, ListTodo, History, BadgePercent, CheckCircle2, XCircle } from "lucide-react"; // -> Mantém a coleção de ícones lineares corporativos da Lucide rigorosamente preservada no topo.
+import { X, ShieldAlert, Landmark, FileText, ListTodo, History, BadgePercent, CheckCircle2, XCircle, Archive, ArchiveRestore, Trash2 } from "lucide-react"; // -> Mantém a coleção de ícones lineares corporativos da Lucide rigorosamente preservada no topo, agora incluindo os ícones de arquivar e lixeira.
 
 // -> IMPORTAÇÃO DOS FILHOS ESPECIALISTAS GARANTINDO O VÍNCULO DA EXTENSÃO DENTRO DA MESMA PASTA
 import FichaDevedorPainel from "./Prontuario/FichaDevedorPainel"; // -> Conecta o painel esquerdo dedicado que cuida do cadastro, contatos e da sacola de Notas Fiscais.
@@ -8989,7 +8989,7 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
   // -> GATILHO REATIVO DE ANTICRASH: Força o buffer de RAM a recarregar e espelhar as informações do novo devedor assim que ele muda no CRM.
   useEffect(() => { // -> Sincroniza o estado toda vez que o card mestre lá no App.jsx comuta.
     if (card) { // -> Verifica se o objeto do devedor é válido e existente.
-      setCardModificado(card); // -> Sobrescreve o buffer com os dados atualizados e limpos vindos do banco de dados.
+      setCardModificado(card); // -> Sobrescreve o buffer com os dados updated e limpos vindos do banco de dados.
     }
   }, [card]); // -> Escuta rigorosamente o gatilho de transição do ID do card devedor.
 
@@ -8999,7 +8999,7 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
   // -> CONFIGURAÇÃO DE TRAVA DE SEGURANÇA CRÍTICA CONFORME DIRETRIZ: Junção de [feito] e [finalizado] para blindar mutações fiscais.
   const categoriaBloqueada = colunaId === "acordo" || colunaId === "finalizado" || card?.categoria === "feito" || card?.categoria === "finalizado"; // -> Se for verdadeiro, congela a possibilidade de adicionar ou remover títulos fiscais.
 
-  // -> INTERCEPTADOR DE SUB-ABAS (BUFFER REATIVO EM RAM): Escuta as alterações feitas dentro da calculadora Price e guarda no balde local.
+  // -> INTERCEPTADOR DE SUB-ABAS (BUFFER REATIVO IN RAM): Escuta as alterações feitas dentro da calculadora Price e guarda no balde local.
   const lidarMutacaoLocalDasSubAbas = (pacoteModificado) => { // -> Recebe a carga útil de faturamento e parcelas recalculadas.
     setCardModificado(pacoteModificado); // -> Sincroniza a memória RAM do modal mestre com os cálculos novos do Excel.
   };
@@ -9039,6 +9039,39 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
 
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <span style={{ fontSize: "11px", background: "#dbeafe", color: "#1e40af", padding: "4px 12px", borderRadius: "20px", fontWeight: "700", textTransform: "uppercase" }}>Raia CRM: {colunaId}</span>
+            
+            {/* 🛠️ BOTÃO DE ARQUIVAMENTO REATIVO DO MODAL (PONTO VERMELHO SUPERIOR) */}
+            <button
+              type="button"
+              onClick={() => {
+                aoAlternarArquivamentoNoModal(card.id, card.cliente); // -> Dispara a rota do limbo trocando a flag booleana.
+                aoFechar(); // -> Fecha o prontuário imediatamente após a ação preventiva para atualizar a grade do CRM.
+              }}
+              style={{ background: "none", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#64748b", padding: "4px", transition: "color 0.15s" }}
+              onMouseEnter={(e) => e.currentTarget.style.color = exibirArquivados ? "#2563eb" : "#eab308"} // -> Muda para azul se estiver desarquivando ou amarelo se for arquivar ao passar o mouse.
+              onMouseLeave={(e) => e.currentTarget.style.color = "#64748b"} // -> Retorna à cor cinza neutra original quando o mouse sai.
+              title={exibirArquivados ? "Desarquivar este card" : "Arquivar este card"} // -> Mostra o texto explicativo contextual flutuando ao passar o mouse.
+            >
+              {exibirArquivados ? <ArchiveRestore size={18} strokeWidth={2.5} /> : <Archive size={18} strokeWidth={2.5} />} {/* -> Alterna o ícone de caixa aberta ou fechada conforme o fluxo ativo. */}
+            </button>
+
+            {/* 🛠️ BOTÃO DE EXCLUSÃO DEFINITIVA DO MODAL (PONTO VERMELHO SUPERIOR) */}
+            <button
+              type="button"
+              onClick={() => {
+                if (confirm(`⚠️ ALERTA DE DESTRUIÇÃO NO FIREBASE:\n\nTem certeza absoluta de que deseja triturar permanentemente o prontuário de "${card.cliente}"?\n\nEsta ação apagará todos os dados NoSQL para sempre e não pode ser desfeita.`)) { // -> Exibe o aviso clássico de barreira jurídica de segurança.
+                  aoExcluirCardNoModal(card.id, card.cliente); // -> Executa o triturador do Firestore apagando o nó permanentemente.
+                  aoFechar(); // -> Encerra o modal ativo após sumir com o registro das coleções.
+                }
+              }}
+              style={{ background: "none", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#64748b", padding: "4px", transition: "color 0.15s" }}
+              onMouseEnter={(e) => e.currentTarget.style.color = "#ef4444"} // -> Acende em vermelho vivo de perigo ao posicionar o cursor.
+              onMouseLeave={(e) => e.currentTarget.style.color = "#64748b"} // -> Retorna à cor padrão de segurança cinza.
+              title="Excluir cobrança definitivamente" // -> Rótulo explicativo para o advogado operador.
+            >
+              <Trash2 size={18} strokeWidth={2.5} /> {/* -> Desenha o ícone linear da lixeira de eliminação absoluta. */}
+            </button>
+
             <button 
               type="button" 
               onClick={aoFechar} 
@@ -9144,7 +9177,7 @@ export default function ModalProntuario({ aberto, aoFechar, card, colunaId, cont
                     status: cardModificado?.proposta ? "acordo" : (cardModificado?.status === "acordo" ? "atendimento" : (cardModificado?.status || "atendimento")) // -> 🛠️ TRITURADOR DE BOLETOS FANTASMA: Se o status era acordo mas a proposta sumiu na calculadora, redefine para atendimento quebrando a trava de persistence.
                   };
                   aoSalvarProntuário(card.id, pacoteFinalParaGravar); // -> Despacha o pacote estruturado diretamente para o Firebase.
-                  alert("🚀 PROPOSTA PERSISTIDA COM SUCESSO!\n\nAs amarrações fiscais foram consolidadas e trancadas no Firebase."); // -> Notifica o advogado operador.
+                  alert("🚀 PROPOSTA PERSISTIDA WITH SUCESSO!\n\nAs amarrações fiscais foram consolidadas e trancadas no Firebase."); // -> Notifica o advogado operador.
                   aoFechar(); // -> Encerra a exibição da viewport do modal de atendimento.
                 }} 
                 style={{ background: "#0f172a", color: "#ffffff", border: "none", padding: "6px 18px", borderRadius: "6px", fontWeight: "700", fontSize: "12px", cursor: "pointer", transition: "background 0.15s" }} 
@@ -10330,401 +10363,433 @@ export function ModuloFinanceiro({ cobrancas = [], aoMudarStatusDireto }) { // -
 
 --- FILE:  ---
 
-// Conecta o importador diretamente com as chaves e credenciais oficiais do banco de dados na nuvem. -> Comentário orientativo sobre o acoplamento de infraestrutura remota.
-import { db } from '../../config/firebase.js'; // -> Traz a conexão configurada com o servidor do Firebase ativo.
-// Traz as ferramentas do Firebase para gravação atômica segura de registros. -> Nota explicativa sobre as engines de comandos síncronos do Firestore.
-import { collection, doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore'; // -> Importa os comandos cirúrgicos NoSQL.
-// Injeta a biblioteca mestre SheetJS para decodificar planilhas nativas do Excel sem corromper números longos. -> Nota sobre o leitor binário mundial de planilhas.
-import * as XLSX from 'xlsx'; // -> Importa o leitor binário especialista em arquivos .xlsx.
+import React, { useState } from 'react'; // -> Traz a biblioteca mestre do React e o gancho de estados para gerenciar as telas de fluxo[cite: 492, 598].
+import ReactDOM from 'react-dom/client'; // -> Importa o assistente de engenharia do React para estancar o ReferenceError e permitir a renderização do modal no HTML[cite: 596].
+import * as XLSX from 'xlsx'; // -> Importa a biblioteca SheetJS especialista em decodificar arquivos binários do Excel nativo[cite: 35, 478].
+import { db } from '../../config/firebase.js'; // -> Conecta o componente direto com as referências de rede do banco de dados na nuvem[cite: 493].
+import { collection, doc, setDoc, serverTimestamp } from 'firebase/firestore'; // -> Puxa as ferramentas cirúrgicas do SDK do Firestore para gravações unificadas[cite: 493].
+import { UploadCloud, FileSpreadsheet, AlertTriangle, CheckCircle2 } from 'lucide-react'; // -> Injeta a coleção de ícones lineares executivos da Lucide para ilustrar o fluxo de upload[cite: 599].
 
-export class ImportadorAging { // -> Cria o motor principal que vai comandar a carga pesada de arquivos Excel (.xlsx).
-  // Construtor que recebe o aviso reativo do app central para atualizar o visor do Kanban assim que o lote concluir. -> Nota de arquitetura reativa.
-  constructor(onSucessoCallback) { // -> Prepara a classe guardando a trigger de sucesso.
-    this.onSucesso = onSucessoCallback; // -> Memoriza a função de atualização para acioná-la no fim do processo de carga.
-    this.dadosProcessados = []; // -> Inicia a esteira limpa em memória RAM para segurar as linhas extraídas da planilha.
-  } // -> Encerra o construtor.
+// -> IMPORTAÇÃO DOS NOVOS MÓDULOS FILHOS ESPECIALISTAS DA ESTEIRA DE AUTONOMIA
+import { ValidadorEmpresas } from '../../services/Importador/ValidadorEmpresas'; // -> Importa o higienizador de CNPJs e cadastros corporativos de retaguarda.
+import { MotorSugestoes } from '../../services/Importador/MotorSugestoes'; // -> Importa o cérebro analítico de cruzamento e geração de sugestões NoSQL.
+import { FiltroLimboSobrantes } from '../../services/Importador/FiltroLimboSobrantes'; // -> Importa o isolador de inconsistências e dados malformados da planilha.
+import ModalConferenciaAging from './ModalConferenciaAging'; // -> Importa a janela de checkout visual onde o operador exercerá sua validação de lote.
 
-  // Desenha o botão visual de importação na barra de ferramentas superior do CRM. -> Nota sobre a injeção do botão de carregamento.
-  renderizarBotaoUpload(containerId) { // -> Cria e estiliza o botão de upload de arquivos dinamicamente na página.
-    const container = document.getElementById(containerId); // -> Localiza o bloco visual da barra de ferramentas pela ID.
-    if (!container) return; // -> Aborta a criação se o container de destino não estiver montado na árvore visível por segurança.
+export class ImportadorAging { // -> Mantém a assinatura da classe de arranque exportada para o perfeito acoplamento com a Toolbar do App.jsx[cite: 497, 524].
+  constructor(onSucessoCallback) { // -> Construtor que recebe a trigger de atualização imediata da prancha Kanban[cite: 525].
+    this.onSucesso = onSucessoCallback; // -> Memoriza o callback para atualizar a tela no final do processamento[cite: 525].
+  }
 
-    const btn = document.createElement('button'); // -> Fabrica uma nova tag de botão HTML diretamente na memória do navegador.
-    btn.className = 'btn-importar-aging'; // -> Atribui a classe de estilização CSS para o botão ficar padronizado.
-    btn.innerHTML = 'Upload Xlsx'; // -> ADEQUAÇÃO: Altera o texto interno do botão de forma limpa para o padrão regulamentar "Upload Xlsx".
-    btn.style.padding = '8px 14px'; // -> Garante um tamanho de espaçamento confortável para o clique do usuário.
-    btn.style.backgroundColor = '#0f172a'; // -> ADEQUAÇÃO: Pinta o fundo do botão com o tom Azul Escuro Profundo institucional da DOCULOC.
-    btn.style.color = '#ffffff'; // -> Força a cor do texto interno para branco absoluto.
-    btn.style.border = 'none'; // -> Remove as bordas padrão antiquadas do navegador.
-    btn.style.borderRadius = '6px'; // -> Arredonda levemente os cantos do botão seguindo o padrão estético.
-    btn.style.cursor = 'pointer'; // -> Muda o ponteiro do mouse para indicar elemento clicável.
-    btn.style.fontWeight = '600'; // -> Engrossa a fonte do botão para melhorar o destaque visual.
-    btn.style.fontSize = '13px'; // -> Ajusta o tamanho da letra do botão para o padrão executivo.
+  renderizarBotaoUpload(containerId) { // -> Método que renderiza o botão oficial na barra de ferramentas do CRM[cite: 526].
+    const container = document.getElementById(containerId); // -> Captura a div de ancoragem da Toolbar[cite: 526].
+    if (!container) return; // -> Aborta se o elemento não estiver presente na árvore visível do HTML.
 
-    const inputOculto = document.createElement('input'); // -> Cria uma caixa secreta e oculta de seleção de arquivos do sistema.
-    inputOculto.type = 'file'; // -> Configura o tipo do elemento para seleção de arquivos locais do computador.
-    inputOculto.accept = '.xlsx, .xls'; // -> Altera a restrição aceitando rigidamente arquivos nativos do Excel (.xlsx).
-    inputOculto.style.display = 'none'; // -> Esconde o input original do navegador para manter o visual limpo.
+    const botaoAntigo = container.querySelector('.btn-importar-aging'); // -> Caça o botão antigo para evitar duplicados.
+    if (botaoAntigo) botaoAntigo.remove(); // -> Expulsa o lixo da RAM.
 
-    btn.addEventListener('click', () => inputOculto.click()); // -> Abre a janela de escolha de arquivos sempre que o botão customizado for pressionado.
+    const btn = document.createElement('button'); // -> Fabrica o elemento de botão interativo.
+    btn.className = 'btn-importar-aging'; // -> Carimba a classe de identificación visual.
+    btn.innerHTML = 'Upload Xlsx'; // -> Define o rótulo comercial do botão no padrão regulamentar.
+    btn.style.padding = '6px 14px'; // -> Estilo compacto simétrico.
+    btn.style.backgroundColor = '#0f172a'; // -> Aplica a cor Azul Escuro Profundo institucional da DOCULOC.
+    btn.style.color = '#ffffff'; // -> Texto em branco absoluto.
+    btn.style.border = 'none'; // -> Remove contornos.
+    btn.style.borderRadius = '6px'; // -> Cantos suavizados em 6px.
+    btn.style.cursor = 'pointer'; // -> Ponteiro de mãozinha clicável.
+    btn.style.fontWeight = '700'; // -> Peso em negrito denso.
+    btn.style.fontSize = '12px'; // -> Tamanho regular de 12px de alta densidade.
+    btn.style.height = '30px'; // -> Trava a altura casando com os botões da Toolbar.
+
+    const inputOculto = document.createElement('input'); // -> Fabrica a caixa secreta de arquivos do Windows.
+    inputOculto.type = 'file'; // -> Configura o tipo para seleção de arquivos.
+    inputOculto.accept = '.xlsx, .xls'; // -> Restringe a aceitação para planilhas legítimas do Excel.
+    inputOculto.style.display = 'none'; // -> Mantém o elemento invisível no layout.
+
+    btn.addEventListener('click', () => inputOculto.click()); // -> Simula o clique oculto quando o botão institucional for pressionado.
     
-    inputOculto.addEventListener('change', (e) => { // -> Vigia o momento exato em que o cobrador seleciona o arquivo.
-      const arquivo = e.target.files[0]; // -> Captura a primeira planilha selecionada na lista.
-      if (arquivo) { // -> Testa se o arquivo existe e é válido antes de iniciar o motor de conversão.
-        this.processarExcel(arquivo); // -> Despacha o arquivo binário direto para o processador especialista do Excel.
-      } // -> Fim da checagem de arquivo.
-    }); // -> Encerra o evento de mudança.
+    inputOculto.addEventListener('change', async (e) => { // -> Ouve quando o operador escolhe um arquivo válido.
+      const arquivo = e.target.files[0]; // -> Isola o arquivo binário selecionado.
+      if (arquivo) { // -> Se o arquivo existir e passar no teste inicial de integridade.
+        const leitor = new FileReader(); // -> Instancia leitor binário nativo do navegador.
+        leitor.onload = async (evento) => { // -> Define a rotina assíncrona executada ao ler os bytes da máquina.
+          const dadosBinarios = evento.target.result; // -> Captura a string de dados binários do arquivo.
+          const pastaTrabalho = XLSX.read(dadosBinarios, { type: 'binary', cellDates: true }); // -> Invoca o decodificador do SheetJS para ler as abas.
+          
+          let nomeAbaAnalitica = ""; // -> Buffer para armazenar o nome da aba correta.
+          for (const nomeAba of pastaTrabalho.SheetNames) { // -> Varre reativamente a matriz de abas em busca do lote real.
+            const nomeAbaMaiusculo = nomeAba.toUpperCase().trim(); // -> Normaliza o texto em caixa alta.
+            if (!nomeAbaMaiusculo.includes("RESUMO") && !nomeAbaMaiusculo.includes("SUMMARY")) { // -> Executa a Regra de Expurgo eliminando abas de sumário.
+              nomeAbaAnalitica = nomeAba; // -> Elege a aba analítica de faturamento.
+              break; // -> Quebra o laço.
+            }
+          }
+          if (!nomeAbaAnalitica) nomeAbaAnalitica = pastaTrabalho.SheetNames[0]; // -> Fallback padrão para a primeira aba se falhar o filtro.
 
-    container.appendChild(btn); // -> Injeta o botão azul fisicamente na barra superior do CRM.
-    container.appendChild(inputOculto); // -> Anexa a caixa de arquivos oculta ao lado do botão na página web.
-  } // -> Encerra a renderização do botão.
+          const pranchaPlanilha = pastaTrabalho.Sheets[nomeAbaAnalitica]; // -> Abre a aba correta.
+          const linesObjeto = XLSX.utils.sheet_to_json(pranchaPlanilha, { defval: "" }); // -> Converte as colunas em JSON computável.
 
-  // O motor reativo que lê a prancha binária do Excel, filtra as abas de resumo e extrai o Aging real. -> Comentário do decodificador binário mestre.
-  processarExcel(arquivo) { // -> Transforma a prancha de faturamento bruta em um array de objetos puros do JavaScript.
-    const leitor = new FileReader(); // -> Cria o leitor binário nativo do navegador web.
+          if (linesObjeto.length === 0) { // -> Trava se a aba vier em branco.
+            alert('Erro: A aba analítica selecionada no Excel está completamente vazia.'); // -> Alerta o operador.
+            return; // -> Aborta.
+          }
+
+          const orquestrador = new OrquestradorProcesamento(linesObjeto, this.onSucesso); // -> Transmite as linhas JSON para o robô orquestrador.
+          await orquestrador.iniciarFluxoDeAnalise(); // -> Ativa os motores de cruzamento e levanta o modal de conferência na tela.
+        };
+        leitor.readAsBinaryString(arquivo); // -> Inicia a leitura física do arquivo da máquina.
+      }
+    });
+
+    container.appendChild(btn); // -> Injeta o botão fisicamente na div reservada da Toolbar.
+    container.appendChild(inputOculto); // -> Anexa o input oculto de suporte.
+  }
+}
+
+class OrquestradorProcesamento {
+  constructor(linesObjeto, callbackSucesso) { // -> Construtor que recebe a massa bruta de faturamento e a trigger do Kanban.
+    this.linhasBrutas = linesObjeto; // -> Guarda as linhas brutas extraídas.
+    this.callbackSucesso = callbackSucesso; // -> Guarda o callback de F5 síncrono.
     
-    leitor.onload = (evento) => { // -> Define a rotina assíncrona executada ao concluir a leitura do arquivo da máquina.
-      const dadosBinarios = evento.target.result; // -> Extrai a string binária gerada pela leitura do arquivo Excel.
-      const pastaTrabalho = XLSX.read(dadosBinarios, { type: 'binary', cellDates: true }); // -> Invoca o decodificador da SheetJS convertendo o binário em abas reais.
-      
-      // =========================================================================================
-      // 🔥 ALGORITMO EXCLUSIVO DE TRIAGEM MULTI-ABAS: Filtra e expurga abas de "Resumo Clientes"
-      // ========================================================================================= -> Comentário do mecanismo de triagem de segurança.
-      let nomeAbaAnalitica = ""; // -> Buffer local para guardar o nome da aba correta de faturamento.
-      
-      // Varre reativamente a matriz de abas gerada pelo seu ERP para localizar o lote real
-      for (const nomeAba of pastaTrabalho.SheetNames) { // -> Inicia o loop pelas abas.
-        const nomeAbaMaiusculo = nomeAba.toUpperCase().trim(); // -> Normaliza o nome em caixa alta para travar comparações de segurança.
+    this.validadorCadastros = new ValidadorEmpresas(); // -> Peça 1: Validador e API CNPJ.
+    this.motorInteligencia = new MotorSugestoes(); // -> Peça 2: Cérebro NoSQL de cruzamento e simulação.
+    this.filtroResiduos = new FiltroLimboSobrantes(); // -> Peça 4: Isolador do limbo de dados sobrantes.
+  }
+
+  async iniciarFluxoDeAnalise() { // -> Gerencia a sequência de processamento antes de abrir o painel visual.
+    try {
+      const triagemDeIntegridade = this.filtroResiduos.filtrarLinhasSobrantes(this.linhasBrutas); // -> Roda o minerador de resíduos.
+      const faturasSaudaveisParaProcessar = triagemDeIntegridade.linhasSanas; // -> Isola a massa de faturas limpas.
+      const residuosSobrantesIdentificados = triagemDeIntegridade.sobrantesRejeitados; // -> Isola o refugo contendo os diagnósticos de erro.
+
+      const faturasFormatadasEsteira = faturasSaudaveisParaProcessar.map((linha, i) => {
+        const valorMontante = parseFloat(linha['Montante em moeda interna']) || 0; // -> Ponto flutuante de moedas.
+        const dataDocFormatada = linha['Data do documento'] instanceof Date ? linha['Data do documento'].toLocaleDateString('pt-BR') : String(linha['Data do documento'] || "").trim(); // -> Emissão.
+        const vencimentoFormatado = linha['Vencimento líquido'] instanceof Date ? linha['Vencimento líquido'].toLocaleDateString('pt-BR') : String(linha['Vencimento líquido'] || "").trim(); // -> Vencimento.
         
-        // Regra de Expurgo do Victor: Descarta resumos e foca na aba de data ou que possua dados analíticos
-        if (!nomeAbaMaiusculo.includes("RESUMO") && !nomeAbaMaiusculo.includes("SUMMARY")) {
-          // Se a aba não contiver termos de sumário, é candidata mestre a ser a aba analítica real do faturamento -> Comentário técnico.
-          nomeAbaAnalitica = nomeAba; // -> Salva o nome da aba legítima (ex: "12062026").
-          break; // -> Quebra o laço imediatamente ao encontrar o alvo analítico.
-        }
+        // 🛠️ FIX DE CRIAÇÃO DE ID TEMPORÁRIO COMPILADO: Sela a chave combinando o index e a referência da NF para banir colisões desde a origem.
+        const refNfOriginal = String(linha['Referência'] || '').trim().toUpperCase();
+        
+        return {
+          idTemporario: `id_temp_${refNfOriginal}-${i + 1}`, // -> Garante IDs totalmente exclusivas desde a primeira fiação de rascunhos.
+          soldTo: String(linha['SoldTo']).trim(), // -> Conta ERP.
+          cliente: String(linha['Cliente'] || '').trim(), // -> Nome.
+          cnpj: String(linha['CNPJ']).replace(/[^0-9]/g, '').trim(), // -> CNPJ limpo.
+          numDocumento: String(linha['Nº documento'] || '').trim(), // -> Contrato.
+          referencia: refNfOriginal, // -> NF.
+          atribuicao: String(linha['Atribuição'] || '').trim(), // -> Tipo venda.
+          dataDoc: dataDocFormatada, // -> Emissão.
+          vencimento: vencimentoFormatado, // -> Vencimento.
+          montante: valorMontante, // -> Saldo float.
+          executivo: String(linha['Executivo de vendas'] || 'Não Informado').trim(), // -> Vendedor.
+          local: String(linha['Local'] || '').trim(), // -> Cidade.
+          regiao: String(linha['Região'] || '').trim() // -> Estado.
+        };
+      });
+
+      const mapaSugestoesGerado = await this.motorInteligencia.processarSugestoesDeCarga(faturasFormatadasEsteira); // -> Cruza em RAM com o Firebase.
+
+      const loteCompletoParaOConferidor = [
+        ...mapaSugestoesGerado,
+        ...residuosSobrantesIdentificados.map((res, i) => ({
+          idTemporario: `residuo_${res.referencia}-${res.linhaPlanilha}-${i}`, // -> Injeta chave composta anti-clones para o refugo do limbo.
+          soldTo: res.soldTo,
+          cliente: res.cliente,
+          cnpj: res.cnpj,
+          numDocumento: String(res.numDocumento || "0"),
+          referencia: res.referencia,
+          atribuicao: "SOBRANTE REJEITADO",
+          dataDoc: "N/A",
+          vencimento: "N/A",
+          montante: res.valor,
+          executivo: "SISTEMA",
+          acaoSugerida: "REJEITAR_LIMBO", // -> Token indicador de bloqueio e descarte.
+          justificativa: `Linha #${res.linhaPlanilha} do Excel Rejeitada. Diagnóstico: ${res.erroDiagnostico}. Este dado não será injetado.`, // -> UX descritiva de erro.
+          aprovadoPeloOperador: false // -> Inicia desmarcado por segurança.
+        }))
+      ];
+
+      this.renderizarModalDeConferenciaNaTela(loteCompletoParaOConferidor); // -> Abre a Mesa de Decisão.
+
+    } catch (err) {
+      console.error(err);
+      alert("Erro crítico ao rodar fluxo de análise del lote de planilhas.");
+    }
+  }
+
+  renderizarModalDeConferenciaNaTela(loteSugestoes) { // -> Cria a div de sustentação para renderizar o componente filho.
+    const containerModal = document.createElement('div'); // -> Cria o nó de sustentação.
+    containerModal.id = 'nó-sustentacao-modal-conferencia'; // -> Batiza a ID.
+    document.body.appendChild(containerModal); // -> Pendura na página.
+
+    const aoFecharModalLocal = () => { // -> Função de descarte e encerramento.
+      containerModal.remove(); // -> Tritura o nó limpando a memória RAM.
+    };
+
+    const aoConfirmarProcessamentoFinal = async (faturasAprovadasPeloOperador) => { // -> O GRANDE DISPARADOR DO GRAVADOR CONSOLIDADO.
+      const botaoConfirmar = document.getElementById('btn-confirmar-carga-final'); // -> Resgata o elemento.
+      if (botaoConfirmar) {
+        botaoConfirmar.disabled = true; // -> Trava contra duplo clique.
+        botaoConfirmar.innerHTML = '⏳ Gravando Alterações na Nuvem...'; // -> Altera status visual.
       }
 
-      // Linha de segurança e contingência: se não encontrar por palavra-chave, pega a aba padrão de fallback
-      if (!nomeAbaAnalitica) nomeAbaAnalitica = pastaTrabalho.SheetNames[0]; // -> Fallback padrão para a primeira aba.
+      try {
+        const colecaoCobrancasRef = collection(db, 'cobrancas'); // -> Abre cabo de rede com a rota raiz.
+        let totalCobrancasSalvas = 0; // -> Inicializa o somador do placar.
 
-      const pranchaPlanilha = pastaTrabalho.Sheets[nomeAbaAnalitica]; // -> Abre os dados fiscais analíticos da aba selecionada de faturamento.
-      
-      // Converte a prancha mestre em um array de objetos JSON mapeando as chaves pelas strings de cabeçalho reais
-      const linhasObjeto = XLSX.utils.sheet_to_json(pranchaPlanilha, { defval: "" }); // -> Transforma as colunas em propriedades JavaScript preservando números longos.
+        for (const faturaAproved of faturasAprovadasPeloOperador) { // -> Inicia la varredura nas decisões do operador.
+          if (faturaAproved.acaoSugerida === "REJEITAR_LIMBO") continue; // -> Ignora resíduos malformados.
 
-      if (linhasObjeto.length === 0) { // -> Trava contra distração se a planilha vier sem nenhuma linha preenchida.
-        alert('Erro: A aba analítica selecionada no Excel está completamente vazia.'); // -> Avisa o operador.
-        return; // -> Aborta o processamento para não danificar o banco de dados.
-      } // -> Fim da barreira.
-
-      this.dadosProcessados = []; // -> Zera a esteira interna para receber a nova carga de braços abertos.
-
-      for (let i = 0; i < linhasObjeto.length; i++) { // -> Inicia a varredura linha por linha do array extraído pela biblioteca.
-        const linha = linhasObjeto[i]; // -> Captura a linha da vez contendo as faturas.
-
-        // Garante a extração limpa e o tratamento de texto do SoldTo e CNPJ blindando contra mutações e espaços invisíveis
-        const soldToTexto = linha['SoldTo'] ? String(linha['SoldTo']).trim() : ""; // -> Isola a ID Conta do devedor como texto.
-        const cnpjTratado = linha['CNPJ'] ? String(linha['CNPJ']).replace(/[^0-9]/g, '').trim() : ""; // -> Puxa o CNPJ nativo intocado de 14 dígitos e expulsa pontos/traços.
-
-        // TRAVA DE SEGURANÇA ANALÍTICA: Ignora linhas de cabeçalhos vazias ou sumários sem dados relacionais no meio do arquivo
-        if (!soldToTexto || !cnpjTratado || cnpjTratado.length < 5) continue; // -> Pula e ignora linhas de rodapé ou registros corrompidos na planilha.
-
-        // Trata os valores de montante e datas convertendo-os em propriedades computáveis
-        const valorMontante = parseFloat(linha['Montante em moeda interna']) || 0; // -> Extrai o Double real da célula sem quebrar em potências.
-        const dataDocFormatada = linha['Data do documento'] instanceof Date ? linha['Data do documento'].toLocaleDateString('pt-BR') : String(linha['Data do documento'] || "").trim(); // -> Converte datas nativas do Excel para string BR.
-        const vencimentoFormatado = linha['Vencimento líquido'] instanceof Date ? linha['Vencimento líquido'].toLocaleDateString('pt-BR') : String(linha['Vencimento líquido'] || "").trim(); // -> Converte vencimentos nativos do Excel para string BR.
-
-        const registro = { // -> Constrói o objeto estruturado perfeitamente compatível com o ecossistema NoSQL do CRM.
-          idTemporario: `id_temp_${i + 1}`, // -> Identificador único de interface para os checkboxes da tabela.
-          soldTo: soldToTexto, // -> ID Conta ERP mestre.
-          cliente: String(linha['Cliente'] || '').trim(), // -> Razão social tratada livre de quebras de strings.
-          cnpj: cnpjTratado, // -> CNPJ intacto de 14 dígitos reais.
-          numDocumento: String(linha['Nº documento'] || '').trim(), // -> Número de contrato comercial.
-          referencia: String(linha['Referência'] || '').trim(), // -> Nota Fiscal real para baixas e prontuários.
-          atribuicao: String(linha['Atribuição'] || '').trim(), // -> Modelo ou tipo de venda.
-          dataDoc: dataDocFormatada, // -> Data fiscal de emissão.
-          vencimento: vencimentoFormatado || vencimentoFormatado, // -> Vencimento líquido estourado.
-          montante: valorMontante, // -> Valor monetário Double real puro para somas.
-          executivo: String(linha['Executivo de vendas'] || 'Não Informado').trim(), // -> Representante da carteira do devedor.
-          local: String(linha['Local'] || '').trim(), // -> Comarca municipal do cliente devedor.
-          regiao: String(linha['Região'] || '').trim() // -> Comarca estadual do cliente devedor.
-        }; // -> Encerra o objeto da linha.
-
-        this.dadosProcessados.push(registro); // -> Enfileira o registro limpo e com o CNPJ perfeito na memória ram de pré-carga.
-      } // -> Fim do laço for.
-
-      this.abrirModalConferencia(); // -> Projeta e joga o painel de conferência visual (Autonomia de Lote) na tela do operador de cobrança.
-    }; // -> Encerra a função onload.
-
-    leitor.readAsBinaryString(arquivo); // -> Inicia a leitura física da planilha em modo binário bruto para capturar as células originais do Excel.
-  } // -> Encerra o processador de planilhas.
-
-  // Consulta a API nacional pública de CNPJ para puxar dados cadastrais atualizados.
-  async consultarApiCNPJ(cnpj) { // -> Faz a chamada para a BrasilAPI (rápida, gratuita e atualizada).
-    try {
-      const resposta = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`); // -> Faz o pedido de dados à API enviando o CNPJ numérico perfeito.
-      if (!resposta.ok) return null; // -> Retorna nulo se a Receita Federal recusar o documento.
-      
-      const dados = await resposta.json(); // -> Converte a resposta em formato JSON estruturado.
-      return { // -> Entrega os metadados ricos da Receita Federal in letras limpas.
-        razaoSocial: dados.razao_social || '',
-        nomeFantasia: dados.nome_fantasia || dados.razao_social || '',
-        situacaoCadastral: dados.descricao_situacao_cadastral || 'ATIVA'
-      }; // -> Encerra o pacote de sucesso.
-    } catch (e) {
-      console.warn(`[API CNPJ] Não foi possível consultar o CNPJ ${cnpj} na API externa. Usando dados da planilha.`); // -> Imprime aviso leve se a internet oscilar.
-      return null; // -> Aciona as rotinas de contingência locais.
-    } // -> Fim do catch.
-  } // -> Encerra a busca de API.
-
-  // Sincroniza e garante o cadastro da matriz da empresa conectando ao módulo de cadastros corporativos.
-  async garantizarCadastroEmpresa(cnpj, nomePlanilha, local, regiao) { // -> Garante que a PJ esteja arquivada antes de subir os faturamentos.
-    const empresaDocRef = doc(db, 'cadastros_empresas', cnpj); // -> Endereço físico NoSQL usando o CNPJ limpo como ID única do documento.
-    const snapshot = await getDoc(empresaDocRef); // -> Faz a varredura preventiva na nuvem.
-
-    if (snapshot.exists()) { // -> Se a empresa já constar no banco de dados.
-      return snapshot.data(); // -> Devolve a ficha existente economizando conexões e processamento no Firebase.
-    } // -> Fim da verificação.
-
-    console.log(`[Importador] Empresa ${cnpj} não cadastrada. Iniciando fluxo de cadastro rápido...`); // -> Alerta no terminal de desenvolvedor.
-    const dadosApi = await this.consultarApiCNPJ(cnpj); // -> Aciona o consultor externo web com o CNPJ perfeito de 14 dígitos que o leitor de Excel preservou.
-    
-    let payloadEmpresa = {}; // -> Inicializa a gaveta de memória ram de embalagem.
-
-    if (dadosApi) { // -> Se localizou a empresa ativa na Receita Federal do Brasil.
-      payloadEmpresa = { // -> Embala a ficha cadastral profissional com a Razão Social oficial do governo em letras maiúsculas.
-        cnpj: cnpj,
-        razaoSocial: dadosApi.razaoSocial.toUpperCase(),
-        nomeFantasia: dadosApi.nomeFantasia.toUpperCase(),
-        situacao: dadosApi.situacaoCadastral,
-        tipoCadastro: 'Automático via API (Importador)',
-        criadoEm: serverTimestamp() // -> Assinatura cronológica oficial imutável de compliance do Google.
-      };
-    } else { // -> Regime de contingência: se a API falhar, força a criação usando as comarcas locais para o endereço não nascer órfão.
-      const comarcaEndereço = local && regiao ? `${local} / ${regiao}` : "Não informado no lote"; // -> Monta o texto de localização geográfica.
-      payloadEmpresa = {
-        cnpj: cnpj,
-        razaoSocial: nomePlanilha.toUpperCase(),
-        nomeFantasia: nomePlanilha.toUpperCase(),
-        situacao: 'NÃO VERIFICADO',
-        endereco: comarcaEndereço.toUpperCase(), // -> Sincroniza as cidades locais diretamente no prontuário.
-        tipoCadastro: 'Contingência via Planilha (Importador)',
-        criadoEm: serverTimestamp()
-      };
-    } // -> Fim da fiação de cadastro rápido.
-
-    await setDoc(empresaDocRef, payloadEmpresa); // -> Grava definitivamente a ficha cadastral corporativa na coleção 'cadastros_empresas'.
-    this.ultimoTipoCadastro = payloadEmpresa.tipoCadastro; // -> Anota o tipo de inclusão para o placar final do rodapé.
-    return payloadEmpresa; // -> Devolve o objeto criado para alimentar a esteira subsequente.
-  } // -> Encerra o garantidor de cadastro de empresa.
-
-  // Constrói a janela flutuante cinza e branca contendo a listagem prévia de aprovação humana.
-  abrirModalConferencia() { // -> AREA DE AUTONOMIA DE LOTE: Painel de checkout com checkboxes individuais de aprovação.
-    const modalExistente = document.getElementById('modal-conferencia-aging'); // -> Caça duplicados perdidos na árvore visual.
-    if (modalExistente) modalExistente.remove(); // -> Limpa a tela eliminando resquícios de cargas anteriores.
-
-    const modalBg = document.createElement('div'); // -> Fabrica o apagão de fundo translúcido para focar o cobrador nas faturas.
-    modalBg.id = 'modal-conferencia-aging'; // -> Batiza a ID identificadora.
-    modalBg.style.position = 'fixed'; // -> Fixa a janela colada nas bordas evitando sumiços ao rolar as raias.
-    modalBg.style.top = '0'; modalBg.style.left = '0'; // -> Alinha nos limites absolutos do monitor.
-    modalBg.style.width = '100vw'; modalBg.style.height = '100vh'; // -> Alarga e alonga cobranca 100% da aba ativa.
-    modalBg.style.backgroundColor = 'rgba(0, 0, 0, 0.6)'; // -> Aplica a opacidade escura de foco.
-    modalBg.style.display = 'flex'; modalBg.style.justifyContent = 'center'; modalBg.style.alignItems = 'center'; // -> Centralização ágil em flexbox.
-    modalBg.style.zIndex = '99999'; // -> Camada máxima de sobreposição visual.
-
-    const modalConteudo = document.createElement('div'); // -> Painel interno branco de alta visibilidade comercial.
-    modalConteudo.style.backgroundColor = '#ffffff'; modalConteudo.style.width = '92%'; modalConteudo.style.maxHeight = '85vh'; // -> Configura o papel branco responsivo em 92%.
-    modalConteudo.style.borderRadius = '8px'; modalConteudo.style.display = 'flex'; modalConteudo.style.flexDirection = 'column'; modalConteudo.style.padding = '24px'; // -> Alinhamentos de flexbox.
-    modalConteudo.style.boxShadow = '0 20px 25px -5px rgba(0,0,0,0.1)'; // -> Efeito visual moderno 3D nas margens.
-
-    // Escreve a estrutura HTML limpando qualquer string solta das células para anular avisos de DOM do navegador.
-    modalConteudo.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <div style="text-align: left;">
-          <h2 style="margin: 0; color: #1e293b; font-size: 18px; font-family: sans-serif; font-weight: 800;">Área de Conferência Pré-Carga (Autonomia de Lote)</h2>
-          <p style="margin: 4px 0 0 0; color: #64748b; font-size: 13px; font-family: sans-serif; font-weight: 500;">O sistema localizou e filtrou a aba analítica com sucesso. As faturas serão consolidadas por devedor único via <b>SoldTo</b>.</p>
-        </div>
-        <button id="btn-fechar-modal-conferencia" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #94a3b8; font-weight: bold;">&times;</button>
-      </div>
-      
-      <div style="flex: 1; overflow-y: auto; overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 16px;">
-        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; font-family: sans-serif;">
-          <thead>
-            <tr style="background-color: #f8fafc; border-bottom: 2px solid #e2e8f0; position: sticky; top: 0; z-index: 10;">
-              <th style="padding: 12px; width: 40px;"><input type="checkbox" id="checkbox-selecionar-todos-conferencia" checked style="cursor: pointer;"></th>
-              <th style="padding: 12px; color: #475569; font-weight: 700;">SoldTo (ID Conta)</th>
-              <th style="padding: 12px; color: #475569; font-weight: 700;">Cliente / Razão Social</th>
-              <th style="padding: 12px; color: #475569; font-weight: 700;">CNPJ Preservado</th>
-              <th style="padding: 12px; color: #475569; font-weight: 700;">Nº documento</th>
-              <th style="padding: 12px; color: #475569; font-weight: 700;">Referência (NF)</th>
-              <th style="padding: 12px; color: #475569; font-weight: 700;">Atribuição</th>
-              <th style="padding: 12px; color: #475569; font-weight: 700;">Data Doc.</th>
-              <th style="padding: 12px; color: #475569; font-weight: 700;">Vencimento</th>
-              <th style="padding: 12px; color: #475569; font-weight: 700; text-align: right;">Montante (R$)</th>
-              <th style="padding: 12px; color: #475569; font-weight: 700;">Executivo de Vendas</th>
-            </tr>
-          </thead>
-          <tbody id="corpo-tabela-conferencia-aging"></tbody>
-        </table>
-      </div>
-
-      <div style="display: flex; justify-content: flex-end; gap: 12px; font-family: sans-serif;">
-        <button id="btn-cancelar-conferencia" style="padding: 9px 16px; background-color: #f1f5f9; color: #475569; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; fontSize: 12px;">Cancelar e Descartar</button>
-        <button id="btn-confirmar-carga-final" style="padding: 9px 20px; background-color: #16a34a; color: #ffffff; border: none; border-radius: 6px; cursor: pointer; font-weight: 800; fontSize: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-transform: uppercase;">🚀 Confirmar Processamento</button>
-      </div>
-    `; // -> Encerra a injeção do cabeçalho da tabela.
-
-    modalBg.appendChild(modalConteudo); // -> Insere o bloco branco no plano de foco escuro.
-    document.body.appendChild(modalBg); // -> Projeta a estrutura na aba ativa do navegador do Victor.
-
-    const corpoTabela = document.getElementById('corpo-tabela-conferencia-aging'); // -> Mapeia a ID tbody do HTML para descida das linhas.
-    this.dadosProcessados.forEach(reg => { // -> Percorre todos os devedores binários minerados da planilha Excel.
-      const tr = document.createElement('tr'); // -> Fabrica a linha tr diretamente na RAM.
-      tr.style.borderBottom = '1px solid #f1f5f9'; // -> Borda fina inferior separadora.
-      
-      tr.innerHTML = `
-        <td style="padding: 12px;"><input type="checkbox" class="checkbox-linha-conferencia" data-id="${reg.idTemporario}" checked style="cursor: pointer;"></td>
-        <td style="padding: 12px; font-weight: 700; color: #1e293b;">${reg.soldTo}</td>
-        <td style="padding: 12px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; color: #334155;">${reg.cliente}</td>
-        <td style="padding: 12px; font-family: monospace; color: #475569; font-weight: bold;">${reg.cnpj}</td>
-        <td style="padding: 12px; color: #64748b;">#${reg.numDocumento}</td>
-        <td style="padding: 12px; color: #0284c7; font-weight: 700;">${reg.referencia}</td>
-        <td style="padding: 12px; color: #64748b;">${reg.atribuicao}</td>
-        <td style="padding: 12px; color: #475569;">${reg.dataDoc}</td>
-        <td style="padding: 12px; color: #2563eb; font-weight: 700;">${reg.vencimento}</td>
-        <td style="padding: 12px; font-weight: 800; color: #0f172a; text-align: right;">R$ ${reg.montante.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
-        <td style="padding: 12px; color: #475569; font-weight: 600;">${reg.executivo}</td>
-      `; // -> Alimenta a linha injetando o CNPJ de 14 dígitos reais que vieram da aba analítica selecionada.
-      corpoTabela.appendChild(tr); // -> Acopla a linha fisicamente no checkout.
-    }); // -> Fim do loop.
-
-    const chkTodos = document.getElementById('checkbox-selecionar-todos-conferencia'); // -> Caixa mestre superior.
-    chkTodos.addEventListener('change', (e) => { // -> Sincroniza todas as subcaixas secundárias com um único clique do topo esquerdo.
-      const checkboxes = document.querySelectorAll('.checkbox-linha-conferencia'); // -> Coleta os checkboxes de linha.
-      checkboxes.forEach(chk => chk.checked = e.target.checked); // -> Clona o estado mestre nas linhas secundárias.
-    }); // -> Encerra o evento.
-
-    const fecharModal = () => modalBg.remove(); // -> Desliga e extingue o modal da RAM.
-    document.getElementById('btn-fechar-modal-conferencia').addEventListener('click', fecharModal); // -> Fecha no 'x'.
-    document.getElementById('btn-cancelar-conferencia').addEventListener('click', fecharModal); // -> Descarta no cancelar.
-
-    // DISPARO DE INJEÇÃO EM MASSA ASSÍNCRONA COMPACTADA PELO SOLDTO REAL (A SACOLA INTEGRAL):
-    document.getElementById('btn-confirmar-carga-final').addEventListener('click', async () => { // -> Aciona o gatilho final.
-      const chksMarcados = document.querySelectorAll('.checkbox-linha-conferencia:checked'); // -> Varre quais faturas mantiveram o flag ativo.
-      
-      if (chksMarcados.length === 0) { // -> Impede o envio de lotes em branco.
-        alert('Atenção Operador: É necessário manter pelo menos uma cobrança selecionada para autorizar o processamento.'); // -> Exibe o aviso.
-        return; // -> Aborta.
-      } // -> Fim da checagem.
-
-      const idsParaSalvar = Array.from(chksMarcados).map(chk => chk.getAttribute('data-id')); // -> Junta em vetor simples as IDs salvas.
-      const registrosAprovados = this.dadosProcessados.filter(reg => idsParaSalvar.includes(reg.idTemporario)); // -> Filtra e mantém os devedores binários aprovados.
-      const btnConfirmar = document.getElementById('btn-confirmar-carga-final'); // -> Resgata o botão.
-      btnConfirmar.disabled = true; // -> Trava contra duplo clique ansioso.
-      btnConfirmar.innerHTML = '⏳ Unificando Sacolas por SoldTo e Injetando...'; // -> Altera status visual de gravação.
-
-      try { // -> Escudo antiquedas.
-        const colecaoCobrancasRef = collection(db, 'cobrancas'); // -> Abre cabo de rede com a rota mestre de cobranças unificadas.
-        let totalNovasEmpresas = 0; // -> Placar de homologações de PJ de retaguarda.
-
-        // =========================================================================================
-        // 🔥 CONSOLIDAÇÃO DINÂMICA DA SACOLA ÚNICA EM RAM (SANEAMENTO DO TRUNCAMENTO DE CNPJ) 
-        // =========================================================================================
-        const devedoresAgrupadosPorSoldTo = {}; // -> Inicializa o cofre temporário em RAM.
-        
-        registrosAprovados.forEach(reg => { // -> Agrupa as Notas Fiscais no mesmo SoldTo limpo da planilha Excel.
-          const chaveGrupoSoldTo = reg.soldTo; // -> Chave primária.
-          
-          if (!devedoresAgrupadosPorSoldTo[chaveGrupoSoldTo]) { // -> Se for o primeiro título daquele cliente, cria a sacola mestre.
-            devedoresAgrupadosPorSoldTo[chaveGrupoSoldTo] = { // -> Aloca dados mestre.
-              soldTo: reg.soldTo,
-              cliente: reg.cliente,
-              cnpj: reg.cnpj, // -> CNPJ de 14 dígitos reais preservado pela célula do Excel.
-              local: reg.local,
-              regiao: reg.regiao,
-              titulos: [] // -> Array limpo pronto para receber o bolo de faturas da PJ.
-            }; // -> Fim.
-          } // -> Fim.
-          
-          devedoresAgrupadosPorSoldTo[chaveGrupoSoldTo].titulos.push({ // -> Encaixa as faturas fiscais individuais dentro da sacola da PJ.
-            numDocumento: parseInt(reg.numDocumento) || 0,
-            referencia: reg.referencia,
-            atribuicao: reg.atribuicao,
-            dataDocumento: reg.dataDoc,
-            vencimentoLiquido: reg.vencimento,
-            valorNota: reg.montante,
-            executivoVendas: reg.executivo
-          }); // -> Fim.
-        }); // -> Fim.
-
-        // Loop assíncrono NoSQL que processa e grava os SoldTos consolidados na nuvem da Google 
-        for (const soldToChave of Object.keys(devedoresAgrupadosPorSoldTo)) { // -> Inicia varredura.
-          const devedorUnico = devedoresAgrupadosPorSoldTo[soldToChave]; // -> Pega sacola.
-
-          // CRUCIAL: Sincroniza e garante a gravação síncrona da PJ na rota oficial de cadastros.
-          const dadosEmpresa = await this.garantizarCadastroEmpresa(devedorUnico.cnpj, devedorUnico.cliente, devedorUnico.local, devedorUnico.regiao);
-          
-          if (this.ultimoTipoCadastro && this.ultimoTipoCadastro.includes('Importador')) { // -> Soma no placar se a empresa mãe for inédita na nuvem.
-            totalNovasEmpresas++; // -> Soma.
-            this.ultimoTipoCadastro = null; // -> Reseta buffer técnico.
-          } // -> Fim.
-
-          const novaSomaBrutaAcumulada = devedorUnico.titulos.reduce((acc, n) => acc + n.valorNota, 0); // -> Soma o bolo financeiro da sacola unificada.
-          const primeiroTitulo = devedorUnico.titulos[0] || {}; // -> Captura a primeira NF como espelho.
-
-          const payloadCobranca = { // -> Monta o documento final reestruturado e imune a truncamentos.
-            soldTo: devedorUnico.soldTo, // -> Código numérico ERP do cliente devedor.
-            codigo: devedorUnico.soldTo, // -> ID conta para os cabeçalhos das raias Kanban.
-            cliente: dadosEmpresa.razaoSocial || devedorUnico.cliente, // -> Razão social oficial maiúscula da Receita Federal.
-            cnpj: devedorUnico.cnpj, // -> CNPJ unificador verdadeiro de 14 dígitos.
-            titulos: devedorUnico.titulos, // -> INJEÇÃO AUTOMÁTICA DA SACOLA: Array completo com todas as NFs anexadas.
+          if (faturaAproved.acaoSugerida === "LIQUIDAR_CONCILIACAO") { // -> Processa a baixa automática.
+            const cardBancoRef = doc(db, "cobrancas", faturaAproved.idDocumentoAlvo); // -> Localiza o devedor.
+            const listaFaturasLimpa = (faturaAproved.cardHistoricoRef?.titulos || []).filter(t => t.referencia !== faturaAproved.titulosAReceber[0]?.referencia); // -> Remove a NF do array NoSQL.
+            const novoSaldoAbatido = listaFaturasLimpa.reduce((acc, n) => acc + (parseFloat(n.valorNota) || 0), 0); // -> Recalcula a soma total.
             
-            // ESPELHOS DE COMPATIBILIDADE DE INTERFACE (HERANÇA DO PRIMEIRO TÍTULO DO LOTE) 
-            numDocumento: primeiroTitulo.numDocumento || 0,
-            referencia: primeiroTitulo.referencia || "",
-            atribuicao: primeiroTitulo.atribuicao || "",
-            dataDocumento: primeiroTitulo.dataDocumento || "",
-            dataEnvio: primeiroTitulo.dataDocumento || "",
-            vencimentoLiquido: primeiroTitulo.vencimentoLiquido || "",
-            executivoVendas: primerioTitulo.executivoVendas || "Não Informado",
+            await setDoc(cardBancoRef, {
+              titulos: listaFaturasLimpa,
+              valorVencido: novoSaldoAbatido,
+              valor: novoSaldoAbatido,
+              historicoNotas: [
+                { conteudo: `Baixa Automática: Título ${faturaAproved.titulosAReceber[0]?.referencia} liquidado via planilha.`, dataHora: new Date().toLocaleDateString("pt-BR") + " às " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) },
+                ...(faturaAproved.cardHistoricoRef?.historicoNotas || []) // -> Preserva notas anteriores.
+              ]
+            }, { merge: true }); // -> Salva de forma parcial.
+            totalCobrancasSalvas++; // -> Soma no placar de execuções.
+            continue;
+          }
 
-            valorVencido: novaSomaBrutaAcumulada, // -> Saldo vencido consolidado do devedor mestre do card.
-            valor: novaSomaBrutaAcumulada, // -> Sincroniza os contadores numéricos do topo da raia kanban.
-            responsavel: "Victor Faustino", // -> Operador responsável dono da carteira da mesa do CRM.
-            status: 'novo', // -> Força a ID da primeira calha cinza ('A Iniciar') do funil Kanban.
-            categoria: 'inicio', // -> Categoria macro gerencial de entrada.
-            arquivado: false, // -> O devedor nasce fora do arquivo morto.
-            historicoNotas: [ // -> Notas de histórico.
-              {
-                conteudo: `Injeção automática unificada pelo Excel .XLSX filtrando a aba analítica. Lote agrupado com ${devedorUnico.titulos.length} Notas Fiscais vinculadas no prontuário.`, 
-                dataHora: new Date().toLocaleDateString("pt-BR") + " às " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
-              }
-            ],
-            tarefas: [], // -> Tarefas limpas.
-            proposta: { valorCobrado: novaSomaBrutaAcumulada, qtdParcelas: 1 }, // -> Proposta Price baseada no montante total acumulado.
-            atualizadoEm: serverTimestamp() // -> Assinatura cronológica oficial imutável de compliance do Google.
-          }; // -> Fim.
+          const dadosPJMae = await this.validadorCadastros.garantirCadastroEmpresa(faturaAproved.cnpj, faturaAproved.cliente, faturaAproved.local, faturaAproved.regiao);
+          const devedorDocRef = doc(colecaoCobrancasRef, faturaAproved.idDocumentoAlvo); // -> Rota física.
+          
+          let listaNotasFiscaisFinais = [...faturaAproved.titulosAReceber];
+          let historicoNotasFinal = [];
 
-          // EXECUÇÃO DO SETDOC USANDO EXCLUSIVAMENTE O SOLDTO ERP COMO ID ÚNICO DO CARD (ANTI-DUPLICIDADE EM MASSA) 
-          await setDoc(doc(colecaoCobrancasRef, devedorUnico.soldTo), payloadCobranca, { merge: true }); // -> Salva ou mescla faturamentos na nuvem na ID do SoldTo corporativo real, blindando as visões.
-        } // -> Fim.
+          if (faturaAproved.acaoSugerida === "MESCLAR_CONTA_CORRENTE" || faturaAproved.acaoSugerida === "ATUALIZAR_ESTEIRA") {
+            const faturasAntigas = faturaAproved.cardHistoricoRef?.titulos || [];
+            const faturasNovasNaoDuplicadas = faturaAproved.titulosAReceber.filter(nfNova => !faturasAntigas.some(nfAntiga => nfAntiga.referencia === nfNova.referencia));
+            listaNotasFiscaisFinais = [...faturasAntigas, ...faturasNovasNaoDuplicadas];
+            historicoNotasFinal = [
+              { conteudo: `Lote processado. Anexadas ${faturasNovasNaoDuplicadas.length} novas NFs.`, dataHora: new Date().toLocaleDateString("pt-BR") + " às " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) },
+              ...(faturaAproved.cardHistoricoRef?.historicoNotas || []) // -> Preserva logs passados.
+            ];
+          } else {
+            historicoNotasFinal = [{
+              conteudo: faturaAproved.acaoSugerida === "RAMIFICAR_NOVO_CARD" ? "Nova cobrança isolada criada para novas NFs, protegendo o acordo Price antigo." : "Lote de cobrança iniciado via importador.",
+              dataHora: new Date().toLocaleDateString("pt-BR") + " às " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+            }];
+          }
 
-        alert(`Sucesso! Processamento concluído via Excel nativo de abas filtradas:\n• ${Object.keys(devedoresAgrupadosPorSoldTo).length} Devedores unificados criados no Firebase.\n• Planilha processou ${registrosAprovados.length} Notas Fiscais em sacolas agrupadas pelo SoldTo de célula.\n• ${totalNovasEmpresas} Novas empresas cadastradas no módulo de cadastros.`); // -> Alerta visível detalhado comemorativo de transação concluída.
-        fecharModal(); // -> Destrói e desliga o modal da tela do usuário.
+          const novoMontanteConsolidado = listaNotasFiscaisFinais.reduce((acc, n) => acc + (parseFloat(n.valorNota) || 0), 0); // -> Soma o bolo total.
+          const itemEspelho = listaNotasFiscaisFinais[0] || {}; // -> Captura a primeira fatura como espelho.
+
+          const payloadFinalCobranca = {
+            soldTo: faturaAproved.soldTo, // -> Conta ERP.
+            codigo: faturaAproved.soldTo, // -> ID conta para visualização das raias.
+            cliente: dadosPJMae.razaoSocial || faturaAproved.cliente, // -> Razão social oficial da Receita Federal.
+            cnpj: faturaAproved.cnpj, // -> CNPJ de 14 dígitos.
+            titulos: listaNotasFiscaisFinais, // -> Injeta a sacola de Notas Fiscais unificada.
+            numDocumento: itemEspelho.numDocumento || 0, // -> Dados de herança.
+            referencia: itemEspelho.referencia || "", // -> Dados de herança.
+            atribuicao: itemEspelho.atribuicao || "", // -> Dados de herança.
+            dataDocumento: itemEspelho.dataDocumento || "", // -> Dados de herança.
+            dataEnvio: itemEspelho.dataDocumento || "", // -> Sincronismo legado.
+            vencimentoLiquido: itemEspelho.vencimentoLiquido || "", // -> Dados de herança.
+            executivoVendas: itemEspelho.executivoVendas || "Não Informado", // -> Dados de herança.
+            valorVencido: novoMontanteConsolidado, // -> Saldo consolidado final da sacola.
+            valor: novoMontanteConsolidado, // -> Sincroniza contadores de topo de coluna.
+            responsavel: "Victor Faustino", // -> Assinatura do gestor responsável da mesa.
+            status: faturaAproved.raiaSugerida || "novo", // -> Mantém a raia configurada.
+            categoria: faturaAproved.raiaSugerida === "novo" ? "inicio" : "em_andamento", // -> Categoria macro gerencial.
+            arquivado: false, // -> O card nasce fora do arquivo morto.
+            historicoNotas: historicoNotasFinal, // -> Acopla as linhas cronológicas de auditoria.
+            tarefas: faturaAproved.cardHistoricoRef?.tarefas || [], // -> Preserva a fila de agendamentos.
+            proposta: { valorCobrado: novoMontanteConsolidado, qtdParcelas: 1 }, // -> Inicializa proposta Price baseada no bolo total.
+            atualizadoEm: serverTimestamp() // -> Carimba data técnica del Google.
+          };
+
+          await setDoc(devedorDocRef, payloadFinalCobranca, { merge: true }); // -> Grava com segurança anti-duplicidade NoSQL.
+          totalCobrancasSalvas++; // -> Soma no placar de execuções.
+        }
+
+        alert(`🟩 PROCESSO CONCLUÍDO COM SUCESSO!\n\n• A esteira atualizou com sucesso ${totalCobrancasSalvas} devedores no quadro Kanban.`);
+        aoFecharModalLocal(); // -> Fecha a cortina visual limpando buffers de RAM.
         
-        if (typeof this.onSucesso === 'function') { // -> Gatilho reativo maestro.
-          this.onSucesso(); // -> Recarrega e redesenha o Kanban reativamente com as novas sacolas unificadas sem dar F5.
-        } // -> Fim.
+        if (typeof this.callbackSucesso === 'function') { // -> Se o callback mestre do App.jsx estiver funcional:
+          this.callbackSucesso(); // -> Recarrega o Kanban reativamente em tempo real sem dar F5.
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Erro de barramento NoSQL ao salvar lote.");
+        if (botaoConfirmar) { botaoConfirmar.disabled = false; botaoConfirmar.innerHTML = '🚀 Confirmar Processamento'; }
+      }
+    };
 
-      } catch (erroGravacao) { // -> Captura erros.
-        console.error('Falha crítica no processamento do lote:', erroGravacao); // -> Detalhes técnicos no terminal de desenvolvedor.
-        alert('Erro de Processamento: Ocorreu um contratempo ao tentar salvar os dados na nuvem. Revise sua conexão.'); // -> Alerta.
-        btnConfirmar.disabled = false; // -> Destrava botão de reenvio.
-        btnConfirmar.innerHTML = '🚀 Confirmar Processamento'; // -> Restaura rótulo comercial do botão.
-      } // -> Fim.
-    }); // -> Fim.
-  } // -> Encerra a Área de Conferência.
-} // -> Encerra a classe mestre do ImportadorAging.
+    const elementoModalDOM = (
+      <ModalConferenciaAging 
+        aberto={true} 
+        aoFechar={aoFecharModalLocal} 
+        dadosProcessados={loteSugestoes} 
+        aoConfirmarProcessing={aoConfirmarProcessamentoFinal} 
+        aoConfirmarProcessamento={aoConfirmarProcessamentoFinal} 
+        carregando={false} 
+      />
+    );
+    
+    const renderizadorFixoDiv = document.getElementById('nó-sustentacao-modal-conferencia'); // -> Captura a div de sustentação.
+    if (renderizadorFixoDiv) {
+      renderizadorFixoDiv.innerHTML = ""; // -> Limpa buffers.
+      ReactDOM.createRoot(renderizadorFixoDiv).render(elementoModalDOM); // -> O robô do React monta o componente na árvore injetando o ReactDOM.
+    }
+  }
+}
+
+
+--- FILE:  ---
+
+import React, { useState } from "react"; // -> Traz a biblioteca mestre do React e o gancho de estado para monitorar os vistos das linhas em tempo real.
+import { X, CheckCircle2, AlertTriangle, FolderMinus, Info } from "lucide-react"; // -> Injeta a coleção de ícones lineares monocromáticos e sóbrios da Lucide para manter a estética corporativa.
+
+export default function ModalConferenciaAging({ aberto, aoFechar, dadosProcessados = [], aoConfirmarProcessamento, carregando }) { // -> Declara a função do modal recebendo os dados minerados e os gatilhos de gravação do motor.
+  
+  // 🧺 MEMÓRIA RAM DE SELEÇÃO: Monitora os vistos das fileiras baseando-se estritamente no índice numérico da linha (Garantia de Isolação)
+  const [itensSelecionados, setItensSelecionados] = useState(() => { // -> Inicializa o estado com todas as linhas marcadas como true por padrão.
+    const mapaInicial = {}; // -> Cria um rascunho de objeto vazio em RAM.
+    dadosProcessados.forEach((item, idx) => { mapaInicial[idx] = true; }); // -> 🛠️ EQUALIZAÇÃO EXECUTIVA: Usa o índice numérico sequencial da linha como chave de controle, banindo conflitos de propriedades nulas.
+    return mapaInicial; // -> Retorna o mapa configurado em RAM.
+  });
+
+  if (!aberto) return null; // -> TRAVA DE SEGURANÇA: Se o controle disser que o modal deve ficar oculto, mata a renderização poupando processamento.
+
+  // -> Analisa de forma reativa quantas faturas o cobrador manteve com o visto ativo na tabela
+  const totalAprovados = Object.keys(itensSelecionados).filter(id => itensSelecionados[id] === true).length; // -> Conta de forma limpa quantos booleanos estão marcados com visto verdadeiro.
+  const todosEstaoFlegados = dadosProcessados.length > 0 && totalAprovados === dadosProcessados.length; // -> Checa se o contador bateu simetricamente no limite máximo de linhas.
+
+  const lidarComSelecaoMestreLote = () => { // -> Função que gerencia o clique no checkbox do cabeçalho superior para marcar ou desmarcar tudo.
+    const mapaRascunho = {}; // -> Inicializa um balde vazio.
+    if (!todosEstaoFlegados) { // -> Se nem tudo estiver marcado, roda o laço injetando visto ativo em todas as linhas.
+      dadosProcessados.forEach((item, idx) => { mapaRascunho[idx] = true; }); // -> 🛠️ FIX DE LOTE: Alinha o marcador mestre para preencher os índices numéricos correspondentes.
+    }
+    setItensSelecionados(mapaRascunho); // -> Atualiza a tela de forma síncrona.
+  };
+
+  const lidarComSelecaoIndividual = (idxLinha) => { // -> Acionado ao clicar na caixinha de visto de uma fileira específica.
+    setItensSelecionados(anterior => ({
+      ...anterior, // -> Preserva o estado de todas as outras linhas paralelas.
+      [idxLinha]: !anterior[idxLinha] // -> 🛠️ FIX DE AUTONOMIA: Inverte de forma totalmente isolada o visto do índice numérico clicado, garantindo que o clique em um não afete os outros.
+    }));
+  };
+
+  const executarDisparoFinalDeCarga = () => { // -> Acionado pelo botão verde de processamento.
+    const listaIndicesAprovados = Object.keys(itensSelecionados).filter(idx => itensSelecionados[idx]).map(Number); // -> Coleta os índices numéricos que mantiveram o visto true.
+    const registrosAprovadosFinal = dadosProcessados.filter((reg, idx) => listaIndicesAprovados.includes(idx)); // -> Filtra a esteira isolando as faturas autorizadas pelo operador.
+
+    if (registrosAprovadosFinal.length === 0) { // -> Trava de segurança: impede o avanço se o lote de faturamento vier totalmente zerado.
+      alert("⚠️ AUTONOMIA DE LOTE:\n\nÉ necessário manter ao menos uma fatura selecionada para autorizar a injeção na nuvem."); // -> Notifica o erro.
+      return; // -> Aborta a gravação.
+    }
+
+    if (aoConfirmarProcessamento) { // -> Se o gatilho assíncrono do orquestrador central estiver plugado:
+      aoConfirmarProcessamento(registrosAprovadosFinal); // -> Arremessa o array purificado de faturas para o gravador unificado salvar no Firebase.
+    }
+  };
+
+  return ( // -> Desenha a interface estruturada de checkout de auditoria da planilha.
+    <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(15, 23, 42, 0.6)", zIndex: 9000, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px", boxSizing: "border-box" }}> {/* -> Cortina escura translúcida de isolamento de alta profundidade. */}
+      <div style={{ background: "#ffffff", padding: "24px", borderRadius: "12px", border: "1px solid #e2e8f0", width: "100%", maxWidth: "1200px", maxHeight: "85vh", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)", display: "flex", flexDirection: "column", overflow: "hidden", boxSizing: "border-box" }}> {/* -> Painel branco estrutural ultra-largo com trava de estouro de tela. */}
+        
+        {/* TOPO DO MODAL: TÍTULOS E EXPLICAÇÃO DE PROTOCOLO */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", borderBottom: "1px solid #e2e8f0", paddingBottom: "12px" }}>
+          <div style={{ textAlign: "left" }}>
+            <h3 style={{ margin: 0, fontSize: "14px", fontWeight: "900", color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.5px" }}>Área de Conferência Pré-Carga (Autonomia de Lote)</h3>
+            <p style={{ margin: "4px 0 0 0", color: "#64748b", fontSize: "12px", lineHeight: "1.4" }}>O sistema localizou a aba analítica com sucesso. As faturas marcadas abaixo serão consolidadas por devedor único via <b>SoldTo (Conta)</b>.</p>
+          </div>
+          <button type="button" onClick={aoFechar} style={{ background: "none", border: "none", fontSize: "22px", cursor: "pointer", color: "#94a3b8", padding: "4px" }}>&times;</button>
+        </div>
+
+        {/* GRADE PLANILHADA DE CHECKOUT COM ACESSOS DE CONFERÊNCIA */}
+        <div style={{ flex: 1, overflowY: "auto", overflowX: "auto", border: "1px solid #e2e8f0", borderRadius: "8px", marginBottom: "16px", backgroundColor: "#ffffff" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "12px", fontFamily: "inherit" }}>
+            <thead>
+              <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0", position: "sticky", top: 0, zIndex: 10 }}>
+                <th style={{ padding: "12px 16px", width: "40px", textAlign: "center" }}><input type="checkbox" checked={todosEstaoFlegados} onChange={lidarComSelecaoMestreLote} style={{ cursor: "pointer", width: "14px", height: "14px" }} /></th>
+                <th style={{ padding: "12px 12px", color: "#475569", fontWeight: "700" }}>CONTA (SOLDTO)</th>
+                <th style={{ padding: "12px 12px", color: "#475569", fontWeight: "700" }}>EMPRESA / RAZÃO SOCIAL</th>
+                <th style={{ padding: "12px 12px", color: "#475569", fontWeight: "700" }}>CNPJ PRESERVADO</th>
+                <th style={{ padding: "12px 12px", color: "#475569", fontWeight: "700" }}>Nº DOCUMENTO</th>
+                <th style={{ padding: "12px 12px", color: "#475569", fontWeight: "700" }}>REFERÊNCIA (NF)</th>
+                <th style={{ padding: "12px 12px", color: "#475569", fontWeight: "700" }}>ATRIBUIÇÃO</th>
+                <th style={{ padding: "12px 12px", color: "#475569", fontWeight: "700" }}>EMISSÃO</th>
+                <th style={{ padding: "12px 16px", color: "#475569", fontWeight: "700" }}>VENCIMENTO</th>
+                <th style={{ padding: "12px 16px", color: "#475569", fontWeight: "700", textAlign: "right", width: "130px" }}>MONTANTE BRUTO</th>
+                <th style={{ padding: "12px 16px", color: "#475569", fontWeight: "700" }}>EXECUTIVO VENDAS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {dadosProcessados.length === 0 ? (
+                <tr><td colSpan="11" style={{ padding: "24px", textAlign: "center", color: "#94a3b8", fontStyle: "italic" }}>Nenhum título extraído para a esteira de pré-visualização.</td></tr>
+              ) : (
+                dadosProcessados.map((reg, idx) => { // -> Captura o índice numérico real da fileira.
+                  const isLinhaFlegada = itensSelecionados[idx] === true; // -> 🛠️ FIX DE MARCAÇÃO: Lê a flag diretamente do índice numérico correspondente em RAM.
+                  
+                  const primeiroTitulo = reg.titulosAReceber && reg.titulosAReceber.length > 0 ? reg.titulosAReceber[0] : null; 
+                  
+                  const numDocExibir = primeiroTitulo ? primeiroTitulo.numDocumento : (reg.numDocumento || ""); 
+                  const refExibir = primeiroTitulo ? primeiroTitulo.referencia : (reg.referencia || ""); 
+                  const atribExibir = primeiroTitulo ? primeiroTitulo.atribuicao : (reg.atribuicao || ""); 
+                  const dataDocExibir = primeiroTitulo ? primeiroTitulo.dataDocumento : (reg.dataDoc || ""); 
+                  const vencExibir = primeiroTitulo ? primeiroTitulo.vencimentoLiquido : (reg.vencimento || ""); 
+                  
+                  const montanteExibir = reg.titulosAReceber 
+                    ? reg.titulosAReceber.reduce((acc, t) => acc + (parseFloat(t.valorNota) || 0), 0) 
+                    : (parseFloat(reg.montante) || 0);
+
+                  const chaveInviolavelLinha = `${reg.soldTo}-${refExibir}-${idx}`; // -> Chave imutável de renderização.
+
+                  return (
+                    <tr key={chaveInviolavelLinha} style={{ borderBottom: "1px solid #f1f5f9", backgroundColor: isLinhaFlegada ? "#f8fafc" : "transparent" }}>
+                      <td style={{ padding: "12px", textAlign: "center" }}><input type="checkbox" checked={isLinhaFlegada} onChange={() => lidarComSelecaoIndividual(idx)} style={{ cursor: "pointer", width: "13px", height: "13px" }} /></td> {/* -> 🛠️ GATILHO REATIVO FIXADO: Passa o índice numérico 'idx' para o gerenciador isolar o clique com precisão de agulha. */}
+                      <td style={{ padding: "12px", fontWeight: "700", color: "#1e293b" }}>#{reg.soldTo}</td>
+                      <td style={{ padding: "12px", maxWidth: "180px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontWeight: "600", color: "#334155" }} title={reg.cliente}>{reg.cliente}</td>
+                      <td style={{ padding: "12px", fontFamily: "monospace", color: "#475569", fontWeight: "bold" }}>{reg.cnpj}</td>
+                      <td style={{ padding: "12px", color: "#64748b" }}>{numDocExibir ? `#${numDocExibir}` : "S/D"}</td>
+                      <td style={{ padding: "12px", color: "#0284c7", fontWeight: "700" }}>{refExibir}</td>
+                      <td style={{ padding: "12px", color: "#64748b" }}>{atribExibir}</td>
+                      <td style={{ padding: "12px", color: "#475569" }}>{dataDocExibir}</td>
+                      <td style={{ padding: "12px", color: "#2563eb", fontWeight: "700" }}>{vencExibir}</td>
+                      <td style={{ padding: "12px 16px", fontWeight: "800", color: "#0f172a", textAlign: "right" }}>R$ {montanteExibir.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td>
+                      <td style={{ padding: "12px", color: "#475569", fontWeight: "600" }}>{reg.executivo || "SISTEMA"}</td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* INFO EXTRA DE PREVISÃO E NOTA DE COMPLIANCE JURÍDICO */}
+        <div style={{ display: "flex", alignItems: "center", gap: "6px", background: "#f8fafc", padding: "10px 14px", borderRadius: "6px", border: "1px solid #e2e8f0", fontSize: "11px", color: "#64748b", marginBottom: "16px", textAlign: "left" }}>
+          <Info size={13} style={{ color: "#0284c7", flexShrink: 0 }} />
+          <span><b>Aviso de Governança:</b> As faturas não marcadas serão expurgadas do processamento e não criarão cartões ghosts no Kanban .</span>
+        </div>
+
+        {/* RODAPÉ: COMANDOS DE REJEIÇÃO TOTAL OU CARGA CONSOLIDADA NO FIREBASE */}
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+          <button type="button" disabled={carregando} onClick={aoFechar} style={{ padding: "8px 14px", backgroundColor: "#ffffff", color: "#475569", border: "1px solid #cbd5e1", borderRadius: "6px", cursor: carregando ? "not-allowed" : "pointer", fontSize: "12px", fontWeight: "600" }}>Cancelar e Descartar</button>
+          <button
+            type="button"
+            disabled={carregando}
+            onClick={executarDisparoFinalDeCarga}
+            style={{ padding: "8px 18px", backgroundColor: carregando ? "#64748b" : "#16a34a", color: "#ffffff", border: "none", borderRadius: "6px", cursor: carregando ? "not-allowed" : "pointer", fontSize: "12px", fontWeight: "800", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "6px", boxShadow: "0 2px 4px rgba(0,0,0,0.05)" }}
+          >
+            <CheckCircle2 size={13} strokeWidth={2.5} />
+            <span>{carregando ? "Processando..." : `Injetar Lote (${totalAprovados} Devedores)`}</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+}
 
 
 --- FILE:  ---
@@ -11492,3 +11557,309 @@ export const useFirebaseSync = () => { // -> Declara a função do hook customiz
 
 --- FILE:  ---
 
+
+
+--- FILE:  ---
+
+export class FiltroLimboSobrantes { // -> Declara a classe especialista encarregada de filtrar as inconsistências e resíduos da planilha.
+
+  constructor() { // -> Inicializa o construtor do filtro de refugo.
+    this.dadosRejeitados = []; // -> Cria uma esteira limpa em memória RAM para segurar os registros corrompidos identificados.
+  } // -> Encerra o construtor.
+
+  // 🔍 MINERAÇÃO DE RESÍDUOS: Varre a planilha bruta antes do processamento principal para isolar o refugo
+  filtrarLinhasSobrantes(linhasBrutasDaPlanilha) { // -> Função que analisa o arquivo em busca de dados malformados.
+    this.dadosRejeitados = []; // -> Reseta o balde local para evitar lixo acumulado de uploads anteriores.
+    const linhasValidasAprovadas = []; // -> Inicializa a lista de faturas saudáveis que serão enviadas ao motor principal.
+
+    linhasBrutasDaPlanilha.forEach((linha, index) => { // -> Inicia a varredura linha por linha do array extraído do Excel.
+      
+      // -> Extrai as chaves de ancoragem limpando espaços em branco nas pontas
+      const soldTo = linha['SoldTo'] ? String(linha['SoldTo']).trim() : ""; // -> Identificador da conta.
+      const cnpj = linha['CNPJ'] ? String(linha['CNPJ']).replace(/[^0-9]/g, '').trim() : ""; // -> Isola os dígitos numéricos.
+      const cliente = linha['Cliente'] ? String(linha['Cliente']).trim() : ""; // -> Razão social.
+      const montante = parseFloat(linha['Montante em moeda interna']) || 0; // -> Converte o valor para float decimal.
+
+      // 🚨 CRITÉRIOS DE REJEIÇÃO E ISOLAMENTO DE SEGURANÇA NoSQL
+      let motivoRejeicao = ""; // -> Cria a variável que armazenará o diagnóstico do erro técnico.
+
+      if (!soldTo) { // -> Teste 1: Verifica se a conta ERP (SoldTo) veio em branco.
+        motivoRejeicao = "CONTA (SOLDTO) AUSENTE OU EM BRANCO"; // -> Define o erro.
+      } else if (!cnpj || cnpj.length !== 14) { // -> Teste 2: Verifica se o CNPJ está ausente ou malformado (diferente de 14 dígitos).
+        motivoRejeicao = `CNPJ INVÁLIDO OU INCOMPLETO (${cnpj.length} DÍGITOS)`; // -> Define o erro detalhando o tamanho string.
+      } else if (!cliente) { // -> Teste 3: Verifica se o nome da Razão Social veio zerado.
+        motivoRejeicao = "RAZÃO SOCIAL DO DEVEDOR NÃO INFORMADA"; // -> Define o erro.
+      } else if (montante <= 0) { // -> Teste 4: Verifica se o valor da fatura veio zerado ou negativo.
+        motivoRejeicao = `MONTANTE INVÁLIDO (R$ ${montante})`; // -> Define o erro.
+      }
+
+      if (motivoRejeicao !== "") { // -> Se a linha falhou em qualquer uma das 4 barreiras de segurança cadastral:
+        this.dadosRejeitados.push({ // -> Desvia a linha corrompida para a sacola de resíduos da RAM.
+          linhaPlanilha: index + 4, // -> Calcula o número exato da linha física no Excel (considerando o topo do cabeçalho) para facilitar a auditoria humana.
+          soldTo: soldTo || "N/A", // -> Preenche com o dado bruto ou indica ausência.
+          cliente: cliente || "NOME NÃO LOCALIZADO", // -> Preenche com o nome ou indica erro.
+          cnpj: cnpj || "NÃO INFORMADO", // -> Documento.
+          referencia: linha['Referência'] ? String(linha['Referência']).trim().toUpperCase() : "SEM REF", // -> Nota Fiscal original.
+          valor: montante, // -> Saldo.
+          erroDiagnostico: motivoRejeicao // -> Carimba o diagnóstico exato que será exibido no painel de sobrantes.
+        }); // -> Encerra o empilhamento do refugo.
+      } else { // -> Caso a linha passe com sucesso em todas as validações de integridade NoSQL:
+        linhasValidasAprovadas.push(linha); // -> Envia a fatura saudável para a lista limpa que abastecerá o motor do Kanban.
+      }
+    }); // -> Encerra o laço de repetição.
+
+    return { // -> Exporta o resultado da triagem dividido em duas vias limpas.
+      linhasSanas: linhasValidasAprovadas, // -> A massa de dados limpa que vai para o processamento inteligente.
+      sobrantesRejeitados: this.dadosRejeitados // -> O relatório de erros contendo o refugo isolado da carga.
+    }; // -> Encerra o retorno.
+  } // -> Encerra a mineração de resíduos.
+}
+
+
+--- FILE:  ---
+
+// -> Conecta o motor de sugestões diretamente com as referências e chaves do banco de dados na nuvem.
+import { db } from '../../config/firebase.js'; // -> Traz a fiação configurada com o servidor do Firebase ativo[cite: 493].
+// -> Puxa os comandos cirúrgicos do SDK do Firestore para consultar coleções de forma atômica.
+import { collection, getDocs } from 'firebase/firestore'; // -> Traz as engines de leitura NoSQL[cite: 493].
+
+export class MotorSugestoes { // -> Declara a classe especialista encarregada do cruzamento inteligente de dados.
+
+  constructor() { // -> Inicializa o construtor do cérebro analítico.
+    this.cobrancasAtivasNoBanco = []; // -> Inicializa uma bandeja limpa de rascunho na memória RAM para reter o espelho do Firebase.
+  } // -> Encerra o construtor.
+
+  // 🔄 SINCRONIZAÇÃO EM BACKGROUND: Puxa o estado atual do Kanban para confrontar com o Excel
+  async carregarFichasAtivasDoBanco() { // -> Função assíncrona que lê a esteira atual de faturamento[cite: 507].
+    const cobrancasCollectionRef = collection(db, "cobrancas"); // -> Mira os cabos de leitura na coleção mestre 'cobrancas'[cite: 4, 493].
+    const snapshot = await getDocs(cobrancasCollectionRef); // -> Dispara a leitura em lote trazendo os cartões gravados na nuvem[cite: 20].
+    
+    this.cobrancasAtivasNoBanco = []; // -> Reseta o rascunho local para evitar ghosts na memória.
+    snapshot.forEach((doc) => { // -> Varre pasta por pasta de devedores ativos no servidor da Google[cite: 508].
+      this.dadosProcessados = doc.data(); // -> Despeja o objeto de dados original em rascunho de RAM[cite: 6].
+      this.dadosProcessados.id = doc.id; // -> Vincula a ID física (CNPJ ou SoldTo) do documento[cite: 6].
+      this.dadosCobrancasGlobais = listaCobrancas; // -> Mantém o alinhamento retrocompatível de propriedades[cite: 1829].
+      this.dadosCobrancasGlobais.push({ id: doc.id, ...doc.data() }); // -> Junta o ID exclusivo com as informações internas do nó[cite: 1829].
+      this.dadosCobrancasGlobais.sort((itemA, itemB) => itemA.vencimentoLiquido - itemB.vencimentoLiquido); // -> Ordena do mais urgente para o mais distante como padrão[cite: 1542, 1617].
+      this.cobrancasAtivasNoBanco.push({ id: doc.id, ...doc.data() }); // -> Aloca na esteira local de cruzamento.
+    }); // -> Encerra a varredura NoSQL.
+  } // -> Encerra a carga de fichas.
+
+  // 🧠 O CÉREBRO DO DE-PARA: Cruza as faturas e gera a árvore de sugestões para o operador
+  async processarSugestoesDeCarga(dadosPlanilhaHigienizados) { // -> Motor que analisa a planilha e gera as diretrizes da Mesa de Decisão.
+    await this.carregarFichasAtivasDoBanco(); // -> Garante a leitura fresca do banco de dados antes de confrontar os itens.
+    
+    const listaDeSugestoesFinais = []; // -> Cria a esteira local que guardará o relatório de sugestões gerado para a tela.
+    const mapaDevedoresAgrupados = {}; // -> Inicializa o cofre de unificação em RAM para juntar NFs do mesmo devedor[cite: 1696].
+
+    // =========================================================================================
+    // ETAPA A: AGRUPAMENTO EM MEMÓRIA RAM DAS NOTAS FISCAIS DO EXCEL POR SOLDTO ÚNICO
+    // =========================================================================================
+    dadosPlanilhaHigienizados.forEach(reg => { // -> Varre linha por linha as faturas mineradas da planilha[cite: 1688].
+      const chaveSoldTo = reg.soldTo; // -> Captura o código numérico ERP do devedor como chave primária[cite: 1697].
+      
+      if (!mapaDevedoresAgrupados[chaveSoldTo]) { // -> Se for a primeira Nota Fiscal desse cliente detectada no lote:
+        mapaDevedoresAgrupados[chaveSoldTo] = { // -> Inicializa a sacola unificada com os dados mestre[cite: 1697].
+          soldTo: reg.soldTo, // -> Código da conta[cite: 1703].
+          cliente: reg.cliente, // -> Razão social da célula[cite: 1703].
+          cnpj: reg.cnpj, // -> CNPJ verdadeiro de 14 dígitos puros[cite: 1704].
+          local: reg.local, // -> Comarca de localização[cite: 1705].
+          regiao: reg.regiao, // -> Comarca estadual[cite: 1705].
+          executivo: reg.executivo, // -> Representante da carteira[cite: 1667].
+          titulosNovos: [] // -> Array que vai receber o bolo de faturas novas do arquivo[cite: 1700].
+        };
+      }
+      
+      mapaDevedoresAgrupados[chaveSoldTo].titulosNovos.push({ // -> Encaixa as informações individuais deste título dentro da sacola[cite: 1700].
+        numDocumento: parseInt(reg.numDocumento) || 0, // -> Número do contrato[cite: 1700].
+        referencia: reg.referencia, // -> Nota Fiscal real para prontuários[cite: 1700].
+        atribuicao: reg.atribuicao, // -> Tipo de venda[cite: 1700].
+        dataDocumento: reg.dataDoc, // -> Data fiscal de emissão[cite: 1701].
+        vencimentoLiquido: reg.vencimento, // -> Vencimento líquido estourado[cite: 1701].
+        valorNota: reg.montante, // -> Valor monetário Double real puro para somas[cite: 1701].
+        executivoVendas: reg.executivo // -> Dono da carteira[cite: 1701].
+      });
+    });
+
+    // =========================================================================================
+    // ETAPA B: APLICAÇÃO DAS REGRAS OPERACIONAIS EM CADA SACOLA UNIFICADA
+    // =========================================================================================
+    for (const soldToKey of Object.keys(mapaDevedoresAgrupados)) { // -> Inicia a varredura nas sacolas agrupadas em RAM[cite: 1702].
+      const devedorLote = mapaDevedoresAgrupados[soldToKey]; // -> Captura a sacola do devedor da vez[cite: 1702].
+      const cardExistenteNoFirebase = this.cobrancasAtivasNoBanco.find(c => c.id === devedorLote.soldTo || c.cnpj === devedorLote.cnpj); // -> Caça o histórico desse cliente na nuvem batendo o SoldTo ou CNPJ.
+
+      let acaoSugeridaRobo = "CRIAR"; // -> Inicializa a ação padrão presumindo que o devedor é inédito no sistema.
+      let justificativaTexto = "Devedor inédito detectado na planilha. O sistema criará um novo card na primeira raia do Kanban."; // ->UX explicativa.
+      let raiaDestinoSugerida = "novo"; // -> Força a ID da primeira calha cinza ('A Iniciar')[cite: 1706].
+      let idDocumentoDestino = devedorLote.soldTo; // -> ID padrão de gravação passa a ser o SoldTo puro[cite: 1709].
+
+      if (cardExistenteNoFirebase) { // -> Se o sistema localizou uma ficha ativa para este devedor na nuvem do Firebase:
+        const statusAtualDoCard = cardExistenteNoFirebase.status || "novo"; // -> Captura a raia onde o card está estacionado hoje[cite: 572, 1392].
+
+        if (statusAtualDoCard === "conta_corrente") { // -> 🛡️ REGRA CONTA CORRENTE: Se o card estiver na esteira de amortização livre[cite: 1371]:
+          acaoSugeridaRobo = "MESCLAR_CONTA_CORRENTE"; // -> Sinaliza a fusão de saldos em lote.
+          raiaDestinoSugerida = "conta_corrente"; // -> Mantém o card fixo na mesma raia de Conta Corrente[cite: 1371].
+          justificativaTexto = "Cliente ativo em regime de Conta Corrente. As novas NFs serão acopladas à mesma sacola de notas existente, acumulando o saldo devedor."; // -> UX explicativa.
+        } 
+        else if (statusAtualDoCard === "acordo" || statusAtualDoCard === "cobranca") { // -> 🛡️ REGRA ACORDO PRICE: Se o card já estiver parcelado/selado[cite: 1371]:
+          acaoSugeridaRobo = "RAMIFICAR_NOVO_CARD"; // -> Chaveia o comportamento quebrando a sobreposição cega.
+          raiaDestinoSugerida = "novo"; // -> O novo card de faturamento nasce limpo na raia inicial cinza[cite: 1706].
+          idDocumentoDestino = `${devedorLote.soldTo}_${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}`; // -> Gera uma ID física nova (Ex: 1022_202606) para ramificar sem destruir o acordo Price existente.
+          justificativaTexto = "Atenção: Este cliente possui um Acordo Comercial Price ativo e blindado. Sugestão: Criar uma nova cobrança isolada na raia inicial para este novo bolo de faturas."; // -> UX explicativa.
+        } 
+        else { // -> Se estiver nas raias comuns de atrito (novo, contato, negociacao)[cite: 1372]:
+          acaoSugeridaRobo = "ATUALIZAR_ESTEIRA"; // -> Indica atualização normal de saldo parcial.
+          raiaDestinoSugerida = statusAtualDoCard; // -> Respeita e mantém a calha atual onde o cobrador já está trabalhando o devedor[cite: 13, 1431].
+          justificativaTexto = "Cliente em fase de negociação ativa. O sistema anexará as novas NFs atualizando o saldo total e mantendo a raia do funil intacta."; // -> UX explicativa.
+        }
+      }
+
+      listaDeSugestoesFinais.push({ // -> Aloca o payload estruturado contendo a sugestão lógica inteligente para o painel.
+        idUnicaLote: devedorLote.soldTo, // -> Código de indexação primária.
+        idDocumentoAlvo: idDocumentoDestino, // -> O caminho de gravação definitivo que o Firebase receberá.
+        soldTo: devedorLote.soldTo, // -> Conta ERP.
+        cliente: devedorLote.cliente, // -> Razão social.
+        cnpj: devedorLote.cnpj, // -> CNPJ de 14 dígitos.
+        local: devedorLote.local, // -> Comarca municipal.
+        regiao: devedorLote.regiao, // -> Comarca estadual.
+        executivo: devedorLote.executivo, // -> Vendedor.
+        titulosAReceber: devedorLote.titulosNovos, // -> O array contendo o pacote de faturas novas do Excel.
+        cardHistoricoRef: cardExistenteNoFirebase || null, // -> Envia o espelho antigo do Firebase para conferência de cross-check do operador.
+        acaoSugerida: acaoSugeridaRobo, // -> Token identificador da regra do robô (CRIAR, MESCLAR, RAMIFICAR).
+        raiaSugerida: raiaDestinoSugerida, // -> Para qual coluna o card deve caminhar ou se manter.
+        justificativa: justificativaTexto, // -> Frase que convencerá o operador na tela.
+        aprovadoPeloOperador: true // -> Inicializa o checkbox reativo marcado como verdadeiro (Autonomia de Lote).
+      }); // -> Encerra o empilhamento da sugestão.
+    }
+
+    // =========================================================================================
+    // ETAPA C: RASTREADOR DE CONCILIAÇÃO AUTOMÁTICA (SUMIÇO DE NOTAS FISCAIS NO EXCEL)
+    // =========================================================================================
+    this.cobrancasAtivasNoBanco.forEach(cardBanco => { // -> Varre todos os cartões que estão gravados na nuvem do Google[cite: 508].
+      if (cardBanco.status === "cobranca" && cardBanco.titulos) { // -> Se o devedor estiver na esteira de Cobrança Parcelada monitorada[cite: 1371]:
+        cardBanco.titulos.forEach(tituloSalvo => { // -> Visita Nota Fiscal por Nota Fiscal contida dentro da sacola NoSQL do prontuário[cite: 543, 628].
+          if (tituloSalvo.referencia && tituloSalvo.referencia.startsWith("[NO]")) { // -> Se a NF possuir a inicial controlada indicando acordo firmado:
+            
+            // -> Checa se essa Nota Fiscal sumiu das linhas aprovadas do novo arquivo Excel carregado
+            const notaFiscalContinuaNaPlanilha = dadosPlanilhaHigienizados.some(reg => reg.referencia === tituloSalvo.referencia); // -> Retorna verdadeiro se a NF ainda constar no arquivo.
+
+            if (!notaFiscalContinuaNaPlanilha) { // -> 🚨 DETECTADO SUMIÇO: Se a NF sumiu na nova rodada de carga de planilhas periódicas:
+              listaDeSugestoesFinais.push({ // -> Aloca um item especial de liquidação na Mesa de Decisão.
+                idUnicaLote: `BAIXA_${cardBanco.id}_${tituloSalvo.referencia}`, // -> ID única do lote de conciliação.
+                idDocumentoAlvo: cardBanco.id, // -> ID do card pai que sofrerá o abatimento de saldo.
+                soldTo: cardBanco.soldTo || cardBanco.id, // -> Conta ERP.
+                cliente: cardBanco.cliente, // -> Razão social do devedor unificado[cite: 539].
+                cnpj: cardBanco.cnpj || "", // -> CNPJ.
+                local: cardBanco.local || "",
+                regiao: cardBanco.regiao || "",
+                executivo: tituloSalvo.executivoVendas || "Controladoria", // -> Origem.
+                titulosAReceber: [tituloSalvo], // -> Envia a Nota Fiscal liquidada isolada para o visor do painel.
+                cardHistoricoRef: cardBanco, // -> Envia a ficha completa do banco.
+                acaoSugerida: "LIQUIDAR_CONCILIACAO", // -> Token da regra de conciliação bancária por sumiço.
+                raiaSugerida: "cobranca", // -> Mantém o card na esteira parcelada abatendo apenas o saldo[cite: 1371].
+                justificativa: `Liquidação de Acordo: A Nota Fiscal ${tituloSalvo.referencia} sumiu da planilha. Sugestão: Dar baixa automática abatendo R$ ${tituloSalvo.valorNota?.toLocaleString("pt-BR")} do saldo.`, // -> UX descritiva.
+                aprovadoPeloOperador: true // -> Inicializa marcado para liquidação em lote rápida.
+              }); // -> Encerra o empilhamento de baixa.
+            }
+          }
+        }); // -> Fim das notas fiscais do card.
+      }
+    }); // -> Fim da análise de conciliação.
+
+    return listaDeSugestoesFinais; // -> Devolve a lista consolidada contendo todas as decisões cruzadas prontas para a interface do React.
+  } // -> Encerra o motor de sugestões.
+}
+
+
+--- FILE:  ---
+
+// -> Conecta o validador diretamente com a fiação e referências oficiais do banco de dados na nuvem.
+import { db } from '../../config/firebase.js'; // -> Traz a conexão configurada com o servidor do Firebase ativo.
+// -> Puxa as ferramentas especialistas do SDK do Firestore para ler e gravar nós de forma atômica.
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'; // -> Traz as engines cirúrgicas NoSQL.
+
+export class ValidadorEmpresas { // -> Declara a classe especialista encarregada da higienização cadastral.
+  
+  constructor() { // -> Inicializa o construtor do módulo.
+    this.cacheEmpresasLocais = {}; // -> Cria um dicionário em memória RAM para reter os CNPJs checados na mesma sessão e evitar requisições repetidas na API.
+  } // -> Encerra o construtor.
+
+  // 🚀 ENGINE DE CONSULTA AUTOMÁTICA DE CNPJ (BRASIL API)
+  async consultarApiCNPJ(cnpj) { // -> Define a função assíncrona que dispara o pacote de rede para enriquecimento de dados.
+    try { // -> Escudo protetivo antiqueda para tratar instabilidades de conexão ou CNPJs inexistentes.
+      const resposta = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`); // -> Dispara o método fetch visando o endpoint da BrasilAPI.
+      if (!resposta.ok) return null; // -> Retorna nulo se a Receita Federal recusar o documento ou der erro 404.
+      
+      const dados = await resposta.json(); // -> Traduz o pacote de rede codificado em formato JSON vivo para leitura na memória.
+      return { // -> Entrega os metadados ricos estruturados em letras limpas.
+        razaoSocial: (dados.razao_social || '').toUpperCase(), // -> Captura a Razão Social oficial forçando caixa alta.
+        nomeFantasia: (dados.nome_fantasia || dados.razao_social || '').toUpperCase(), // -> Captura o Nome Fantasia de fallback em caixa alta.
+        situacaoCadastral: dados.descricao_situacao_cadastral || 'ATIVA', // -> Isola a string de situação cadastral (Ex: ATIVA, BAIXADA).
+        endereco: `${dados.logradouro || ""}, Nº ${dados.numero || ""}`.toUpperCase(), // -> Concatena o endereço básico da Receita.
+        cep: dados.cep || "" // -> Captura o código postal postal.
+      }; // -> Encerra o retorno estruturado.
+    } catch (e) { // -> Captura falhas físicas de timeout ou falta de internet.
+      console.warn(`[API CNPJ] Falha ao consultar o documento ${cnpj}:`, e); // -> Imprime aviso leve no console do desenvolvedor.
+      return null; // -> Retorna nulo para acionar as rotinas de contingência locais.
+    } // -> Fim do catch.
+  } // -> Encerra a consulta de API.
+
+  // 🛡️ MOTOR DE GARANTIA CADASTRAL: Valida existência no Firebase e previne duplicidade
+  async garantirCadastroEmpresa(cnpj, nomePlanilha, local, regiao) { // -> Função que checa o banco antes de autorizar novos registros.
+    const cnpjLimpo = String(cnpj).replace(/[^0-9]/g, '').trim(); // -> Expulsa pontos, barras e traços aplicando regex para isolar os 14 dígitos numéricos puros.
+    
+    if (cnpjLimpo.length !== 14) { // -> Trava de segurança para caminhos de rede corrompidos.
+      throw new Error(`CNPJ Inválido para cadastro: ${cnpj}`); // -> Dispara exceção se o documento fiscal estiver quebrado.
+    }
+
+    // -> Primeiro nível de checagem: Verifica se já foi lido nesta mesma rodada de processamento da planilha.
+    if (this.cacheEmpresasLocais[cnpjLimpo]) { // -> Se o CNPJ constar no dicionário temporário da RAM:
+      return this.cacheEmpresasLocais[cnpjLimpo]; // -> Devolve a ficha da memória local economizando processamento.
+    }
+
+    // -> Segundo nível de checagem: Faz a varredura em tempo real direto na nuvem do Firestore.
+    const empresaDocRef = doc(db, 'cadastros_empresas', cnpjLimpo); // -> Define a rota física fixa: o ID do documento na nuvem passa a ser o próprio CNPJ numérico puro.
+    const snapshot = await getDoc(empresaDocRef); // -> Realiza a leitura preventiva no cofre do Firebase.
+
+    if (snapshot.exists()) { // -> Cenário A: Se a empresa já constar na base de dados de retaguarda:
+      const dadosExistentes = snapshot.data(); // -> Puxa os dados estruturados do nó.
+      this.cacheEmpresasLocais[cnpjLimpo] = dadosExistentes; // -> Aloca no cache local da RAM.
+      return dadosExistentes; // -> Devolve a ficha existente salvando conexões com o servidor.
+    }
+
+    // -> Cenário B: Empresa inédita na esteira. Inicializa o fluxo de enriquecimento automático via API.
+    const dadosApi = await this.consultarApiCNPJ(cnpjLimpo); // -> Invoca o consultor externo web com o CNPJ purificado.
+    let payloadEmpresa = {}; // -> Inicializa o balde de alocação do pacote.
+
+    if (dadosApi) { // -> Sub-cenário B1: Se localizou a empresa ativa nos servidores da Receita Federal:
+      payloadEmpresa = { // -> Embala a ficha cadastral oficial rica do governo.
+        codigo: "SOLICITAR", // -> Marca o alerta de preenchimento para sincronismo posterior com o ERP.
+        cliente: dadosApi.razaoSocial, // -> Razão social validada em caixa alta estrita.
+        cnpj: cnpjLimpo, // -> CNPJ unificador de 14 dígitos puros.
+        tipo: "Matriz", // -> Define o padrão institucional sóbrio de Matriz.
+        segmento: "Extraído via Script (API)", // -> Metadado de auditoria de migração automática.
+        endereco: dadosApi.endereco, // -> Logradouro oficial retornado pela API.
+        cep: dadosApi.cep, // -> Código postal oficial retornado pela API.
+        situacaoFiscal: dadosApi.situacaoCadastral, // -> Carimba se o CNPJ está ativo ou baixado no governo.
+        criadoEm: serverTimestamp() // -> Assinatura cronológica oficial imutável de compliance do Google.
+      }; // -> Encerra a montagem do documento enriquecido.
+    } else { // -> Sub-cenário B2: Contingência contra falhas de timeout ou indisponibilidade da API:
+      const comarcaEndereco = local && regiao ? `${local} / ${regiao}` : "Não informado no lote"; // -> Concatena as praças da planilha.
+      payloadEmpresa = { // -> Embala o documento com os dados disponíveis nas colunas do Excel.
+        codigo: "SOLICITAR", // -> Alerta de preenchimento de Conta.
+        cliente: String(nomePlanilha || '').trim().toUpperCase(), // -> Puxa o nome da célula da planilha forçando letras maiúsculas.
+        cnpj: cnpjLimpo, // -> CNPJ unificador verdadeiro.
+        tipo: "Matriz", // -> Define padrão soberano Matriz.
+        segmento: "Extraído via Script (Planilha)", // -> Carimba metadados de contingência.
+        endereco: comarcaEndereco.toUpperCase(), // -> Aloca as comarcas da planilha no endereço para não nascer órfão.
+        cep: "00000-000", // -> Insere o formato numérico padrão temporário.
+        situacaoFiscal: "NÃO VERIFICADO", // -> Alerta para checagem posterior do operador.
+        criadoEm: serverTimestamp() // -> Assinatura cronológica do Google.
+      }; // -> Encerra a montagem de contingência.
+    }
+
+    await setDoc(empresaDocRef, payloadEmpresa); // -> Grava definitivamente a ficha cadastral corporativa estável na coleção.
+    this.cacheEmpresasLocais[cnpjLimpo] = payloadEmpresa; // -> Aloca o novo registro no cache de RAM local.
+    return payloadEmpresa; // -> Devolve a ficha criada para abastecer os motores subsequentes da esteira.
+  } // -> Encerra o motor garantidor de cadastros.
+}
